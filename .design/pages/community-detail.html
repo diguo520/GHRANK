@@ -10,10 +10,10 @@
   <link rel="stylesheet" href="../styles/css/index.css">
   <link rel="stylesheet" href="../styles/css/header.css">
   <link rel="stylesheet" href="../styles/css/footer.css">
-  <link rel="stylesheet" href="../styles/css/side-nav.css">
+  <link rel="stylesheet" href="../styles/css/side-nav.css?v=4">
   <link rel="stylesheet" href="../styles/css/search-overlay.css">
   <link rel="stylesheet" href="../styles/css/loading.css">
-  <link rel="stylesheet" href="../styles/css/community.css?v=2">
+  <link rel="stylesheet" href="../styles/css/community.css?v=13">
   <link rel="stylesheet" href="../styles/css/code-block.css?v=5">
   <link rel="stylesheet" href="../styles/css/tiptap-hud.css">
   <!-- React 19 CJS + Babel Standalone（本地 vendor，免构建接入） -->
@@ -217,20 +217,22 @@
       font-family: var(--font-mono);
       font-size: 13px;
       color: var(--text-bright);
-      background: var(--bg-deep);
-      border: 1px solid var(--border);
-      border-left: 2px solid var(--cyan);
+      background: transparent;
+      border: none;
       padding: 14px 16px;
-      margin: 16px 0;
+      margin: 0;
       overflow-x: auto;
       line-height: 1.55;
     }
+    /* 代码块内部 <code> 不显示行内 code 的青框/背景 */
     .post-body pre code {
       background: none;
       padding: 0;
       color: inherit;
       font-size: 13px;
+      border: none;
     }
+    /* 仅行内 code 保留高亮边框 */
     .post-body code {
       font-family: var(--font-mono);
       font-size: 13px;
@@ -268,6 +270,7 @@
       position: relative;
       display: block;
       width: 100%;
+      height: 320px;
       max-height: 320px;
       overflow: hidden;
       border: 1px solid var(--border);
@@ -315,6 +318,20 @@
     .post-body .post-image-caption .caption-tag {
       color: var(--gold-dim);
       margin-right: 6px;
+    }
+    /* 图片加载失败时的占位提示 */
+    .post-body .post-image-wrap .image-error-msg {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      background: var(--bg-panel);
+      z-index: 10;
     }
 
     /* ── Post Action Row ── */
@@ -744,6 +761,13 @@
         width: 100%;
         justify-content: center;
       }
+      .post-body .post-image-wrap {
+        height: 220px;
+        max-height: 220px;
+      }
+      .post-body .post-image-wrap img {
+        max-height: 220px;
+      }
     }
   </style>
 </head>
@@ -761,99 +785,48 @@
     <!-- COMMUNITY LAYOUT -->
     <div class="community-layout">
 
-      <!-- SIDEBAR — unified with community.html (icon nav + 4-card stats) -->
+      <!-- SIDEBAR — 帖子详情：作者卡 + 贴吧卡 + 热门贴吧 -->
       <aside class="community-sidebar">
         <div class="sidebar-section">
-          <div class="sidebar-section-title">Browse Sections</div>
-          <nav class="sidebar-nav">
-            <a class="sidebar-nav-item" data-section="show" href="community.html">
-              <span class="sidebar-nav-icon">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10"/><path d="M5 6h6M5 9h4"/></svg>
-              </span>
-              <span class="sidebar-nav-label">Show &amp; Tell</span>
-              <span class="sidebar-nav-count" data-count-key="show">642</span>
-            </a>
-            <a class="sidebar-nav-item" data-section="questions" href="community.html">
-              <span class="sidebar-nav-icon">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="5.5"/><path d="M6.5 6.5a1.5 1.5 0 0 1 3 0c0 1-.5 1.3-1 1.6-.3.2-.5.4-.5.8v.6"/><circle cx="8" cy="11.5" r="0.5" fill="currentColor"/></svg>
-              </span>
-              <span class="sidebar-nav-label">Questions</span>
-              <span class="sidebar-nav-count" data-count-key="questions">1,089</span>
-            </a>
-            <a class="sidebar-nav-item" data-section="discussions" href="community.html">
-              <span class="sidebar-nav-icon">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 4h10v6H6l-3 3V4z"/></svg>
-              </span>
-              <span class="sidebar-nav-label">Discussions</span>
-              <span class="sidebar-nav-count" data-count-key="discussions">876</span>
-            </a>
-            <a class="sidebar-nav-item" data-section="tutorials" href="community.html">
-              <span class="sidebar-nav-icon">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 3l4 5-4 5M8 13h6"/></svg>
-              </span>
-              <span class="sidebar-nav-label">Tutorials</span>
-              <span class="sidebar-nav-count" data-count-key="tutorials">234</span>
-            </a>
-            <a class="sidebar-nav-item" data-section="news" href="community.html">
-              <span class="sidebar-nav-icon">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10"/><path d="M2 6h12M5 9h4M5 11h3"/></svg>
-              </span>
-              <span class="sidebar-nav-label">News &amp; Updates</span>
-              <span class="sidebar-nav-count" data-count-key="news">198</span>
-            </a>
-            <a class="sidebar-nav-item" data-section="offtopic" href="community.html">
-              <span class="sidebar-nav-icon">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 3h8v10H4z"/><path d="M6 6h4M6 9h4"/></svg>
-              </span>
-              <span class="sidebar-nav-label">Off-Topic</span>
-              <span class="sidebar-nav-count" data-count-key="offtopic">156</span>
-            </a>
-            <a class="sidebar-nav-item" data-section="devlogs" href="community.html">
-              <span class="sidebar-nav-icon">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="5 6 8 3 11 6"/><polyline points="5 10 8 13 11 10"/><path d="M8 3v10"/></svg>
-              </span>
-              <span class="sidebar-nav-label">Dev Logs</span>
-              <span class="sidebar-nav-count" data-count-key="devlogs">89</span>
-            </a>
-          </nav>
-        </div>
-
-        <div class="sidebar-section">
-          <div class="sidebar-section-title">Community Stats</div>
-          <div class="community-stats-grid">
-            <div class="community-stat-card">
-              <div class="community-stat-card-value">48.3K</div>
-              <div class="community-stat-card-label">Members</div>
+          <div class="detail-author-card">
+            <div class="detail-author-header">
+              <div class="detail-author-avatar">
+                <img src="../styles/images/demo/prompt_2.jpg" alt="">
+              </div>
+              <div class="detail-author-info">
+                <div class="detail-author-name">@raven_vex</div>
+                <span class="detail-author-role">Original Poster</span>
+              </div>
             </div>
-            <div class="community-stat-card">
-              <div class="community-stat-card-value">1,247</div>
-              <div class="community-stat-card-label">Online</div>
-            </div>
-            <div class="community-stat-card">
-              <div class="community-stat-card-value">186</div>
-              <div class="community-stat-card-label">Posts Today</div>
-            </div>
-            <div class="community-stat-card">
-              <div class="community-stat-card-value">1,432</div>
-              <div class="community-stat-card-label">Replies Today</div>
-            </div>
+            <a href="#" class="detail-author-profile-btn">View Profile</a>
           </div>
         </div>
 
         <div class="sidebar-section">
-          <a href="community-new.html" class="sidebar-new-post-btn">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v10M3 8h10"/></svg>
-            New Post
-          </a>
+          <div class="tieba-info-card" id="aboutTiebaCard">
+            <div class="tieba-info-header">
+              <span class="tieba-info-icon" id="aboutTiebaIcon">AI</span>
+              <div>
+                <div class="tieba-info-name" id="aboutTiebaName">AI Agents Hub</div>
+                <div class="tieba-info-meta" id="aboutTiebaMeta">12.4K members · 3.2K posts</div>
+              </div>
+            </div>
+            <div class="tieba-info-desc" id="aboutTiebaDesc">Discuss autonomous AI agents, tool use, and multi-agent orchestration patterns.</div>
+            <button class="tieba-join-btn" id="detailJoinBtn">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v10M3 8h10"/></svg>
+              Join Tieba
+            </button>
+            <a href="community-new.html" class="sidebar-new-post-btn detail-new-post-btn">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v10M3 8h10"/></svg>
+              New Post
+            </a>
+          </div>
         </div>
 
         <div class="sidebar-section">
-          <div class="ad-slot ad-slot-sidebar">
-            <div class="ad-slot-content">
-              <div class="ad-line-1">Sponsored</div>
-              <div class="ad-line-2">VEX LABS</div>
-              <div class="ad-line-3">Build faster. Ship smarter.</div>
-            </div>
+          <div class="sidebar-section-title">Hot Tiebas</div>
+          <div class="hot-bars-list" id="hotBarsList">
+            <!-- JS 动态渲染 -->
           </div>
         </div>
       </aside>
@@ -893,13 +866,26 @@
           </div>
 
           <div class="post-body">
+            <div class="post-poll" data-poll-id="poll-1">
+              <div class="post-poll-title">
+                <span class="post-poll-badge">Poll</span>
+                Which folder structure do you prefer?
+              </div>
+              <div class="post-poll-options">
+                <button class="post-poll-option" data-option="feature"><span class="poll-bar"></span><span class="poll-label">Feature-based</span><span class="poll-count">0 votes</span></button>
+                <button class="post-poll-option" data-option="type"><span class="poll-bar"></span><span class="poll-label">Type-based</span><span class="poll-count">0 votes</span></button>
+              </div>
+              <div class="post-poll-total">0 votes total</div>
+              <div class="post-poll-voted" style="display:none;">You voted · results updated</div>
+            </div>
+
             <p>After working on a few production React codebases that crossed the 200k LOC mark, I wanted to share some patterns that have genuinely helped teams scale without drowning in complexity. None of this is novel, but it is the stuff I wish someone had told me three years ago.</p>
 
             <h2>1. Feature-based folders over type-based folders</h2>
             <p>The single biggest mistake I see is organizing by <em>file type</em> (all components together, all hooks together, all utils together). This works at 5k LOC and becomes a navigation nightmare at 50k. Group by feature instead:</p>
             <div class="post-image">
               <div class="post-image-wrap lazy-wrap" id="postImage1">
-                <img data-lazy alt="Feature-based folder structure diagram">
+                <img src="../styles/images/demo/prompt_4.jpg" alt="Feature-based folder structure diagram">
               </div>
               <div class="post-image-caption"><span class="caption-tag">FIG.01</span>Feature-based vs type-based folder layout</div>
             </div>
@@ -1229,7 +1215,7 @@ if __name__ == "__main__":
             <p>Most performance problems in large React apps are actually data-fetching problems. Use a real data library (React Query, SWR, Apollo) and stop managing server state in <code>useState</code>.</p>
             <div class="post-image">
               <div class="post-image-wrap lazy-wrap" id="postImage2">
-                <img data-lazy alt="Data layer architecture overview">
+                <img src="../styles/images/demo/prompt_5.jpg" alt="Data layer architecture overview">
               </div>
               <div class="post-image-caption"><span class="caption-tag">FIG.02</span>Server-state vs client-state separation</div>
             </div>
@@ -1246,7 +1232,8 @@ if __name__ == "__main__":
             </ul>
             <div class="post-image">
               <div class="post-image-wrap lazy-wrap" id="postImage3">
-                <img data-lazy alt="State management decision tree">
+                <img src="../styles/images/demo/missing_attachment.jpg" alt="State management decision tree" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="image-error-msg">图片无法加载</div>
               </div>
               <div class="post-image-caption"><span class="caption-tag">FIG.03</span>Decision tree for picking the right state bucket</div>
             </div>
@@ -1292,174 +1279,58 @@ if __name__ == "__main__":
 
           <div class="replies-list" id="repliesList">
 
-            <!-- Reply 1 -->
-            <div class="reply-item">
-              <div class="reply-avatar">
-                <img src="../styles/images/demo/prompt_3.jpg" alt="">
+            <!-- Skeleton replies -->
+            <div class="skel-reply-item">
+              <div class="skel-reply-avatar"></div>
+              <div class="skel-reply-body">
+                <div class="skel-reply-head">
+                  <div class="skel-reply-bar short"></div>
+                  <div class="skel-reply-bar short" style="width:80px"></div>
+                </div>
+                <div class="skel-reply-bar medium"></div>
+                <div class="skel-reply-bar full"></div>
               </div>
-              <div class="reply-body">
-                <div class="reply-head">
-                  <span class="reply-author">@mira_kade</span>
-                  <span class="reply-badge">Top Contributor</span>
-                  <span class="reply-time">3 hours ago</span>
+            </div>
+            <div class="skel-reply-item">
+              <div class="skel-reply-avatar"></div>
+              <div class="skel-reply-body">
+                <div class="skel-reply-head">
+                  <div class="skel-reply-bar short"></div>
+                  <div class="skel-reply-bar short" style="width:60px"></div>
                 </div>
-                <div class="reply-content">
-                  <p>The feature-based folder structure is the hill I will die on. We migrated from type-based to feature-based last year and the onboarding time for new engineers dropped from ~2 weeks to ~3 days. The <code>index.ts</code> as public API is the key insight &mdash; it forces you to think about what is actually reusable.</p>
-                  <p>One addition: use ESLint&rsquo;s <code>no-restricted-imports</code> to enforce the boundary. If someone reaches into <code>features/auth/components/LoginForm.tsx</code> from outside the feature, the build fails. Saves you from drift over time.</p>
+                <div class="skel-reply-bar medium"></div>
+                <div class="skel-reply-bar full"></div>
+              </div>
+            </div>
+            <div class="skel-reply-item">
+              <div class="skel-reply-avatar"></div>
+              <div class="skel-reply-body">
+                <div class="skel-reply-head">
+                  <div class="skel-reply-bar short"></div>
+                  <div class="skel-reply-bar short" style="width:90px"></div>
                 </div>
-                <div class="reply-actions">
-                  <button class="reply-action-btn action-like" data-action="like">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                    <span class="action-count">38</span>
-                  </button>
-                  <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
+                <div class="skel-reply-bar medium"></div>
+                <div class="skel-reply-bar full"></div>
+              </div>
+            </div>
+            <div class="skel-reply-item">
+              <div class="skel-reply-avatar"></div>
+              <div class="skel-reply-body">
+                <div class="skel-reply-head">
+                  <div class="skel-reply-bar short"></div>
+                  <div class="skel-reply-bar short" style="width:70px"></div>
                 </div>
-
-                <!-- Nested reply -->
-                <div class="reply-children">
-                  <div class="reply-item">
-                    <div class="reply-avatar">
-                      <img src="../styles/images/demo/prompt_4.jpg" alt="">
-                    </div>
-                    <div class="reply-body">
-                      <div class="reply-head">
-                        <span class="reply-author">@raven_vex</span>
-                        <span class="reply-badge">OP</span>
-                        <span class="reply-time">2 hours ago</span>
-                      </div>
-                      <div class="reply-content">
-                        <p>Good call on the ESLint rule. We have been doing this manually in code review and it is exhausting. Adding <code>no-restricted-imports</code> this week.</p>
-                      </div>
-                      <div class="reply-actions">
-                        <button class="reply-action-btn action-like" data-action="like">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                          <span class="action-count">12</span>
-                        </button>
-                        <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <div class="skel-reply-bar medium"></div>
+                <div class="skel-reply-bar full"></div>
               </div>
             </div>
 
-            <!-- Reply 2 -->
-            <div class="reply-item">
-              <div class="reply-avatar">
-                <img src="../styles/images/demo/prompt_5.jpg" alt="">
-              </div>
-              <div class="reply-body">
-                <div class="reply-head">
-                  <span class="reply-author">@jin_tao</span>
-                  <span class="reply-time">2 hours ago</span>
-                </div>
-                <div class="reply-content">
-                  <p>Disagree slightly on the data library take. We tried React Query on a codebase with a lot of imperative WebSocket updates and it got messy fast. The cache invalidation story for real-time data is not great &mdash; you end up fighting the library.</p>
-                  <p>For REST-heavy CRUD apps, absolutely. For anything with a persistent socket, evaluate Zustand + manual subscription patterns first.</p>
-                </div>
-                <div class="reply-actions">
-                  <button class="reply-action-btn action-like" data-action="like">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                    <span class="action-count">24</span>
-                  </button>
-                  <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
-                </div>
+          </div>
 
-                <div class="reply-children">
-                  <div class="reply-item">
-                    <div class="reply-avatar">
-                      <img src="../styles/images/demo/prompt_6.jpg" alt="">
-                    </div>
-                    <div class="reply-body">
-                      <div class="reply-head">
-                        <span class="reply-author">@alex_dev</span>
-                        <span class="reply-time">1 hour ago</span>
-                      </div>
-                      <div class="reply-content">
-                        <p>Fair point. We use React Query for REST and a separate Zustand store for the socket layer, with the socket store calling <code>queryClient.invalidateQueries</code> when it receives an event that affects cached data. Best of both worlds.</p>
-                      </div>
-                      <div class="reply-actions">
-                        <button class="reply-action-btn action-like" data-action="like">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                          <span class="action-count">9</span>
-                        </button>
-                        <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div id="repliesLoader" class="infinite-scroll-sentinel">
+            <div class="scroll-loader">
+              <div class="scroll-loader-spinner"></div>
             </div>
-
-            <!-- Reply 3 -->
-            <div class="reply-item">
-              <div class="reply-avatar">
-                <img src="../styles/images/demo/prompt_7.jpg" alt="">
-              </div>
-              <div class="reply-body">
-                <div class="reply-head">
-                  <span class="reply-author">@sam构筑</span>
-                  <span class="reply-time">1 hour ago</span>
-                </div>
-                <div class="reply-content">
-                  <p>The composition point hit hard. We had a <code>&lt;Card&gt;</code> component with 32 props including <code>showHeader</code>, <code>headerVariant</code>, <code>footerAlign</code>, <code>collapsible</code>... Splitting it into <code>&lt;Card&gt;</code>, <code>&lt;CardHeader&gt;</code>, <code>&lt;CardBody&gt;</code>, <code>&lt;CardFooter&gt;</code> with compound components removed ~400 lines of conditional logic.</p>
-                </div>
-                <div class="reply-actions">
-                  <button class="reply-action-btn action-like is-active" data-action="like">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                    <span class="action-count">31</span>
-                  </button>
-                  <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Reply 4 -->
-            <div class="reply-item">
-              <div class="reply-avatar">
-                <img src="../styles/images/demo/prompt_8.jpg" alt="">
-              </div>
-              <div class="reply-body">
-                <div class="reply-head">
-                  <span class="reply-author">@nova_codes</span>
-                  <span class="reply-time">45 minutes ago</span>
-                </div>
-                <div class="reply-content">
-                  <p>Anyone migrated a feature-based structure to the App Router? The route colocation rules fight with the feature folder pattern and I have not found a clean answer yet. Currently duplicating some logic between <code>app/</code> routes and <code>features/</code>.</p>
-                </div>
-                <div class="reply-actions">
-                  <button class="reply-action-btn action-like" data-action="like">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                    <span class="action-count">15</span>
-                  </button>
-                  <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Reply 5 -->
-            <div class="reply-item">
-              <div class="reply-avatar">
-                <img src="../styles/images/demo/prompt_9.jpg" alt="">
-              </div>
-              <div class="reply-body">
-                <div class="reply-head">
-                  <span class="reply-author">@kira_dev</span>
-                  <span class="reply-time">20 minutes ago</span>
-                </div>
-                <div class="reply-content">
-                  <p>Saved this thread. The &ldquo;server state is not your state&rdquo; line is going on a sticky note.</p>
-                </div>
-                <div class="reply-actions">
-                  <button class="reply-action-btn action-like" data-action="like">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                    <span class="action-count">6</span>
-                  </button>
-                  <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
-                </div>
-              </div>
-            </div>
-
           </div>
         </section>
 
@@ -1527,9 +1398,30 @@ if __name__ == "__main__":
         </div>
 
       </main>
+
+      <!-- ═══ 右栏：创建贴吧 + 热门贴吧 ═══ -->
+      <aside class="community-aside-right">
+        <div class="create-bar-card">
+          <div class="create-bar-title">Create a Tieba</div>
+          <div class="create-bar-desc">Start your own community around a topic, tool, or project.</div>
+          <button class="create-bar-btn" id="createBarBtn">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v10M3 8h10"/></svg>
+            Create Tieba
+          </button>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Hot Tiebas</div>
+          <div class="hot-bars-list" id="hotBarsList">
+            <!-- JS 动态渲染 -->
+          </div>
+        </div>
+      </aside>
     </div>
 
 </div>
+
+<div id="communityToast" class="community-toast"></div>
 
 <!-- FOOTER -->
 <div id="chrome-footer"></div>
@@ -1539,8 +1431,9 @@ if __name__ == "__main__":
   <script src="../src/addons/GhRank/dist/tiptap-editor.min.js"></script>
   <script src="../js/tiptap-init.js?v=9"></script>
   <script src="../js/code-block.js?v=5"></script>
-  <script type="text/babel" src="../js/core.js"></script>
-  <script type="text/babel">GHRANK.mountChrome();</script>
+  <script type="text/babel" src="../js/core.js?v=4"></script>
+  <script type="text/babel" src="../js/community.js?v=20"></script>
+  <script type="text/babel" src="../js/community-detail.js?v=1"></script>
 
 </body>
 </html>

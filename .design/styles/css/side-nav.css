@@ -19,7 +19,7 @@
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 50;
+  z-index: 60;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -159,6 +159,8 @@
   width: 320px;
   max-width: calc(100vw - 96px);
   max-height: 70vh;
+  /* 确保面板层级高于遮罩层，避免交互被拦截 */
+  z-index: 2;
   /* 使用不透明背景确保内容清晰 */
   background: #111318;
   border: 1px solid var(--border);
@@ -240,6 +242,12 @@
   border-radius: 4px;
   transition: background 0.2s ease;
   position: relative;
+  margin-top: 4px;
+}
+
+/* 列表首项不加分隔间距 */
+.gh-evt:first-child {
+  margin-top: 0;
 }
 
 .gh-evt:hover {
@@ -368,6 +376,23 @@
   box-shadow: 0 0 6px rgba(245, 197, 24, 0.6);
 }
 
+/* 通知内嵌缩略图 —— 固定宽高比，圆角，防止撑破面板 */
+.gh-evt-image {
+  margin-top: 6px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-overlay);
+}
+
+.gh-evt-image img {
+  width: 100%;
+  /* 固定 16:9 宽高比，object-fit 裁剪保证不变形 */
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+
 /* ═══ 7. 消息项（.gh-msg） ═══ */
 .gh-msg {
   display: flex;
@@ -378,6 +403,12 @@
   transition: background 0.2s ease;
   position: relative;
   cursor: pointer;
+  margin-top: 4px;
+}
+
+/* 列表首项不加分隔间距 */
+.gh-msg:first-child {
+  margin-top: 0;
 }
 
 .gh-msg:hover { background: var(--surface-overlay); }

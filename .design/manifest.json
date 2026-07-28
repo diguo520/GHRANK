@@ -36,9 +36,17 @@
       "x": 0, "y": 0, "width": 1280, "height": 720
     },
     {
-      "id": "prompt-list",
+      "id": "community-list",
       "title": "Prompt Listing",
       "file": "pages/prompt-list.html",
+      "type": "page",
+      "isEntry": false,
+      "x": 0, "y": 0, "width": 1280, "height": 720
+    },
+    {
+      "id": "community-tiebas",
+      "title": "Tieba",
+      "file": "pages/community-tiebas.html",
       "type": "page",
       "isEntry": false,
       "x": 0, "y": 0, "width": 1280, "height": 720

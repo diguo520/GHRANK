@@ -27,18 +27,18 @@
 
   // Each thread carries likes, liked, repliers, isOnline
   var BASE_THREADS = [
-    { id: 1, title: 'GHRANK scoring v4 proposal: community-weighted signals', author: 'AlexShader', avatar: '../styles/images/demo/prompt_1.jpg', section: 'Discussions', replies: 87, views: 3420, timeAgo: '2h', isHot: true, isNew: true, likes: 124, liked: false, isOnline: true, repliers: null },
-    { id: 2, title: 'Show & Tell: Built a real-time repo monitor with GHRANK API', author: 'kairos', avatar: '../styles/images/demo/prompt_2.jpg', section: 'Show & Tell', replies: 34, views: 1280, timeAgo: '3h', isHot: false, isNew: true, likes: 38, liked: false, isOnline: false, repliers: null },
-    { id: 3, title: 'Best vector database for production agent pipelines?', author: 'nexusdev', avatar: '../styles/images/demo/prompt_3.jpg', section: 'Questions', replies: 56, views: 2100, timeAgo: '4h', isHot: true, isNew: false, likes: 67, liked: false, isOnline: true, repliers: null },
-    { id: 4, title: 'Tutorial: Fine-tune Llama 4 locally with QLoRA in 30 minutes', author: 'mlcraft', avatar: '../styles/images/demo/prompt_4.jpg', section: 'Tutorials', replies: 23, views: 1890, timeAgo: '5h', isHot: false, isNew: false, likes: 91, liked: false, isOnline: false, repliers: null },
-    { id: 5, title: 'The real cost of running open-source AI in production', author: 'voidrunner', avatar: '../styles/images/demo/prompt_5.jpg', section: 'Discussions', replies: 112, views: 5640, timeAgo: '6h', isHot: true, isNew: false, likes: 203, liked: false, isOnline: true, repliers: null },
-    { id: 6, title: 'Announcing GHRANK API v3 -- breaking changes and migration guide', author: 'AlexShader', avatar: '../styles/images/demo/prompt_1.jpg', section: 'News & Updates', replies: 41, views: 3200, timeAgo: '8h', isHot: false, isNew: false, likes: 156, liked: false, isOnline: false, repliers: null },
-    { id: 7, title: 'How I built a CLI tool that ranks my dotfiles', author: 'shellweird', avatar: '../styles/images/demo/prompt_6.jpg', section: 'Show & Tell', replies: 18, views: 720, timeAgo: '10h', isHot: false, isNew: false, likes: 22, liked: false, isOnline: true, repliers: null },
-    { id: 8, title: 'Why does time-decay weighting use 180 days as the threshold?', author: 'newton_r', avatar: '../styles/images/demo/prompt_7.jpg', section: 'Questions', replies: 29, views: 1100, timeAgo: '12h', isHot: false, isNew: false, likes: 45, liked: false, isOnline: false, repliers: null },
-    { id: 9, title: 'Dev Log: Building a community-driven scoring model', author: 'mirakade', avatar: '../styles/images/demo/prompt_8.jpg', section: 'Dev Logs', replies: 15, views: 480, timeAgo: '1d', isHot: false, isNew: false, likes: 18, liked: false, isOnline: true, repliers: null },
-    { id: 10, title: 'Off-Topic: What IDE theme are you using in 2026?', author: 'pixelshift', avatar: '../styles/images/demo/prompt_1.jpg', section: 'Off-Topic', replies: 64, views: 890, timeAgo: '1d', isHot: true, isNew: false, likes: 73, liked: false, isOnline: false, repliers: null },
-    { id: 11, title: 'How to contribute to GHRANK -- comprehensive onboarding guide', author: 'jintao', avatar: '../styles/images/demo/prompt_3.jpg', section: 'Tutorials', replies: 8, views: 340, timeAgo: '2d', isHot: false, isNew: false, likes: 12, liked: false, isOnline: true, repliers: null },
-    { id: 12, title: 'Comparing RAG frameworks: LlamaIndex vs LangChain vs Haystack', author: 'dataforge', avatar: '../styles/images/demo/prompt_5.jpg', section: 'Discussions', replies: 73, views: 4100, timeAgo: '2d', isHot: true, isNew: false, likes: 188, liked: false, isOnline: false, repliers: null }
+    { id: 1, title: 'GHRANK scoring v4 proposal: community-weighted signals', author: 'AlexShader', avatar: '../styles/images/demo/prompt_1.jpg', section: 'Discussions', tag: 'Scoring-Model', replies: 87, views: 3420, timeAgo: '2h', isHot: true, isNew: true, likes: 124, liked: false, isOnline: true, repliers: null },
+    { id: 2, title: 'Show & Tell: Built a real-time repo monitor with GHRANK API', author: 'kairos', avatar: '../styles/images/demo/prompt_2.jpg', section: 'Show & Tell', tag: 'GHRANK-API', replies: 34, views: 1280, timeAgo: '3h', isHot: false, isNew: true, likes: 38, liked: false, isOnline: false, repliers: null },
+    { id: 3, title: 'Best vector database for production agent pipelines?', author: 'nexusdev', avatar: '../styles/images/demo/prompt_3.jpg', section: 'Questions', tag: 'Vector-DB', replies: 56, views: 2100, timeAgo: '4h', isHot: true, isNew: false, likes: 67, liked: false, isOnline: true, repliers: null },
+    { id: 4, title: 'Tutorial: Fine-tune Llama 4 locally with QLoRA in 30 minutes', author: 'mlcraft', avatar: '../styles/images/demo/prompt_4.jpg', section: 'Tutorials', tag: 'LLM-Finetune', replies: 23, views: 1890, timeAgo: '5h', isHot: false, isNew: false, likes: 91, liked: false, isOnline: false, repliers: null },
+    { id: 5, title: 'The real cost of running open-source AI in production', author: 'voidrunner', avatar: '../styles/images/demo/prompt_5.jpg', section: 'Discussions', tag: 'Open-Source', replies: 112, views: 5640, timeAgo: '6h', isHot: true, isNew: false, likes: 203, liked: false, isOnline: true, repliers: null },
+    { id: 6, title: 'Announcing GHRANK API v3 -- breaking changes and migration guide', author: 'AlexShader', avatar: '../styles/images/demo/prompt_1.jpg', section: 'News & Updates', tag: 'GHRANK-API', replies: 41, views: 3200, timeAgo: '8h', isHot: false, isNew: false, likes: 156, liked: false, isOnline: false, repliers: null },
+    { id: 7, title: 'How I built a CLI tool that ranks my dotfiles', author: 'shellweird', avatar: '../styles/images/demo/prompt_6.jpg', section: 'Show & Tell', tag: 'CLI-Tools', replies: 18, views: 720, timeAgo: '10h', isHot: false, isNew: false, likes: 22, liked: false, isOnline: true, repliers: null },
+    { id: 8, title: 'Why does time-decay weighting use 180 days as the threshold?', author: 'newton_r', avatar: '../styles/images/demo/prompt_7.jpg', section: 'Questions', tag: 'Scoring-Model', replies: 29, views: 1100, timeAgo: '12h', isHot: false, isNew: false, likes: 45, liked: false, isOnline: false, repliers: null },
+    { id: 9, title: 'Dev Log: Building a community-driven scoring model', author: 'mirakade', avatar: '../styles/images/demo/prompt_8.jpg', section: 'Dev Logs', tag: 'DevOps', replies: 15, views: 480, timeAgo: '1d', isHot: false, isNew: false, likes: 18, liked: false, isOnline: true, repliers: null },
+    { id: 10, title: 'Off-Topic: What IDE theme are you using in 2026?', author: 'pixelshift', avatar: '../styles/images/demo/prompt_1.jpg', section: 'Off-Topic', tag: 'Tutorial', replies: 64, views: 890, timeAgo: '1d', isHot: true, isNew: false, likes: 73, liked: false, isOnline: false, repliers: null },
+    { id: 11, title: 'How to contribute to GHRANK -- comprehensive onboarding guide', author: 'jintao', avatar: '../styles/images/demo/prompt_3.jpg', section: 'Tutorials', tag: 'Open-Source', replies: 8, views: 340, timeAgo: '2d', isHot: false, isNew: false, likes: 12, liked: false, isOnline: true, repliers: null },
+    { id: 12, title: 'Comparing RAG frameworks: LlamaIndex vs LangChain vs Haystack', author: 'dataforge', avatar: '../styles/images/demo/prompt_5.jpg', section: 'Discussions', tag: 'RAG', replies: 73, views: 4100, timeAgo: '2d', isHot: true, isNew: false, likes: 188, liked: false, isOnline: false, repliers: null }
   ];
 
   // Author pool for synthesizing replier avatar stacks and extra threads
@@ -104,6 +104,66 @@
     hot: 1284, show: 642, questions: 1089, discussions: 876,
     tutorials: 234, news: 198, offtopic: 156, devlogs: 89
   };
+
+  /* ═══ 贴吧模式数据 ═══ */
+
+  // 标签热度排名数据（Top 10，trend: up/down/flat）
+  // 排名基于标签使用量，不显示数量，仅显示排名和趋势箭头
+  var TAG_RANKINGS = [
+    { tag: 'AI-Agents',       rank: 1,  trend: 'up',   change: 2 },
+    { tag: 'RAG',             rank: 2,  trend: 'up',   change: 1 },
+    { tag: 'LLM-Finetune',    rank: 3,  trend: 'down', change: 1 },
+    { tag: 'Vector-DB',       rank: 4,  trend: 'flat', change: 0 },
+    { tag: 'Open-Source',     rank: 5,  trend: 'up',   change: 3 },
+    { tag: 'CLI-Tools',       rank: 6,  trend: 'down', change: 2 },
+    { tag: 'GHRANK-API',      rank: 7,  trend: 'up',   change: 1 },
+    { tag: 'Scoring-Model',   rank: 8,  trend: 'flat', change: 0 },
+    { tag: 'DevOps',          rank: 9,  trend: 'down', change: 1 },
+    { tag: 'Tutorial',        rank: 10, trend: 'up',   change: 4 }
+  ];
+
+  // 趋势箭头 SVG 图标
+  var TREND_SVGS = {
+    up: '<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 2L8 6H2z" fill="currentColor"/></svg>',
+    down: '<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 8L2 4H8z" fill="currentColor"/></svg>',
+    flat: '<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h6"/></svg>'
+  };
+
+  // 热门贴吧列表数据（六边形图标 + 名称 + 元信息）
+  var HOT_TIEBAS = [
+    { id: 'ai-agents',   name: 'AI Agents Hub',    icon: 'AI', members: '12.4K', posts: '3.2K' },
+    { id: 'rag-builders', name: 'RAG Builders',    icon: 'RG', members: '8.7K',  posts: '2.1K' },
+    { id: 'llm-train',   name: 'LLM Training',     icon: 'LL', members: '6.3K',  posts: '1.8K' },
+    { id: 'vector-db',   name: 'Vector DB Labs',   icon: 'VD', members: '4.9K',  posts: '1.2K' },
+    { id: 'cli-craft',   name: 'CLI Craftsmen',    icon: 'CL', members: '3.5K',  posts: '890' }
+  ];
+
+  // 贴吧卡片数据（标签页用，完整贴吧列表）
+  var TIEBA_CATALOG = [
+    { id: 'ai-agents',    name: 'AI Agents Hub',     icon: 'AI', desc: 'Discuss autonomous AI agents, tool use, and multi-agent orchestration patterns.', members: 12400, posts: 3200, tags: ['AI-Agents', 'LLM'] },
+    { id: 'rag-builders', name: 'RAG Builders',      icon: 'RG', desc: 'Build retrieval-augmented generation pipelines, share embedding strategies and chunking tips.', members: 8700,  posts: 2100, tags: ['RAG', 'Vector-DB'] },
+    { id: 'llm-train',    name: 'LLM Training',      icon: 'LL', desc: 'Fine-tuning, QLoRA, LoRA, dataset prep, and training infrastructure discussions.', members: 6300,  posts: 1800, tags: ['LLM-Finetune'] },
+    { id: 'vector-db',    name: 'Vector DB Labs',    icon: 'VD', desc: 'Compare and optimize vector stores: pgvector, Pinecone, Weaviate, Qdrant and more.', members: 4900,  posts: 1200, tags: ['Vector-DB'] },
+    { id: 'cli-craft',    name: 'CLI Craftsmen',     icon: 'CL', desc: 'Share your favorite CLI tools, shell scripts, terminal workflows and dotfiles.', members: 3500,  posts: 890,  tags: ['CLI-Tools'] },
+    { id: 'open-src',     name: 'Open Source Guild', icon: 'OS', desc: 'Open source governance, licensing, monetization, and community management.', members: 5200,  posts: 1450, tags: ['Open-Source'] },
+    { id: 'scoring',      name: 'Scoring Model Lab', icon: 'SC', desc: 'Deep dives into GHRANK scoring algorithms, signal weighting, and time-decay models.', members: 2800,  posts: 670,  tags: ['Scoring-Model', 'GHRANK-API'] },
+    { id: 'devops',       name: 'DevOps Den',        icon: 'DO', desc: 'CI/CD, container orchestration, observability, and infrastructure-as-code for AI workloads.', members: 4100,  posts: 980,  tags: ['DevOps'] }
+  ];
+
+  // 当前登录用户创建与关注的贴吧（community-list.html 使用）
+  var MY_CREATED_BARS = [
+    { id: 'my-ai-lab',    name: 'My AI Lab',         icon: 'MA', desc: 'A personal sandbox for testing agent prompts and sharing experiment notes.', members: 342,   posts: 128 },
+    { id: 'ghrank-cn',    name: 'GHRANK CN',         icon: 'GC', desc: 'Chinese-speaking GHRANK community for local events and Mandarin discussions.', members: 1890,  posts: 560 },
+    { id: 'rust-scoring', name: 'Rust Scoring',      icon: 'RS', desc: 'Rewriting GHRANK scoring modules in Rust for performance and safety.', members: 780,   posts: 210 }
+  ];
+
+  var MY_FOLLOWED_BARS = [
+    { id: 'ai-agents',    name: 'AI Agents Hub',     icon: 'AI', desc: 'Discuss autonomous AI agents, tool use, and multi-agent orchestration patterns.', members: 12400, posts: 3200 },
+    { id: 'rag-builders', name: 'RAG Builders',      icon: 'RG', desc: 'Build retrieval-augmented generation pipelines, share embedding strategies and chunking tips.', members: 8700,  posts: 2100 },
+    { id: 'vector-db',    name: 'Vector DB Labs',    icon: 'VD', desc: 'Compare and optimize vector stores: pgvector, Pinecone, Weaviate, Qdrant and more.', members: 4900,  posts: 1200 },
+    { id: 'cli-craft',    name: 'CLI Craftsmen',     icon: 'CL', desc: 'Share your favorite CLI tools, shell scripts, terminal workflows and dotfiles.', members: 3500,  posts: 890 },
+    { id: 'devops',       name: 'DevOps Den',        icon: 'DO', desc: 'CI/CD, container orchestration, observability, and infrastructure-as-code for AI workloads.', members: 4100,  posts: 980 }
+  ];
 
   // Title suffixes for synthesized threads (prevents repetition)
   var TITLE_SUFFIXES = [
@@ -184,6 +244,14 @@
     return base;
   }
 
+  // 侧边栏标签列表，用于为合成帖子分配分类标签
+  var SIDEBAR_TAGS = TAG_RANKINGS.map(function (item) { return item.tag; });
+  function tagForThread(title) {
+    var n = 0;
+    for (var i = 0; i < title.length; i++) n += title.charCodeAt(i);
+    return SIDEBAR_TAGS[n % SIDEBAR_TAGS.length];
+  }
+
   // Synthesize a new thread from an extra pool base
   var nextThreadId = 1000;
   function synthesizeThread(base) {
@@ -198,12 +266,14 @@
       var sIdx = (cycle - 1) * EXTRA_POOL.length + (extraCursor % EXTRA_POOL.length) - 1;
       suffix = TITLE_SUFFIXES[sIdx % TITLE_SUFFIXES.length] || '';
     }
+    var fullTitle = base.title + suffix;
     return {
       id: nextThreadId,
-      title: base.title + suffix,
+      title: fullTitle,
       author: base.author,
       avatar: base.avatar,
       section: base.section,
+      tag: tagForThread(fullTitle),
       replies: replies,
       views: views,
       timeAgo: timeAgo,
@@ -277,6 +347,82 @@
       if (wrap) wrap.classList.remove('is-avatar-loading');
       img.classList.add('is-avatar-loaded');
     }, { once: true });
+  }
+
+  /* ═══ 贴吧模式渲染函数 — 标签排名 / 热门贴吧 / 贴吧卡片 ═══ */
+
+  // 渲染标签热度排名到 DOM（Top 10，趋势箭头）
+  function renderTagRankList(container) {
+    if (!container) return;
+    var html = '';
+    for (var i = 0; i < TAG_RANKINGS.length; i++) {
+      var item = TAG_RANKINGS[i];
+      var trendClass = 'is-' + item.trend;
+      var trendSvg = TREND_SVGS[item.trend] || TREND_SVGS.flat;
+      var changeText = item.change > 0 ? String(item.change) : '';
+      html +=
+        '<a class="tag-rank-item" href="community-tag.html?tag=' + encodeURIComponent(item.tag) + '" data-tag="' + escapeHtml(item.tag) + '">' +
+          '<span class="tag-rank-num">' + item.rank + '</span>' +
+          '<span class="tag-rank-name">' + escapeHtml(item.tag) + '</span>' +
+          '<span class="tag-rank-trend ' + trendClass + '">' +
+            trendSvg +
+            (changeText ? '<span class="tag-rank-change">' + changeText + '</span>' : '') +
+          '</span>' +
+        '</a>';
+    }
+    container.innerHTML = html;
+  }
+
+  // 渲染热门贴吧列表到 DOM（右栏紧凑列表）
+  function renderHotBarsList(container) {
+    if (!container) return;
+    var html = '';
+    for (var i = 0; i < HOT_TIEBAS.length; i++) {
+      var bar = HOT_TIEBAS[i];
+      html +=
+        '<a class="hot-bar-item" href="community-list.html?bar=' + encodeURIComponent(bar.id) + '">' +
+          '<span class="hot-bar-icon">' + escapeHtml(bar.icon) + '</span>' +
+          '<div class="hot-bar-info">' +
+            '<div class="hot-bar-name">' + escapeHtml(bar.name) + '</div>' +
+            '<div class="hot-bar-meta">' + bar.members + ' members · ' + bar.posts + ' posts</div>' +
+          '</div>' +
+        '</a>';
+    }
+    container.innerHTML = html;
+  }
+
+  // 渲染贴吧卡片网格到 DOM（community-list.html 使用）
+  // tab: 'created' 我创建的 / 'following' 已关注的
+  function renderBarCardGrid(container, tab) {
+    if (!container) return;
+    var list = tab === 'created' ? MY_CREATED_BARS : MY_FOLLOWED_BARS;
+    var html = '';
+    for (var i = 0; i < list.length; i++) {
+      var bar = list[i];
+      html +=
+        '<a class="bar-card" href="community-list.html" data-bar-id="' + escapeHtml(bar.id) + '">' +
+          '<div class="bar-card-header">' +
+            '<span class="bar-card-icon">' + escapeHtml(bar.icon) + '</span>' +
+            '<span class="bar-card-name">' + escapeHtml(bar.name) + '</span>' +
+          '</div>' +
+          '<p class="bar-card-desc">' + escapeHtml(bar.desc) + '</p>' +
+          '<div class="bar-card-footer">' +
+            '<span class="bar-card-stat"><strong>' + fmtNum(bar.members) + '</strong> members</span>' +
+            '<span class="bar-card-stat"><strong>' + fmtNum(bar.posts) + '</strong> posts</span>' +
+          '</div>' +
+        '</a>';
+    }
+    container.innerHTML = html;
+
+    // 触发入场动画
+    var cards = container.querySelectorAll('.bar-card');
+    requestAnimationFrame(function () {
+      for (var ci = 0; ci < cards.length; ci++) {
+        (function (card, idx) {
+          setTimeout(function () { card.classList.add('is-entered'); }, idx * 50);
+        })(cards[ci], ci);
+      }
+    });
   }
 
   /* ═══════════════════════════════════════════════════════════════
@@ -488,11 +634,13 @@
         var t = slice[i];
         var entranceClass = append ? 'thread-fade-in' : '';
         var styleAttr = '';
+        // 作者在线标识随机显示，避免固定数据造成的重复感
+        var isOnline = Math.random() < 0.55;
         html +=
-          '<a class="thread-item ' + entranceClass + (t.isOnline ? ' is-author-online' : '') + '" href="community-detail.html?id=' + t.id + '" data-thread-id="' + t.id + '">' +
-            '<div class="thread-avatar thread-avatar-lazy' + (t.isOnline ? ' is-online' : '') + '" data-avatar="' + t.avatar + '" data-author="' + t.author + '">' +
+          '<a class="thread-item ' + entranceClass + (isOnline ? ' is-author-online' : '') + '" href="community-detail.html?id=' + t.id + '" data-thread-id="' + t.id + '">' +
+            '<div class="thread-avatar thread-avatar-lazy' + (isOnline ? ' is-online' : '') + '" data-avatar="' + t.avatar + '" data-author="' + t.author + '">' +
               '<img src="' + t.avatar + '" alt="' + t.author + '" loading="lazy" decoding="async">' +
-              (t.isOnline ? '<span class="thread-avatar-online" aria-label="online"></span>' : '') +
+              (isOnline ? '<span class="thread-avatar-online" aria-label="online"></span>' : '') +
             '</div>' +
             '<div class="thread-body">' +
               '<div class="thread-title">' + escapeHtml(t.title) +
@@ -502,8 +650,7 @@
               '</div>' +
               '<div class="thread-meta">' +
                 '<span class="thread-author">@' + t.author + '</span>' +
-                '<span class="thread-section-tag">' + t.section + '</span>' +
-                '<span class="thread-time">' + t.timeAgo + '</span>' +
+                '<span class="thread-bar-tag">' + escapeHtml(t.tag || t.section) + '</span>' +
               '</div>' +
             '</div>' +
             '<div class="thread-stats">' +
@@ -601,8 +748,48 @@
       navTreeRef.current = document.getElementById('communityNavTree');
       loaderElRef.current = document.getElementById('threadLoader');
 
-      if (!threadListRef.current) return;
+      // ── 贴吧模式：渲染标签排名和热门贴吧 ──
+      var tagRankListEl = document.getElementById('tagRankList');
+      if (tagRankListEl) renderTagRankList(tagRankListEl);
 
+      var hotBarsListEl = document.getElementById('hotBarsList');
+      if (hotBarsListEl) renderHotBarsList(hotBarsListEl);
+
+      // 贴吧卡片网格（标签页用）
+      var barCardGridEl = document.getElementById('barCardGrid');
+
+      // 贴吧选项卡切换
+      var barTabsEl = document.getElementById('barTabs');
+      if (barTabsEl && barCardGridEl) {
+        var barTabButtons = barTabsEl.querySelectorAll('.bar-tab');
+        var barTabHandler = function () {
+          var tabName = this.getAttribute('data-bar-tab') || 'created';
+          for (var j = 0; j < barTabButtons.length; j++) {
+            barTabButtons[j].classList.toggle('is-active', barTabButtons[j] === this);
+          }
+          renderBarCardGrid(barCardGridEl, tabName);
+        };
+        for (var bti = 0; bti < barTabButtons.length; bti++) {
+          barTabButtons[bti].addEventListener('click', barTabHandler);
+        }
+        renderBarCardGrid(barCardGridEl, 'created');
+      }
+
+      // ── 创建贴吧按钮交互 ──
+      var createBarBtn = document.getElementById('createBarBtn');
+      if (createBarBtn) {
+        createBarBtn.addEventListener('click', function () {
+          var toast = toastElRef.current;
+          if (toast) {
+            toast.textContent = 'Create Tieba — coming soon';
+            toast.classList.add('is-visible');
+            setTimeout(function () { toast.classList.remove('is-visible'); }, 2200);
+          }
+        });
+      }
+
+      // 只有帖子列表页才执行后续线程相关逻辑
+      if (threadListRef.current) {
       // ── 种子线程池（12 base + 50 = 62 total）──
       ensurePool(allThreadsRef.current, 62);
 
@@ -887,6 +1074,7 @@
           // 避免 IntersectionObserver 在骨架屏阶段提前触发 loadMoreThreads。
         }
       }
+      }
 
       // ── 分类横幅辅助函数 ──
       function applySectionBanner(sectionKey) {
@@ -932,6 +1120,117 @@
 
   // 导出组件
   global.CommunityPage = CommunityPage;
+
+  /* ═══════════════════════════════════════════════════════════════
+     8. ANIMATED HERO TITLE — TextType 风格打字机动画
+     参考：https://www.reactbits.dev/text-animations/text-type
+     特性：逐字打印、闪烁光标、多句循环、删除重打、变速打字
+     ═══════════════════════════════════════════════════════════════ */
+
+  // 范围随机整数
+  function randomBetween(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // TextType 风格打字机组件
+  function TextTypeHero(props) {
+    var rawTexts = props.texts || [props.text || 'Where Builders Connect'];
+    var texts = Array.isArray(rawTexts) ? rawTexts : [rawTexts];
+    var loop = props.loop !== false;
+    var typingSpeed = props.typingSpeed || 75;
+    var pauseDuration = props.pauseDuration || 2000;
+    var deletingSpeed = props.deletingSpeed || 50;
+    var variableSpeed = props.variableSpeed;
+    var cursorCharacter = props.cursorCharacter || '_';
+    var showCursor = props.showCursor !== false;
+
+    var [displayText, setDisplayText] = useState('');
+    var [currentIndex, setCurrentIndex] = useState(0);
+    var [isDeleting, setIsDeleting] = useState(false);
+    var [showCursorState, setShowCursorState] = useState(true);
+    var [started, setStarted] = useState(false);
+
+    // 当前完整句子
+    var currentText = texts[currentIndex % texts.length] || '';
+
+    useEffect(function () {
+      // 初始延迟后启动
+      var id = setTimeout(function () { setStarted(true); }, props.initialDelay || 300);
+      return function () { clearTimeout(id); };
+    }, []);
+
+    useEffect(function () {
+      if (!started) return;
+
+      var timer;
+      if (isDeleting) {
+        if (displayText === '') {
+          // 删除完毕，切换到下一句
+          setIsDeleting(false);
+          setCurrentIndex(function (idx) { return (idx + 1) % texts.length; });
+          timer = setTimeout(function () {}, pauseDuration);
+        } else {
+          timer = setTimeout(function () {
+            setDisplayText(function (t) { return t.slice(0, -1); });
+          }, deletingSpeed);
+        }
+      } else {
+        if (displayText === currentText) {
+          if (texts.length > 1 || loop) {
+            // 打完一句，暂停后删除
+            timer = setTimeout(function () {
+              setIsDeleting(true);
+            }, pauseDuration);
+          }
+        } else {
+          timer = setTimeout(function () {
+            setDisplayText(function (t) { return currentText.slice(0, t.length + 1); });
+          }, variableSpeed
+            ? randomBetween(variableSpeed.min, variableSpeed.max)
+            : typingSpeed);
+        }
+      }
+
+      return function () { clearTimeout(timer); };
+    }, [started, displayText, isDeleting, currentText, currentIndex, texts.length, loop, typingSpeed, pauseDuration, deletingSpeed, variableSpeed]);
+
+    // 光标闪烁
+    useEffect(function () {
+      if (!showCursor) return;
+      var id = setInterval(function () {
+        setShowCursorState(function (s) { return !s; });
+      }, 530);
+      return function () { clearInterval(id); };
+    }, [showCursor]);
+
+    var activeText = texts[currentIndex % texts.length] || '';
+
+    return React.createElement('h1', {
+      className: 'community-hero-title text-type-hero',
+      'aria-label': activeText
+    },
+      React.createElement('span', { className: 'text-type-content' }, displayText),
+      showCursor && React.createElement('span', {
+        className: 'text-type-cursor' + (showCursorState ? ' is-visible' : ''),
+        'aria-hidden': 'true'
+      }, cursorCharacter)
+    );
+  }
+
+  /* ── 单独挂载动画标题组件 ── */
+  var heroTitleRootEl = document.getElementById('animated-hero-title-root');
+  if (heroTitleRootEl && ReactDOM && typeof ReactDOM.createRoot === 'function') {
+    var heroTitleRoot = ReactDOM.createRoot(heroTitleRootEl);
+    heroTitleRoot.render(React.createElement(TextTypeHero, {
+      texts: ['Where Builders Connect', 'Where Ideas Flow', 'Where Code Lives'],
+      typingSpeed: 80,
+      pauseDuration: 2200,
+      deletingSpeed: 45,
+      variableSpeed: { min: 50, max: 130 },
+      cursorCharacter: '_',
+      loop: true
+    }));
+  }
 
   /* ── 自动挂载到 GHRANK chrome 层 ── */
   // 使用 auto-detect：mountChrome() 会根据 URL 自动识别 'community' 或 'community-list'

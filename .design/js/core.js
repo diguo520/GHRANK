@@ -206,6 +206,20 @@
       footerText: 'GHRANK Community &mdash; Where builders connect, share, and learn together.',
       footerLinks: ['About Us', 'Sponsors', 'Changelog', 'Terms']
     },
+    'community-tiebas': {
+      tickerLabel: 'COMMUNITY',
+      tickerItems: [
+        { text: 'New thread in AI Agents Hub <span>2m</span>', href: 'community-tiebas.html' },
+        { text: 'RAG Builders milestone: 8.7K members <span>HOT</span>', href: 'community-tiebas.html?bar=rag-builders' },
+        { text: 'Vector DB Labs trending <span>UP</span>', href: 'community-tiebas.html?bar=vector-db' },
+        { text: 'CLI Craftsmen weekly showcase <span>SHOW</span>', href: 'community-tiebas.html?bar=cli-craft' },
+        { text: 'DevOps Den: cost attribution guide <span>NEW</span>', href: 'community-tiebas.html?bar=devops' },
+        { text: 'Open Source Guild governance talk <span>LOG</span>', href: 'community-tiebas.html?bar=open-src' }
+      ],
+      searchPlaceholder: 'Search tieba...',
+      footerText: 'GHRANK Tieba &mdash; Focused spaces for deep technical discussions.',
+      footerLinks: ['About Us', 'Sponsors', 'Changelog', 'Terms']
+    },
     login: {
       tickerLabel: 'ACCESS',
       tickerItems: [
@@ -652,6 +666,7 @@
       { type: 'like', user: 'kairos', avatar: '../styles/images/demo/prompt_2.jpg', action: 'liked your repo analysis', target: 'facebook/react', time: '15m', read: false },
       { type: 'follow', user: 'nova_dev', avatar: '../styles/images/demo/prompt_3.jpg', action: 'started following you', target: '', time: '1h', read: false },
       { type: 'system', user: 'GHRANK', avatar: 'LOGO', action: 'announced a new milestone: 12,847 repos now tracked on the platform', target: '', time: '2h', read: false },
+      { type: 'system', user: 'GHRANK', avatar: 'LOGO', action: 'Hackathon 2026 is live — build agent integrations and win from $50K in prizes.', target: '', time: '45m', read: false, image: '../styles/images/demo/prompt_7.jpg', imageAlt: 'GHRANK Hackathon 2026 banner' },
       { type: 'tip', user: 'byteforge', avatar: '../styles/images/demo/prompt_5.jpg', action: 'tipped your prompt', target: 'SEO Blog Writer Pro', amount: '20 GHR', time: '3h', read: true }
     ],
     messages: [
@@ -748,12 +763,17 @@
         : '<div class="gh-evt-avatar"><img src="' + a.avatar + '" alt="" loading="lazy"></div>';
       var userName = a.type === 'system' ? a.user : '@' + a.user;
       var dot = a.read ? '' : '<div class="gh-evt-icon" aria-label="unread"></div>';
+      // 带图片的系统消息：在正文下方插入缩略图
+      var imageHtml = a.image
+        ? '<div class="gh-evt-image"><img src="' + a.image + '" alt="' + (a.imageAlt || '') + '" loading="lazy"></div>'
+        : '';
       return '<div class="gh-evt' + (a.read ? '' : ' is-unread') + '">' + avatarHtml +
              '<div class="gh-evt-main"><div class="gh-evt-top"><span class="gh-evt-user' +
              (a.type === 'system' ? ' gh-evt-user-system' : '') + '">' + userName +
              '</span><span class="gh-evt-time">' + a.time + ' ago</span></div>' +
              '<div class="gh-evt-action">' + a.action + '</div>' +
              (tgt || amt ? '<div class="gh-evt-meta">' + tgt + amt + '</div>' : '') +
+             imageHtml +
              '</div>' + dot + '</div>';
     }
 
