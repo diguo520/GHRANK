@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GHRANK // react/react — Intel Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/css/index.css">
+    <link rel="stylesheet" href="../styles/css/detail.css?v=2">
+    <link rel="stylesheet" href="../styles/css/header.css">
+    <link rel="stylesheet" href="../styles/css/footer.css">
+    <link rel="stylesheet" href="../styles/css/side-nav.css">
+    <link rel="stylesheet" href="../styles/css/search-overlay.css">
+    <link rel="stylesheet" href="../styles/css/loading.css">
+    <link rel="stylesheet" href="../styles/css/code-block.css?v=5">
+  <!-- React 19 CJS + Babel Standalone（本地 vendor，免构建接入） -->
+  <script src="../js/vendor/react-cjs-shim.js"></script>
+  <script src="../js/vendor/babel.min.js"></script>
+</head>
+<body>
+
+<div id="chrome-root"></div>
+<div id="chrome-body"></div>
+
+<div class="scan-line"></div>
+
+<div id="chrome-ticker"></div>
+<div id="chrome-navbar"></div>
+
+<div class="main-content">
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       3. BREADCRUMB
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="breadcrumb-bar">
+    <div class="breadcrumb-trail">
+      <a href="index.html" class="breadcrumb-back">&larr; RETURN TO FLEET</a>
+      <a href="#">FRONTEND</a>
+      <span class="breadcrumb-sep">&gt;</span>
+        <span class="breadcrumb-current">react/react</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       4. PROJECT HEADER PANEL (Ship Dossier)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="dossier-header skel-wrap" data-skel="dossier">
+    <!-- 骨架屏覆盖层：头像 + 标题 + 描述 + 6 统计卡占位 -->
+    <div class="skel-overlay skel-dossier">
+      <div class="skel-dossier-top">
+        <div class="skel-avatar"></div>
+        <div class="skel-dossier-info">
+          <div class="skel-bar" style="width:200px;height:26px;margin-bottom:12px"></div>
+          <div class="skel-bar full" style="height:14px;margin-bottom:6px"></div>
+          <div class="skel-bar medium" style="height:14px"></div>
+        </div>
+      </div>
+      <div class="skel-stats-row">
+        <div class="skel-stat-card"></div>
+        <div class="skel-stat-card"></div>
+        <div class="skel-stat-card"></div>
+        <div class="skel-stat-card"></div>
+        <div class="skel-stat-card"></div>
+        <div class="skel-stat-card"></div>
+      </div>
+    </div>
+    <!-- 真实内容 -->
+    <div class="skel-content">
+    <div class="dossier-content">
+      <div class="dossier-top">
+        <div class="dossier-avatar"><img src="https://avatars.githubusercontent.com/react?s=200" alt="react avatar" onerror="this.src='https://avatars.githubusercontent.com/react?s=200'"></div>
+        <div class="dossier-info">
+          <div class="dossier-name-row">
+            <span class="dossier-bracket-l">[</span>
+            <span class="dossier-repo-name">react/react</span>
+            <span class="dossier-bracket-r">]</span>
+            <div class="dossier-icon-actions">
+              <button class="dossier-icon-btn bookmark-btn" title="Bookmark"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4,1 H12 L12,15 L8,12 L4,15 Z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg></button>
+              <button class="dossier-icon-btn copy-btn" title="Copy Link" onclick="copyRepoLink(this, 'https://github.com/react/react')"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="8" height="9" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M3,11 V3.5 A1.5,1.5 0 0,1 4.5,2 H10" stroke="currentColor" stroke-width="1.2" fill="none"/></svg></button>
+              <a href="https://github.com/react/react" target="_blank" class="dossier-icon-btn github-btn" title="View on GitHub"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+            </div>
+          </div>
+          <p class="dossier-desc">The library for web and native user interfaces. React lets you build user interfaces out of individual pieces called components.</p>
+        </div>
+      </div>
+
+      <!-- 6 Mini Stat Panels -->
+      <div class="mini-stats-row">
+        <div class="mini-stat">
+          <div class="mini-stat-head">
+            <svg class="mini-stat-icon" width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1l2.2 4.6 5 .7-3.6 3.5.9 5L8 12.9 3.5 14.8l.9-5L.8 6.3l5-.7L8 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <div class="mini-stat-label">Stars</div>
+          </div>
+          <span class="mini-stat-value">230K</span>
+          <div class="mini-stat-change up">+8.2%</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-head">
+            <svg class="mini-stat-icon" width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="4.5" cy="3.5" r="1.8" stroke="currentColor" stroke-width="1.2"/><circle cx="4.5" cy="12.5" r="1.8" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="8" r="1.8" stroke="currentColor" stroke-width="1.2"/><path d="M6 4.3l4.3 2.8M6 11.7l4.3-2.8" stroke="currentColor" stroke-width="1.2"/></svg>
+            <div class="mini-stat-label">Forks</div>
+          </div>
+          <span class="mini-stat-value">46.8K</span>
+          <div class="mini-stat-change up">+120 this week</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-head">
+            <svg class="mini-stat-icon" width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 4.5v3.2M8 10.8v.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            <div class="mini-stat-label">Issues</div>
+          </div>
+          <span class="mini-stat-value">832</span>
+          <div class="mini-stat-change up">-15 this week</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-head">
+            <svg class="mini-stat-icon" width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 13.5c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="2.5" cy="6" r="1.2" stroke="currentColor" stroke-width="1" opacity="0.5"/><circle cx="13.5" cy="6" r="1.2" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg>
+            <div class="mini-stat-label">Contributors</div>
+          </div>
+          <span class="mini-stat-value">1,648</span>
+          <div class="mini-stat-change up">+24 this week</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-head">
+            <svg class="mini-stat-icon" width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="3.5" cy="8" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="12.5" cy="4" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="12.5" cy="12" r="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 7.2l6-2.5M5 8.8l6 2.5" stroke="currentColor" stroke-width="1.2"/></svg>
+            <div class="mini-stat-label">Commits</div>
+          </div>
+          <span class="mini-stat-value">18,472</span>
+          <div class="mini-stat-change up">847 this month</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-head">
+            <svg class="mini-stat-icon" width="14" height="14" viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="3.5" rx="5" ry="1.8" stroke="currentColor" stroke-width="1.2"/><path d="M3 3.5v9c0 1 2.2 1.8 5 1.8s5-.8 5-1.8v-9" stroke="currentColor" stroke-width="1.2"/><path d="M3 8c0 1 2.2 1.8 5 1.8s5-.8 5-1.8" stroke="currentColor" stroke-width="1.2"/></svg>
+            <div class="mini-stat-label">Repo Size</div>
+          </div>
+          <span class="mini-stat-value">38.6<span class="mini-stat-unit">MB</span></span>
+          <div class="mini-stat-change up">+1.2MB this month</div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /skel-content -->
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       5. TWO-COLUMN LAYOUT
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="detail-layout">
+
+    <!-- LEFT COLUMN -->
+    <div class="detail-left">
+
+      <!-- 并排仪表盘：Star Trajectory + Commit Frequency -->
+      <div class="dashboard-grid">
+
+        <!-- a. Star Growth Trend (55%) — React 组件挂载点 -->
+        <div class="hud-panel-full dashboard-grid-item skel-wrap" style="padding:var(--panel-pad)" data-skel="star-chart">
+          <span class="hud-corner-bl"></span>
+          <span class="hud-corner-tr"></span>
+          <!-- 骨架屏覆盖层：图表标题 + 曲线区 + 统计行 -->
+          <div class="skel-overlay skel-chart-panel">
+            <div class="skel-chart-header">
+              <div class="skel-bar" style="width:180px;height:13px"></div>
+              <div class="skel-bar" style="width:30px;height:20px;margin-left:auto"></div>
+              <div class="skel-bar" style="width:30px;height:20px"></div>
+            </div>
+            <div class="skel-chart-area"></div>
+            <div class="skel-chart-summary">
+              <div class="skel-bar" style="width:80px;height:11px"></div>
+              <div class="skel-bar" style="width:90px;height:11px"></div>
+              <div class="skel-bar" style="width:100px;height:11px"></div>
+            </div>
+          </div>
+          <!-- 真实内容 -->
+          <div class="skel-content">
+          <div id="starChartRoot"></div>
+          </div>
+        </div>
+
+        <!-- b. Commit Activity Heatmap (45%) -->
+        <div class="hud-panel-full dashboard-grid-item heatmap-panel-compact skel-wrap" data-skel="heatmap">
+          <span class="hud-corner-bl"></span>
+          <span class="hud-corner-tr"></span>
+          <!-- 骨架屏覆盖层：热力图格子网格 -->
+          <div class="skel-overlay skel-heatmap-panel">
+            <div class="skel-heatmap-grid"></div>
+          </div>
+          <!-- 真实内容 -->
+          <div class="skel-content">
+          <div class="heatmap-grid" id="heatmapGrid"></div>
+          </div><!-- /skel-content -->
+        </div><!-- /dashboard-grid-item (Heatmap) -->
+
+        <!-- c. Composition Analysis（紧跟热力图下方，填充右侧列剩余空间） -->
+        <div class="hud-panel-full dashboard-grid-item composition-compact skel-wrap" data-skel="composition">
+          <span class="hud-corner-bl"></span>
+          <span class="hud-corner-tr"></span>
+          <!-- 骨架屏覆盖层：圆环 + 图例行 -->
+          <div class="skel-overlay skel-composition-panel">
+            <div class="skel-donut"></div>
+            <div class="skel-legend">
+              <div class="skel-legend-row"></div>
+              <div class="skel-legend-row"></div>
+              <div class="skel-legend-row"></div>
+              <div class="skel-legend-row"></div>
+            </div>
+          </div>
+          <!-- 真实内容 -->
+          <div class="skel-content">
+          <div class="lang-chart-wrap">
+            <svg class="lang-donut" viewBox="0 0 42 42">
+              <circle cx="21" cy="21" r="15.91549431" fill="transparent" stroke="#0c0e14" stroke-width="3"/>
+              <circle cx="21" cy="21" r="15.91549431" fill="transparent" stroke="#F1E05A" stroke-width="3" stroke-dasharray="71 29" stroke-dashoffset="25"/>
+              <circle cx="21" cy="21" r="15.91549431" fill="transparent" stroke="#3178C6" stroke-width="3" stroke-dasharray="14.2 85.8" stroke-dashoffset="54"/>
+              <circle cx="21" cy="21" r="15.91549431" fill="transparent" stroke="#E34C26" stroke-width="3" stroke-dasharray="5.1 94.9" stroke-dashoffset="39.8"/>
+              <circle cx="21" cy="21" r="15.91549431" fill="transparent" stroke="#F34B7D" stroke-width="3" stroke-dasharray="3.4 96.6" stroke-dashoffset="34.7"/>
+              <circle cx="21" cy="21" r="15.91549431" fill="transparent" stroke="#89E051" stroke-width="3" stroke-dasharray="2.8 97.2" stroke-dashoffset="31.3"/>
+              <circle cx="21" cy="21" r="15.91549431" fill="transparent" stroke="#563D7C" stroke-width="3" stroke-dasharray="2.1 97.9" stroke-dashoffset="28.5"/>
+            </svg>
+            <div class="lang-legend">
+              <div class="lang-legend-item">
+                <span class="lang-dot" style="background:#F1E05A"></span>
+                <span class="lang-name">JavaScript</span>
+                <span class="lang-pct">71.0%</span>
+              </div>
+              <div class="lang-legend-item">
+                <span class="lang-dot" style="background:#3178C6"></span>
+                <span class="lang-name">TypeScript</span>
+                <span class="lang-pct">14.2%</span>
+              </div>
+              <div class="lang-legend-item">
+                <span class="lang-dot" style="background:#E34C26"></span>
+                <span class="lang-name">HTML</span>
+                <span class="lang-pct">5.1%</span>
+              </div>
+              <div class="lang-legend-item">
+                <span class="lang-dot" style="background:#F34B7D"></span>
+                <span class="lang-name">C++</span>
+                <span class="lang-pct">3.4%</span>
+              </div>
+              <div class="lang-legend-item">
+                <span class="lang-dot" style="background:#89E051"></span>
+                <span class="lang-name">Shell</span>
+                <span class="lang-pct">2.8%</span>
+              </div>
+              <div class="lang-legend-item">
+                <span class="lang-dot" style="background:#563D7C"></span>
+                <span class="lang-name">CSS</span>
+                <span class="lang-pct">2.1%</span>
+              </div>
+            </div>
+          </div>
+          </div><!-- /skel-content -->
+        </div>
+
+      </div><!-- /dashboard-grid -->
+
+      <!-- c. Commits over Time — 整体提交趋势（React 组件挂载点） -->
+      <div class="hud-panel-full skel-wrap" style="padding:var(--panel-pad)" data-skel="commit-trend">
+        <span class="hud-corner-bl"></span>
+        <span class="hud-corner-tr"></span>
+        <!-- 骨架屏覆盖层：标题 + 条形图 + 统计行 -->
+        <div class="skel-overlay skel-trend-panel">
+          <div class="skel-bar" style="width:240px;height:13px;margin-bottom:14px"></div>
+          <div class="skel-trend-chart"></div>
+          <div class="skel-chart-summary">
+            <div class="skel-bar" style="width:70px;height:11px"></div>
+            <div class="skel-bar" style="width:60px;height:11px"></div>
+            <div class="skel-bar" style="width:80px;height:11px"></div>
+            <div class="skel-bar" style="width:120px;height:11px"></div>
+          </div>
+        </div>
+        <!-- 真实内容 -->
+        <div class="skel-content">
+        <div class="panel-title">CREW MANIFEST: SENIOR OFFICERS <span class="panel-title-right">Commits Over Time</span></div>
+        <div id="commitTrendRoot"></div>
+        </div><!-- /skel-content -->
+      </div>
+
+      <!-- d. README Preview -->
+      <div class="hud-panel-full skel-wrap" style="padding:var(--panel-pad)" data-skel="readme">
+        <span class="hud-corner-bl"></span>
+        <span class="hud-corner-tr"></span>
+        <!-- 骨架屏覆盖层：标题 + 多行文本 + 代码块占位 -->
+        <div class="skel-overlay skel-readme-panel">
+          <div class="skel-bar" style="width:200px;height:13px;margin-bottom:14px"></div>
+          <div class="skel-bar" style="width:60%;height:18px;margin-bottom:14px"></div>
+          <div class="skel-bar full" style="height:13px;margin-bottom:6px"></div>
+          <div class="skel-bar full" style="height:13px;margin-bottom:6px"></div>
+          <div class="skel-bar medium" style="height:13px;margin-bottom:14px"></div>
+          <div class="skel-code-block"></div>
+          <div class="skel-bar full" style="height:13px;margin-bottom:6px"></div>
+          <div class="skel-bar short" style="height:13px;margin-bottom:14px"></div>
+          <div class="skel-bar" style="width:50%;height:16px;margin-bottom:10px"></div>
+          <div class="skel-bar full" style="height:13px;margin-bottom:6px"></div>
+          <div class="skel-bar full" style="height:13px;margin-bottom:6px"></div>
+          <div class="skel-bar medium" style="height:13px"></div>
+        </div>
+        <!-- 真实内容 -->
+        <div class="skel-content">
+        <div class="panel-title">SYSTEM DOCUMENTATION <span class="panel-title-right">README.md</span></div>
+        <div class="readme-content">
+          <h1><a href="https://react.dev/">React</a> &middot; <a href="https://github.com/react/react/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="GitHub license"></a> <a href="https://www.npmjs.com/package/react"><img src="https://img.shields.io/npm/v/react.svg?style=flat" alt="npm version"></a> <a href="https://github.com/react/react/actions/workflows/runtime_build_and_test.yml"><img src="https://github.com/react/react/actions/workflows/runtime_build_and_test.yml/badge.svg" alt="(Runtime) Build and Test"></a> <a href="https://github.com/react/react/actions/workflows/compiler_typescript.yml"><img src="https://github.com/react/react/actions/workflows/compiler_typescript.yml/badge.svg?branch=main" alt="(Compiler) TypeScript"></a> <a href="https://legacy.reactjs.org/docs/how-to-contribute.html#your-first-pull-request"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a></h1>
+          <p>React is a JavaScript library for building user interfaces.</p>
+          <ul>
+            <li><strong>Declarative:</strong> React makes it painless to create interactive UIs. Design simple views for each state in your application, and React will efficiently update and render just the right components when your data changes. Declarative views make your code more predictable, simpler to understand, and easier to debug.</li>
+            <li><strong>Component-Based:</strong> Build encapsulated components that manage their own state, then compose them to make complex UIs. Since component logic is written in JavaScript instead of templates, you can easily pass rich data through your app and keep the state out of the DOM.</li>
+            <li><strong>Learn Once, Write Anywhere:</strong> We don't make assumptions about the rest of your technology stack, so you can develop new features in React without rewriting existing code. React can also render on the server using <a href="https://nodejs.org/en">Node</a> and power mobile apps using <a href="https://reactnative.dev/">React Native</a>.</li>
+          </ul>
+          <p><a href="https://react.dev/learn">Learn how to use React in your project</a>.</p>
+          <h2>Installation</h2>
+          <p>React has been designed for gradual adoption from the start, and <strong>you can use as little or as much React as you need</strong>:</p>
+          <ul>
+            <li>Use <a href="https://react.dev/learn">Quick Start</a> to get a taste of React.</li>
+            <li><a href="https://react.dev/learn/add-react-to-an-existing-project">Add React to an Existing Project</a> to use as little or as much React as you need.</li>
+            <li><a href="https://react.dev/learn/start-a-new-react-project">Create a New React App</a> if you're looking for a powerful JavaScript toolchain.</li>
+          </ul>
+          <h2>Documentation</h2>
+          <p>You can find the React documentation <a href="https://react.dev/">on the website</a>.</p>
+          <p>Check out the <a href="https://react.dev/learn">Getting Started</a> page for a quick overview.</p>
+          <p>The documentation is divided into several sections:</p>
+          <ul>
+            <li><a href="https://react.dev/learn">Quick Start</a></li>
+            <li><a href="https://react.dev/learn/tutorial-tic-tac-toe">Tutorial</a></li>
+            <li><a href="https://react.dev/learn/thinking-in-react">Thinking in React</a></li>
+            <li><a href="https://react.dev/learn/installation">Installation</a></li>
+            <li><a href="https://react.dev/learn/describing-the-ui">Describing the UI</a></li>
+            <li><a href="https://react.dev/learn/adding-interactivity">Adding Interactivity</a></li>
+            <li><a href="https://react.dev/learn/managing-state">Managing State</a></li>
+            <li><a href="https://react.dev/learn/escape-hatches">Advanced Guides</a></li>
+            <li><a href="https://react.dev/reference/react">API Reference</a></li>
+            <li><a href="https://react.dev/community">Where to Get Support</a></li>
+            <li><a href="https://legacy.reactjs.org/docs/how-to-contribute.html">Contributing Guide</a></li>
+          </ul>
+          <p>You can improve it by sending pull requests to <a href="https://github.com/reactjs/react.dev">this repository</a>.</p>
+          <h2>Examples</h2>
+          <p>We have several examples <a href="https://react.dev/">on the website</a>. Here is the first one to get you started:</p>
+          <div class="code-block" data-lang="JSX"><pre><code class="language-jsx">import { createRoot } from 'react-dom/client';
+
+function HelloMessage({ name }) {
+  return &lt;div&gt;Hello {name}&lt;/div&gt;;
+}
+
+const root = createRoot(document.getElementById('container'));
+root.render(&lt;HelloMessage name="Taylor" /&gt;);</code></pre></div>
+          <p>This example will render "Hello Taylor" into a container on the page.</p>
+          <p>You'll notice that we used an HTML-like syntax; <a href="https://react.dev/learn#writing-markup-with-jsx">we call it JSX</a>. JSX is not required to use React, but it makes code more readable, and writing it feels like writing HTML.</p>
+          <h2>Contributing</h2>
+          <p>The main purpose of this repository is to continue evolving React core, making it faster and easier to use. Development of React happens in the open on GitHub, and we are grateful to the community for contributing bugfixes and improvements. Read below to learn how you can take part in improving React.</p>
+          <h3><a href="https://code.fb.com/codeofconduct">Code of Conduct</a></h3>
+          <p>Facebook has adopted a Code of Conduct that we expect project participants to adhere to. Please read <a href="https://code.fb.com/codeofconduct">the full text</a> so that you can understand what actions will and will not be tolerated.</p>
+          <h3><a href="https://legacy.reactjs.org/docs/how-to-contribute.html">Contributing Guide</a></h3>
+          <p>Read our <a href="https://legacy.reactjs.org/docs/how-to-contribute.html">contributing guide</a> to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to React.</p>
+          <h3><a href="https://github.com/react/react/labels/good%20first%20issue">Good First Issues</a></h3>
+          <p>To help you get your feet wet and get you familiar with our contribution process, we have a list of <a href="https://github.com/react/react/labels/good%20first%20issue">good first issues</a> that contain bugs that have a relatively limited scope. This is a great place to get started.</p>
+          <h3>License</h3>
+          <p>React is <a href="./LICENSE">MIT licensed</a>.</p>
+        </div>
+      </div>
+    </div>
+    </div><!-- /detail-left -->
+
+    <!-- RIGHT COLUMN -->
+    <div class="detail-right">
+
+      <!-- a. Fleet Standing -->
+      <div class="hud-panel rank-panel skel-wrap" data-skel="rank">
+        <span class="hud-corner-bl"></span>
+        <span class="hud-corner-tr"></span>
+        <!-- 骨架屏覆盖层：加载前显示，ready 后淡出 -->
+        <div class="skel-overlay">
+          <div class="skel-circle"></div>
+          <div class="skel-bar short center"></div>
+          <div class="skel-bar medium center" style="height:9px"></div>
+          <div class="skel-grid3">
+            <div class="skel-cell"><div class="skel-bar"></div><div class="skel-bar val"></div></div>
+            <div class="skel-cell"><div class="skel-bar"></div><div class="skel-bar val"></div></div>
+            <div class="skel-cell"><div class="skel-bar"></div><div class="skel-bar val"></div></div>
+          </div>
+        </div>
+        <!-- 真实内容：默认隐藏，骨架淡出后显现 -->
+        <div class="skel-content">
+        <span class="rank-number"><span class="rank-number-prefix">#</span>1</span>
+        <div class="rank-label">Global Ranking</div>
+        <span class="rank-category">Frontend Framework</span>
+        <div class="rank-sub-grid">
+          <div class="rank-sub-cell">
+            <div class="rank-sub-cell-label">License</div>
+            <div class="rank-sub-cell-value">MIT</div>
+          </div>
+          <div class="rank-sub-cell">
+            <div class="rank-sub-cell-label">Created</div>
+            <div class="rank-sub-cell-value">Nov 2013</div>
+          </div>
+          <div class="rank-sub-cell">
+            <div class="rank-sub-cell-label">Updated</div>
+            <div class="rank-sub-cell-value">2h ago</div>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <!-- b. Topics / Classification -->
+      <div class="hud-panel skel-wrap" style="padding:var(--panel-pad)" data-skel="topics">
+        <span class="hud-corner-bl"></span>
+        <span class="hud-corner-tr"></span>
+        <!-- 骨架屏覆盖层 -->
+        <div class="skel-overlay">
+          <div class="skel-bar medium" style="height:13px;margin-bottom:14px"></div>
+          <div class="skel-pills">
+            <div class="skel-pill" style="width:48px"></div>
+            <div class="skel-pill" style="width:72px"></div>
+            <div class="skel-pill" style="width:56px"></div>
+            <div class="skel-pill" style="width:64px"></div>
+            <div class="skel-pill" style="width:80px"></div>
+            <div class="skel-pill" style="width:60px"></div>
+            <div class="skel-pill" style="width:96px"></div>
+            <div class="skel-pill" style="width:52px"></div>
+            <div class="skel-pill" style="width:76px"></div>
+            <div class="skel-pill" style="width:68px"></div>
+          </div>
+        </div>
+        <!-- 真实内容 -->
+        <div class="skel-content">
+        <div class="panel-title">CLASSIFICATION: TOPICS</div>
+        <div class="topic-cloud">
+          <a href="#" class="topic-pill">react</a>
+          <a href="#" class="topic-pill">javascript</a>
+          <a href="#" class="topic-pill">library</a>
+          <a href="#" class="topic-pill">ui</a>
+          <a href="#" class="topic-pill">frontend</a>
+          <a href="#" class="topic-pill">framework</a>
+          <a href="#" class="topic-pill">react-components</a>
+          <a href="#" class="topic-pill">virtual-dom</a>
+          <a href="#" class="topic-pill">declarative</a>
+          <a href="#" class="topic-pill">hooks</a>
+          <a href="#" class="topic-pill">jsx</a>
+          <a href="#" class="topic-pill">concurrent</a>
+          <a href="#" class="topic-pill">server-components</a>
+          <a href="#" class="topic-pill">fiber</a>
+        </div>
+        </div>
+      </div>
+
+      <!-- d. Deployment Log (Releases) -->
+      <div class="hud-panel skel-wrap" style="padding:var(--panel-pad)" data-skel="releases">
+        <span class="hud-corner-bl"></span>
+        <span class="hud-corner-tr"></span>
+        <!-- 骨架屏覆盖层 -->
+        <div class="skel-overlay">
+          <div class="skel-bar medium" style="height:13px;margin-bottom:14px"></div>
+          <div class="skel-release">
+            <div class="skel-dot"></div>
+            <div class="skel-body">
+              <div class="skel-bar" style="width:40%;height:14px"></div>
+              <div class="skel-bar full" style="height:10px"></div>
+              <div class="skel-bar short" style="height:9px"></div>
+            </div>
+          </div>
+        </div>
+        <!-- 真实内容 -->
+        <div class="skel-content">
+        <div class="panel-title">DEPLOYMENT LOG <span class="panel-title-right">Releases</span></div>
+        <div class="release-timeline">
+          <!-- 最新发布：v19.2.8（LATEST）—— 仅保留最新一条 -->
+          <div class="release-item last">
+            <div class="release-marker"><span class="release-dot latest"></span></div>
+            <div class="release-body">
+              <div class="release-head">
+                <a href="https://github.com/react/react/releases/tag/v19.2.8" target="_blank" rel="noopener" class="release-version">v19.2.8</a>
+                <span class="release-badge latest-badge">LATEST</span>
+              </div>
+              <div class="release-desc">React Server Components decoding performance improvements</div>
+              <div class="release-meta">Jul 21, 2026</div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="chrome-footer"></div>
+
+<div id="overlay-root"></div>
+
+    <script type="text/babel" src="../js/core.js"></script>
+    <script type="text/babel" src="../js/react-chart-components.js"></script>
+    <script type="text/babel" src="../js/detail.js"></script>
+    <script src="../js/code-block.js?v=5"></script>
+
+</body>
+</html>

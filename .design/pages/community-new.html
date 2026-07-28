@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHRANK // COMMUNITY — New Post</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/css/index.css">
+  <link rel="stylesheet" href="../styles/css/header.css">
+  <link rel="stylesheet" href="../styles/css/footer.css">
+  <link rel="stylesheet" href="../styles/css/side-nav.css">
+  <link rel="stylesheet" href="../styles/css/search-overlay.css">
+  <link rel="stylesheet" href="../styles/css/loading.css">
+  <link rel="stylesheet" href="../styles/css/community.css">
+  <link rel="stylesheet" href="../styles/css/code-block.css?v=5">
+  <link rel="stylesheet" href="../styles/css/tiptap-hud.css">
+  <!-- React 19 CJS + Babel Standalone（本地 vendor，免构建接入） -->
+  <script src="../js/vendor/react-cjs-shim.js"></script>
+  <script src="../js/vendor/babel.min.js"></script>
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       COMMUNITY NEW POST — supplementary styles
+       ═══════════════════════════════════════════════════════════════ */
+
+    /* ── Layout (centered, max-width 800px) ── */
+    .community-new-layout {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 8px 24px 64px;
+    }
+
+    /* ── Breadcrumb ── */
+    .community-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .community-breadcrumb a {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .community-breadcrumb a:hover {
+      color: var(--gold);
+    }
+    .community-breadcrumb .crumb-sep {
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+    .community-breadcrumb .crumb-current {
+      color: var(--gold);
+    }
+
+    /* ── Form Container ── */
+    .community-new-form {
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .new-form-main {
+      min-width: 0;
+    }
+
+    /* ── Title Block ── */
+    .new-post-header {
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-dim);
+      position: relative;
+    }
+    .new-post-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold-glow);
+    }
+    .new-post-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .new-post-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-bright);
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+    }
+    .new-post-subtitle {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.5;
+      max-width: 560px;
+    }
+
+    /* ── Field Group ── */
+    .new-post-field {
+      margin-bottom: 20px;
+    }
+    .new-post-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .new-post-label .req {
+      color: var(--gold);
+      margin-left: 2px;
+    }
+
+    /* ── Inputs ── */
+    .new-post-title-input {
+      width: 100%;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-bright);
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--border);
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+      letter-spacing: 0.01em;
+    }
+    .new-post-title-input::placeholder {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .new-post-title-input:focus {
+      border-color: var(--gold-dim);
+      border-left-color: var(--gold);
+      box-shadow: 0 0 0 1px rgba(245,197,24,0.12), -2px 0 12px rgba(245,197,24,0.06);
+    }
+
+    .new-post-section-select {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236e7681' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    .new-post-section-select:hover {
+      border-color: var(--gold-dim);
+    }
+    .new-post-section-select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px rgba(245,197,24,0.12);
+    }
+    .new-post-section-select option {
+      background: var(--bg-panel);
+      color: var(--text);
+      padding: 8px;
+    }
+
+    .new-post-tags {
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text);
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    .new-post-tags::placeholder {
+      color: var(--text-muted);
+    }
+    .new-post-tags:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px rgba(245,197,24,0.12);
+    }
+
+    /* ── Editor Card ── */
+    .new-post-editor {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 20px 24px 24px;
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .new-post-editor::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 14px; height: 14px;
+      border-top: 2px solid var(--gold);
+      border-left: 2px solid var(--gold);
+      pointer-events: none;
+    }
+    .new-post-editor::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 14px; height: 14px;
+      border-bottom: 2px solid var(--gold);
+      border-right: 2px solid var(--gold);
+      pointer-events: none;
+    }
+
+    /* ── Compose (Tiptap wrapper, mirrors community-detail/prompt.css) ── */
+    .compose-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-deep);
+      margin: -20px -24px 16px;
+    }
+    .compose-topbar-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .compose-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .compose-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .compose-body {
+      position: relative;
+    }
+    .compose-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .compose-bottom-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .compose-submit {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--bg-deep);
+      background: var(--gold);
+      border: none;
+      padding: 9px 26px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 12px rgba(245,197,24,0.2);
+    }
+    .compose-submit:hover {
+      background: #ffe066;
+      box-shadow: 0 0 20px rgba(245,197,24,0.35);
+    }
+
+    /* ── Action Row (cancel + publish) ── */
+    .new-post-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-dim);
+    }
+    .btn-cancel {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dim);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 9px 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.18s, border-color 0.18s, background 0.18s;
+      display: inline-flex;
+      align-items: center;
+    }
+    .btn-cancel:hover {
+      color: var(--text);
+      border-color: var(--gold-dim);
+      background: rgba(245,197,24,0.03);
+    }
+    .btn-publish {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--bg-deep);
+      background: var(--gold);
+      border: none;
+      padding: 9px 26px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 0 16px var(--gold-glow);
+      transition: background 0.2s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-publish:hover {
+      background: #ffe066;
+      box-shadow: 0 0 24px var(--gold-glow), 0 0 48px rgba(245,197,24,0.15);
+    }
+
+    /* ── Sidebar: Posting Guidelines ── */
+    .new-form-aside {
+      position: sticky;
+      top: 88px;
+    }
+    .guidelines-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 18px 18px 20px;
+      position: relative;
+    }
+    .guidelines-card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 12px; height: 12px;
+      border-top: 2px solid var(--cyan);
+      border-left: 2px solid var(--cyan);
+      pointer-events: none;
+    }
+    .guidelines-title {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-bright);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .guidelines-title svg {
+      color: var(--cyan);
+      flex-shrink: 0;
+    }
+    .guidelines-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .guidelines-list li {
+      position: relative;
+      padding-left: 22px;
+      margin-bottom: 12px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .guidelines-list li:last-child {
+      margin-bottom: 0;
+    }
+    .guidelines-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 12px;
+      height: 1px;
+      background: var(--gold-dim);
+    }
+    .guidelines-list li strong {
+      color: var(--text-bright);
+      font-weight: 700;
+      font-family: var(--font-display);
+    }
+
+    /* ── Toast ── */
+    .community-toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--bg-panel);
+      border: 1px solid var(--border-gold);
+      padding: 12px 24px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--gold);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 24px rgba(245,197,24,0.15);
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      letter-spacing: 0.04em;
+    }
+    .community-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .community-new-form {
+        grid-template-columns: 1fr;
+      }
+      .new-form-aside {
+        position: static;
+      }
+    }
+    @media (max-width: 640px) {
+      .community-new-layout {
+        padding: 8px 16px 48px;
+      }
+      .new-post-title {
+        font-size: 24px;
+      }
+      .new-post-editor {
+        padding: 16px 16px 18px;
+      }
+      .compose-topbar {
+        margin: -16px -16px 14px;
+      }
+      .new-post-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+      }
+      .btn-cancel,
+      .btn-publish {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="chrome-root"></div>
+
+<div class="scan-line"></div>
+
+<div id="chrome-ticker"></div>
+<div id="chrome-navbar"></div>
+
+<div class="main-content">
+
+    <!-- NEW POST LAYOUT -->
+    <div class="community-new-layout">
+
+      <!-- Breadcrumb -->
+      <nav class="community-breadcrumb">
+        <a href="community.html">Community</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-current">New Post</span>
+      </nav>
+
+      <!-- Form -->
+      <div class="community-new-form">
+
+        <!-- Main Column -->
+        <div class="new-form-main">
+
+          <!-- Header -->
+          <header class="new-post-header">
+            <div class="new-post-eyebrow">// CREATE POST</div>
+            <h1 class="new-post-title">Start a New Discussion</h1>
+            <p class="new-post-subtitle">Share a question, a build, a benchmark, or an idea with the community. Be specific and respectful.</p>
+          </header>
+
+          <!-- Title Field -->
+          <div class="new-post-field">
+            <label class="new-post-label" for="postTitleInput">Title<span class="req">*</span></label>
+            <input type="text" id="postTitleInput" class="new-post-title-input" placeholder="Enter a descriptive title..." maxlength="120" autocomplete="off">
+          </div>
+
+          <!-- Section Field -->
+          <div class="new-post-field">
+            <label class="new-post-label" for="postSectionSelect">Section<span class="req">*</span></label>
+            <select id="postSectionSelect" class="new-post-section-select">
+              <option value="" disabled selected>Select a section...</option>
+              <option value="show-tell">Show &amp; Tell</option>
+              <option value="questions">Questions</option>
+              <option value="discussions">Discussions</option>
+              <option value="tutorials">Tutorials</option>
+              <option value="news-updates">News &amp; Updates</option>
+              <option value="off-topic">Off-Topic</option>
+              <option value="dev-logs">Dev Logs</option>
+            </select>
+          </div>
+
+          <!-- Tags Field -->
+          <div class="new-post-field">
+            <label class="new-post-label" for="postTagsInput">Tags</label>
+            <input type="text" id="postTagsInput" class="new-post-tags" placeholder="Add tags, comma separated" autocomplete="off">
+          </div>
+
+          <!-- Tiptap Editor -->
+          <div class="new-post-editor">
+            <div class="compose-body">
+              <div class="compose-topbar">
+                <div class="compose-topbar-label">Write your post</div>
+                <div class="compose-avatar"><img src="../styles/images/demo/prompt_1.jpg" alt="" class="compose-avatar-img"></div>
+              </div>
+              <div id="bubbleMenu" class="bubble-menu" style="display:none;">
+                <button class="bm-btn bm-heading-toggle" data-bm="heading" title="Text type">
+                  <span class="bm-heading-label">H</span>
+                  <svg class="bm-chevron" width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M2 3l2 2 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="bm-sep"></div>
+                <button class="bm-btn" data-bm="bold" title="Bold"><b>B</b></button>
+                <button class="bm-btn" data-bm="italic" title="Italic"><i>I</i></button>
+                <button class="bm-btn" data-bm="underline" title="Underline"><u>U</u></button>
+                <button class="bm-btn" data-bm="strike" title="Strikethrough"><s>S</s></button>
+                <button class="bm-btn" data-bm="code" title="Inline Code">&lt;/&gt;</button>
+                <button class="bm-btn" data-bm="highlight" title="Highlight">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </button>
+                <div class="bm-sep"></div>
+                <button class="bm-btn" data-bm="link" title="Link">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                </button>
+              </div>
+              <div id="headingDropdown" class="heading-dropdown" style="display:none;">
+                <button class="hd-item" data-hd="paragraph" title="Plain text"><span class="hd-icon hd-text">Aa</span><span class="hd-label">Plain text</span></button>
+                <button class="hd-item" data-hd="heading1" title="Heading 1"><span class="hd-icon hd-h1">H1</span><span class="hd-label">Heading 1</span></button>
+                <button class="hd-item" data-hd="heading2" title="Heading 2"><span class="hd-icon hd-h2">H2</span><span class="hd-label">Heading 2</span></button>
+                <button class="hd-item" data-hd="heading3" title="Heading 3"><span class="hd-icon hd-h3">H3</span><span class="hd-label">Heading 3</span></button>
+              </div>
+              <div id="floatingMenu" class="floating-menu" style="display:none;">
+                <button class="fm-btn" data-fm="heading1" title="Heading 1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1"/></svg></button>
+                <button class="fm-btn" data-fm="heading2" title="Heading 2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1"/></svg></button>
+                <button class="fm-btn" data-fm="heading3" title="Heading 3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1"/></svg></button>
+                <div class="fm-sep"></div>
+                <button class="fm-btn" data-fm="bulletList" title="Bullet List"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg></button>
+                <button class="fm-btn" data-fm="orderedList" title="Numbered List"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6h11"/><path d="M10 12h11"/><path d="M10 18h11"/><path d="M4 8V4h4"/><path d="M8 8L4 4"/><path d="M4 20l4-4H4"/></svg></button>
+                <button class="fm-btn" data-fm="blockquote" title="Blockquote"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"/></svg></button>
+                <div class="fm-sep"></div>
+                <button class="fm-btn" data-fm="codeBlock" title="Code Block"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></button>
+                <button class="fm-btn" data-fm="horizontalRule" title="Divider"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"/></svg></button>
+              </div>
+              <div id="tiptapEditor" class="tiptap-editor"></div>
+              <div class="compose-bottom">
+                <div class="compose-bottom-left">
+                  <span class="compose-char-count"><span id="charCounter">0</span>/5000</span>
+                </div>
+                <button class="compose-submit" id="composeSubmitBtn">Publish Post</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Row -->
+          <div class="new-post-actions">
+            <a href="community.html" class="btn-cancel">Cancel</a>
+            <button class="btn-publish" id="publishPostBtn" type="button">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+              Publish Post
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Aside: Posting Guidelines -->
+        <aside class="new-form-aside">
+          <div class="guidelines-card">
+            <div class="guidelines-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+              Posting Guidelines
+            </div>
+            <ul class="guidelines-list">
+              <li><strong>Be specific.</strong> Clear titles get better answers than vague ones.</li>
+              <li><strong>Search first.</strong> Someone may have already asked your question.</li>
+              <li><strong>Stay on topic.</strong> Pick the section that best matches your post.</li>
+              <li><strong>Be respectful.</strong> No spam, self-promotion, or personal attacks.</li>
+            </ul>
+          </div>
+        </aside>
+
+      </div>
+
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<div id="chrome-footer"></div>
+
+<div id="overlay-root"></div>
+
+  <script type="module" src="../js/tiptap-init.js?v=6"></script>
+  <script src="../js/code-block.js?v=5"></script>
+  <script type="text/babel" src="../js/core.js"></script>
+  <script type="text/babel">GHRANK.mountChrome();</script>
+
+</body>
+</html>
+

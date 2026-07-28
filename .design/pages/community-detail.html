@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHRANK // COMMUNITY — Post Detail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/css/index.css">
+  <link rel="stylesheet" href="../styles/css/header.css">
+  <link rel="stylesheet" href="../styles/css/footer.css">
+  <link rel="stylesheet" href="../styles/css/side-nav.css">
+  <link rel="stylesheet" href="../styles/css/search-overlay.css">
+  <link rel="stylesheet" href="../styles/css/loading.css">
+  <link rel="stylesheet" href="../styles/css/community.css?v=2">
+  <link rel="stylesheet" href="../styles/css/code-block.css?v=5">
+  <link rel="stylesheet" href="../styles/css/tiptap-hud.css">
+  <!-- React 19 CJS + Babel Standalone（本地 vendor，免构建接入） -->
+  <script src="../js/vendor/react-cjs-shim.js"></script>
+  <script src="../js/vendor/babel.min.js"></script>
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       COMMUNITY DETAIL — supplementary styles
+       (community.css covers list page; this covers detail/replies/editor)
+       ═══════════════════════════════════════════════════════════════ */
+
+    /* ── Breadcrumb ── */
+    .community-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .community-breadcrumb a {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .community-breadcrumb a:hover {
+      color: var(--gold);
+    }
+    .community-breadcrumb .crumb-sep {
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+    .community-breadcrumb .crumb-current {
+      color: var(--text);
+      max-width: 320px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ═══ POST DETAIL ═══ */
+    .post-detail {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .post-detail::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 14px; height: 14px;
+      border-top: 2px solid var(--gold);
+      border-left: 2px solid var(--gold);
+      pointer-events: none;
+    }
+    .post-detail::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 14px; height: 14px;
+      border-bottom: 2px solid var(--gold);
+      border-right: 2px solid var(--gold);
+      pointer-events: none;
+    }
+
+    .post-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text-bright);
+      margin-bottom: 18px;
+      letter-spacing: -0.01em;
+    }
+
+    .post-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding-bottom: 18px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+    .post-author-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid var(--border-gold);
+      flex-shrink: 0;
+    }
+    .post-author-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .post-author-name {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+    .post-section-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 10px;
+      background: rgba(245,197,24,0.06);
+      color: var(--gold);
+      border: 1px solid var(--border-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .post-meta-sep {
+      width: 1px;
+      height: 14px;
+      background: var(--border);
+    }
+    .post-meta-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .post-meta-text svg {
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+
+    /* ── Post Body (rendered Tiptap rich text) ── */
+    .post-body {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+    .post-body p {
+      margin: 0 0 14px;
+    }
+    .post-body p:last-child {
+      margin-bottom: 0;
+    }
+    .post-body h1,
+    .post-body h2,
+    .post-body h3 {
+      font-family: var(--font-display);
+      color: var(--text-bright);
+      font-weight: 700;
+      line-height: 1.3;
+      margin: 24px 0 12px;
+    }
+    .post-body h1 {
+      font-size: 24px;
+    }
+    .post-body h2 {
+      font-size: 20px;
+    }
+    .post-body h3 {
+      font-size: 17px;
+      color: var(--gold);
+    }
+    .post-body ul,
+    .post-body ol {
+      padding-left: 24px;
+      margin: 0 0 14px;
+    }
+    .post-body ul {
+      list-style: disc;
+    }
+    .post-body ol {
+      list-style: decimal;
+    }
+    .post-body li {
+      margin-bottom: 6px;
+    }
+    .post-body li::marker {
+      color: var(--gold-dim);
+    }
+    .post-body blockquote {
+      border-left: 3px solid var(--gold);
+      padding: 8px 0 8px 16px;
+      margin: 16px 0;
+      color: var(--text);
+      background: rgba(245,197,24,0.03);
+    }
+    .post-body blockquote p {
+      margin: 0;
+      font-style: italic;
+    }
+    /* Code block 样式由 ../styles/css/code-block.css 统一提供（全站共享） */
+    .post-body pre {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-bright);
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--cyan);
+      padding: 14px 16px;
+      margin: 16px 0;
+      overflow-x: auto;
+      line-height: 1.55;
+    }
+    .post-body pre code {
+      background: none;
+      padding: 0;
+      color: inherit;
+      font-size: 13px;
+    }
+    .post-body code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--cyan);
+      background: rgba(57,210,192,0.08);
+      border: 1px solid rgba(57,210,192,0.15);
+      padding: 1px 6px;
+    }
+    .post-body a {
+      color: var(--gold);
+      text-decoration: underline;
+      text-decoration-color: rgba(245,197,24,0.4);
+      text-underline-offset: 2px;
+      transition: text-decoration-color 0.15s;
+    }
+    .post-body a:hover {
+      text-decoration-color: var(--gold);
+    }
+    .post-body strong {
+      color: var(--text-bright);
+      font-weight: 700;
+    }
+    .post-body hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 20px 0;
+    }
+
+    /* ── Inline post images (random demo images with lazy loading) ── */
+    .post-body .post-image {
+      margin: 18px 0;
+      position: relative;
+    }
+    .post-body .post-image-wrap {
+      position: relative;
+      display: block;
+      width: 100%;
+      max-height: 320px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .post-body .post-image-wrap::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 14px; height: 14px;
+      border-top: 2px solid var(--gold);
+      border-left: 2px solid var(--gold);
+      z-index: 5;
+      pointer-events: none;
+    }
+    .post-body .post-image-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 14px; height: 14px;
+      border-bottom: 2px solid var(--cyan);
+      border-right: 2px solid var(--cyan);
+      z-index: 5;
+      pointer-events: none;
+    }
+    .post-body .post-image-wrap img {
+      width: 100%;
+      height: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .post-body .post-image-wrap:hover img {
+      transform: scale(1.04);
+    }
+    .post-body .post-image-caption {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 6px;
+      padding-left: 2px;
+    }
+    .post-body .post-image-caption .caption-tag {
+      color: var(--gold-dim);
+      margin-right: 6px;
+    }
+
+    /* ── Post Action Row ── */
+    .post-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 22px;
+      margin-top: 24px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .post-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-dim);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: border-color 0.18s, color 0.18s, background 0.18s;
+      letter-spacing: 0.03em;
+    }
+    .post-action-btn svg {
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+    .post-action-btn:hover {
+      color: var(--gold);
+      border-color: var(--border-gold);
+      background: rgba(245,197,24,0.04);
+    }
+    .post-action-btn:hover svg {
+      opacity: 1;
+    }
+    .post-action-btn.is-active {
+      color: var(--gold);
+      border-color: var(--border-gold);
+      background: rgba(245,197,24,0.08);
+    }
+    .post-action-btn .action-count {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .post-action-btn.is-active .action-count {
+      color: var(--gold);
+    }
+    .post-action-btn.action-reply {
+      margin-left: auto;
+      color: var(--bg-deep);
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(245,197,24,0.2);
+    }
+    .post-action-btn.action-reply:hover {
+      background: #ffe066;
+      box-shadow: 0 0 20px rgba(245,197,24,0.35);
+    }
+    .post-action-btn.action-reply svg {
+      opacity: 1;
+    }
+
+    /* ═══ REPLIES ═══ */
+    .post-replies {
+      margin-bottom: 24px;
+    }
+    .replies-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .replies-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+    .replies-title .replies-count {
+      color: var(--gold);
+      margin-left: 4px;
+    }
+    .replies-sort {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .replies-sort-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-right: 6px;
+    }
+    .sort-btn {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dim);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .sort-btn:hover {
+      color: var(--text);
+      border-color: var(--gold-dim);
+    }
+    .sort-btn.is-active {
+      color: var(--bg-deep);
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+
+    /* ── Reply Item ── */
+    .reply-item {
+      display: flex;
+      gap: 14px;
+      padding: 18px 20px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .reply-item.is-op {
+      border-left: 2px solid var(--gold);
+    }
+    .reply-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .reply-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .reply-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .reply-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .reply-author {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+    .reply-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 7px;
+      background: rgba(245,197,24,0.1);
+      color: var(--gold);
+      border: 1px solid var(--border-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .reply-time {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+    .reply-content {
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .reply-content p {
+      margin: 0 0 8px;
+    }
+    .reply-content p:last-child {
+      margin-bottom: 0;
+    }
+    .reply-content code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--cyan);
+      background: rgba(57,210,192,0.08);
+      padding: 1px 5px;
+    }
+    .reply-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .reply-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      background: transparent;
+      border: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .reply-action-btn:hover {
+      color: var(--gold);
+    }
+    .reply-action-btn.is-active {
+      color: var(--pink);
+    }
+    .reply-action-btn svg {
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+    .reply-action-btn:hover svg {
+      opacity: 1;
+    }
+
+    /* ── Nested Replies ── */
+    .reply-children {
+      margin-top: 12px;
+      padding-left: 16px;
+      border-left: 1px solid var(--border);
+    }
+    .reply-item .reply-item {
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-dim);
+    }
+    .reply-item .reply-item .reply-avatar {
+      width: 30px;
+      height: 30px;
+    }
+
+    /* ═══ REPLY EDITOR ═══ */
+    .post-reply-editor {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .post-reply-editor::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 14px; height: 14px;
+      border-top: 2px solid var(--cyan);
+      border-left: 2px solid var(--cyan);
+      pointer-events: none;
+    }
+    .reply-editor-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 16px;
+    }
+
+    /* ── Tiptap compose wrapper (mirrors prompt.css compose-body) ── */
+    .compose-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-deep);
+    }
+    .compose-topbar-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .compose-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .compose-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .compose-body {
+      padding: 16px;
+      position: relative;
+    }
+    .compose-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .compose-bottom-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .compose-submit {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--bg-deep);
+      background: var(--gold);
+      border: none;
+      padding: 8px 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 12px rgba(245,197,24,0.2);
+    }
+    .compose-submit:hover {
+      background: #ffe066;
+      box-shadow: 0 0 20px rgba(245,197,24,0.35);
+    }
+
+    /* ── Ad Slot (wide banner) ── */
+    .ad-slot {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 90px;
+      position: relative;
+    }
+    .ad-slot::before {
+      content: 'AD';
+      position: absolute;
+      top: 6px;
+      left: 8px;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+    .ad-slot-content {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-dim);
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+    .ad-slot-content .ad-cta {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* ── Toast (community submit feedback) ── */
+    .community-toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--bg-panel);
+      border: 1px solid var(--border-gold);
+      padding: 12px 24px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--gold);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 24px rgba(245,197,24,0.15);
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      letter-spacing: 0.04em;
+    }
+    .community-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .community-layout {
+        grid-template-columns: 1fr !important;
+      }
+      .community-sidebar {
+        position: static !important;
+        max-height: none !important;
+      }
+    }
+    @media (max-width: 640px) {
+      .post-detail {
+        padding: 20px 18px;
+      }
+      .post-title {
+        font-size: 22px;
+      }
+      .post-reply-editor {
+        padding: 18px 16px;
+      }
+      .post-action-btn.action-reply {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="chrome-root"></div>
+
+<div class="scan-line"></div>
+
+<div id="chrome-ticker"></div>
+<div id="chrome-navbar"></div>
+
+<div class="main-content">
+
+    <!-- COMMUNITY LAYOUT -->
+    <div class="community-layout">
+
+      <!-- SIDEBAR — unified with community.html (icon nav + 4-card stats) -->
+      <aside class="community-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Browse Sections</div>
+          <nav class="sidebar-nav">
+            <a class="sidebar-nav-item" data-section="show" href="community.html">
+              <span class="sidebar-nav-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10"/><path d="M5 6h6M5 9h4"/></svg>
+              </span>
+              <span class="sidebar-nav-label">Show &amp; Tell</span>
+              <span class="sidebar-nav-count" data-count-key="show">642</span>
+            </a>
+            <a class="sidebar-nav-item" data-section="questions" href="community.html">
+              <span class="sidebar-nav-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="5.5"/><path d="M6.5 6.5a1.5 1.5 0 0 1 3 0c0 1-.5 1.3-1 1.6-.3.2-.5.4-.5.8v.6"/><circle cx="8" cy="11.5" r="0.5" fill="currentColor"/></svg>
+              </span>
+              <span class="sidebar-nav-label">Questions</span>
+              <span class="sidebar-nav-count" data-count-key="questions">1,089</span>
+            </a>
+            <a class="sidebar-nav-item" data-section="discussions" href="community.html">
+              <span class="sidebar-nav-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 4h10v6H6l-3 3V4z"/></svg>
+              </span>
+              <span class="sidebar-nav-label">Discussions</span>
+              <span class="sidebar-nav-count" data-count-key="discussions">876</span>
+            </a>
+            <a class="sidebar-nav-item" data-section="tutorials" href="community.html">
+              <span class="sidebar-nav-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 3l4 5-4 5M8 13h6"/></svg>
+              </span>
+              <span class="sidebar-nav-label">Tutorials</span>
+              <span class="sidebar-nav-count" data-count-key="tutorials">234</span>
+            </a>
+            <a class="sidebar-nav-item" data-section="news" href="community.html">
+              <span class="sidebar-nav-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10"/><path d="M2 6h12M5 9h4M5 11h3"/></svg>
+              </span>
+              <span class="sidebar-nav-label">News &amp; Updates</span>
+              <span class="sidebar-nav-count" data-count-key="news">198</span>
+            </a>
+            <a class="sidebar-nav-item" data-section="offtopic" href="community.html">
+              <span class="sidebar-nav-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 3h8v10H4z"/><path d="M6 6h4M6 9h4"/></svg>
+              </span>
+              <span class="sidebar-nav-label">Off-Topic</span>
+              <span class="sidebar-nav-count" data-count-key="offtopic">156</span>
+            </a>
+            <a class="sidebar-nav-item" data-section="devlogs" href="community.html">
+              <span class="sidebar-nav-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="5 6 8 3 11 6"/><polyline points="5 10 8 13 11 10"/><path d="M8 3v10"/></svg>
+              </span>
+              <span class="sidebar-nav-label">Dev Logs</span>
+              <span class="sidebar-nav-count" data-count-key="devlogs">89</span>
+            </a>
+          </nav>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Community Stats</div>
+          <div class="community-stats-grid">
+            <div class="community-stat-card">
+              <div class="community-stat-card-value">48.3K</div>
+              <div class="community-stat-card-label">Members</div>
+            </div>
+            <div class="community-stat-card">
+              <div class="community-stat-card-value">1,247</div>
+              <div class="community-stat-card-label">Online</div>
+            </div>
+            <div class="community-stat-card">
+              <div class="community-stat-card-value">186</div>
+              <div class="community-stat-card-label">Posts Today</div>
+            </div>
+            <div class="community-stat-card">
+              <div class="community-stat-card-value">1,432</div>
+              <div class="community-stat-card-label">Replies Today</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <a href="community-new.html" class="sidebar-new-post-btn">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v10M3 8h10"/></svg>
+            New Post
+          </a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="ad-slot ad-slot-sidebar">
+            <div class="ad-slot-content">
+              <div class="ad-line-1">Sponsored</div>
+              <div class="ad-line-2">VEX LABS</div>
+              <div class="ad-line-3">Build faster. Ship smarter.</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="community-content">
+
+        <!-- Breadcrumb -->
+        <nav class="community-breadcrumb">
+          <a href="community.html">Community</a>
+          <span class="crumb-sep">/</span>
+          <a href="community.html">Hot Topics</a>
+          <span class="crumb-sep">/</span>
+          <span class="crumb-current">Best practices for structuring large React apps...</span>
+        </nav>
+
+        <!-- POST DETAIL -->
+        <article class="post-detail">
+          <h1 class="post-title">Best practices for structuring large React applications in 2026</h1>
+
+          <div class="post-meta-row">
+            <div class="post-author-avatar">
+              <img src="../styles/images/demo/prompt_2.jpg" alt="">
+            </div>
+            <span class="post-author-name">@raven_vex</span>
+            <span class="post-section-tag">Hot Topics</span>
+            <span class="post-meta-sep"></span>
+            <span class="post-meta-text">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Posted 4 hours ago
+            </span>
+            <span class="post-meta-sep"></span>
+            <span class="post-meta-text">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              1,247 views
+            </span>
+          </div>
+
+          <div class="post-body">
+            <p>After working on a few production React codebases that crossed the 200k LOC mark, I wanted to share some patterns that have genuinely helped teams scale without drowning in complexity. None of this is novel, but it is the stuff I wish someone had told me three years ago.</p>
+
+            <h2>1. Feature-based folders over type-based folders</h2>
+            <p>The single biggest mistake I see is organizing by <em>file type</em> (all components together, all hooks together, all utils together). This works at 5k LOC and becomes a navigation nightmare at 50k. Group by feature instead:</p>
+            <div class="post-image">
+              <div class="post-image-wrap lazy-wrap" id="postImage1">
+                <img data-lazy alt="Feature-based folder structure diagram">
+              </div>
+              <div class="post-image-caption"><span class="caption-tag">FIG.01</span>Feature-based vs type-based folder layout</div>
+            </div>
+            <div class="code-block" data-lang="Text">
+              <pre><code class="language-plaintext">src/
+  features/
+    auth/
+      components/
+      hooks/
+      api.ts
+      index.ts
+    dashboard/
+      components/
+      hooks/
+      api.ts
+      index.ts</code></pre>
+            </div>
+            <p>Each feature becomes a self-contained module with a public API via <code>index.ts</code>. Nothing outside the feature should reach into its internals.</p>
+
+            <h3>Code sample: a typed feature boundary</h3>
+            <p>Here is how a typical feature barrel file looks. Notice we only export the public surface &mdash; internals stay private:</p>
+            <div class="code-block" data-lang="TypeScript">
+              <pre><code class="language-typescript">// features/auth/index.ts
+import { LoginForm } from './components/LoginForm';
+import { useAuth } from './hooks/useAuth';
+import { login, logout } from './api';
+import type { AuthUser, AuthSession } from './types';
+
+export { LoginForm, useAuth, login, logout };
+export type { AuthUser, AuthSession };
+
+// 🔒 Internal modules (api client, token store) are NOT re-exported.
+// Importing them from outside this folder is a lint error.</code></pre>
+            </div>
+
+            <h3>Code sample: React Query for server state</h3>
+            <p>Stop pouring server data into Redux. React Query handles caching, invalidation, and retries for free:</p>
+            <div class="code-block" data-lang="TypeScript">
+              <pre><code class="language-typescript">// features/dashboard/hooks/useRepoStats.ts
+import { useQuery } from '@tanstack/react-query';
+
+export function useRepoStats(repoId: string) {
+  return useQuery({
+    queryKey: ['repoStats', repoId],
+    queryFn: () => fetchRepoStats(repoId),
+    staleTime: 60_000,        // fresh for 1 minute
+    gcTime: 5 * 60_000,       // cached for 5 minutes after unmount
+    retry: (failureCount, err) => err.status !== 404 && failureCount < 3,
+  });
+}
+
+// Consumer — no useEffect, no useState, no boilerplate.
+const { data, isPending, error } = useRepoStats('ghrank/api');</code></pre>
+            </div>
+
+            <h3>Code sample: splitting a mega-component</h3>
+            <p>Before (config-driven, 40+ props) vs after (composable, 3 small components):</p>
+            <div class="code-block" data-lang="JSX">
+              <pre><code class="language-jsx">// ❌ Before — a configuration API disguised as a component
+&lt;Button
+  variant="primary"
+  size="md"
+  icon="arrow-right"
+  iconPosition="right"
+  isLoading={false}
+  fullWidth={false}
+  onClick={handleNext}
+/&gt;
+
+// ✅ After — small, composable pieces
+&lt;ButtonGroup fullWidth&gt;
+  &lt;Button variant="primary" onClick={handleNext}&gt;Continue&lt;/Button&gt;
+  &lt;IconButton icon="arrow-right" aria-label="Next step" /&gt;
+&lt;/ButtonGroup&gt;</code></pre>
+            </div>
+
+            <h3>Code sample: a Python scoring pipeline</h3>
+            <p>For the data side, here is a minimal time-decay scorer we run nightly:</p>
+            <div class="code-block" data-lang="Python">
+              <pre><code class="language-python"># scoring/time_decay.py
+from datetime import datetime, timedelta
+from typing import Iterable
+
+HALF_LIFE_DAYS = 180
+
+def time_decay_weight(event_time: datetime, now: datetime | None = None) -> float:
+    """Exponential decay — recent events weigh more."""
+    now = now or datetime.utcnow()
+    age_days = max((now - event_time).days, 0)
+    return 0.5 ** (age_days / HALF_LIFE_DAYS)
+
+def score_repo(events: Iterable[dict]) -> float:
+    return sum(
+        e['weight'] * time_decay_weight(e['timestamp'])
+        for e in events
+    )</code></pre>
+            </div>
+
+            <h3>Code sample: shell one-liners we use in CI</h3>
+            <div class="code-block" data-lang="Shell">
+              <pre><code class="language-bash"># Compute the diff between two scoring snapshots
+$ jq -S '.repos[] | {name, score}' v4.1.json > a.txt
+$ jq -S '.repos[] | {name, score}' v4.2.json > b.txt
+$ diff -u a.txt b.txt | delta          # pretty side-by-side
+
+# Bust the edge cache after a deploy
+$ curl -X POST "$CDN_HOST/purge" \
+    -H "Authorization: Bearer $CDN_TOKEN" \
+    -d '{"patterns": ["/api/repos/*"]}'</code></pre>
+            </div>
+
+            <h3>Code sample: the full scoring scheduler (long)</h3>
+            <p>This is the complete nightly scheduler that orchestrates repo discovery, cloning, scoring, and snapshot publishing. It is intentionally long &mdash; use the Expand/Collapse button on the code block to read it in full.</p>
+            <div class="code-block" data-lang="Python">
+              <pre><code class="language-python"># scoring/scheduler.py — nightly orchestration entrypoint
+"""
+GHRANK nightly scoring scheduler.
+
+Pipeline stages:
+  1. Discover repos from the seed list + GitHub trending
+  2. Clone (shallow) + extract metadata
+  3. Run signal extractors (stars, forks, issues, PRs, releases, contributors)
+  4. Apply time-decay weighting + community signals
+  5. Normalize + rank
+  6. Publish snapshot to the API + bust CDN cache
+"""
+import asyncio
+import json
+import logging
+import os
+import shutil
+import subprocess
+import sys
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Iterable
+
+from redis import Redis
+from rq import Queue
+
+from .time_decay import score_repo, time_decay_weight
+from .extractors import (
+    extract_stars,
+    extract_forks,
+    extract_issues,
+    extract_prs,
+    extract_releases,
+    extract_contributors,
+)
+from .publish import publish_snapshot, bust_cdn
+from .storage import SnapshotStore, RepoRecord
+
+logger = logging.getLogger("ghrank.scheduler")
+logger.setLevel(logging.INFO)
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+QUEUE_NAME = os.getenv("SCORING_QUEUE", "ghrank-scoring")
+CLONE_DIR = Path(os.getenv("CLONE_DIR", "/tmp/ghrank-clones"))
+SEED_LIST = Path(os.getenv("SEED_LIST", "config/seed_repos.txt"))
+
+# Repos below this composite score are excluded from the published snapshot.
+MIN_PUBLISH_SCORE = float(os.getenv("MIN_PUBLISH_SCORE", "0.42"))
+
+# How many repos to process concurrently. Each repo does network I/O
+# (clone + GitHub API), so we keep this modest to avoid rate limits.
+CONCURRENCY = int(os.getenv("SCORING_CONCURRENCY", "8"))
+
+
+@dataclass
+class ScoringJob:
+    repo_url: str
+    repo_name: str
+    priority: int = 0
+    enqueued_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+
+    @property
+    def key(self) -> str:
+        return f"job:{self.repo_name.replace('/', ':')}"
+
+
+async def discover_repos() -> list[str]:
+    """Build the candidate list from the seed file + GitHub trending."""
+    repos: list[str] = []
+    if SEED_LIST.exists():
+        repos.extend(
+            line.strip()
+            for line in SEED_LIST.read_text().splitlines()
+            if line.strip() and not line.startswith("#")
+        )
+
+    # GitHub trending is scraped (off-GitHub) and pushed to Redis by a
+    # separate worker. We just drain the list here.
+    redis = Redis.from_url(REDIS_URL, decode_responses=True)
+    while True:
+        item = redis.lpop("ghrank:trending")
+        if not item:
+            break
+        if item not in repos:
+            repos.append(item)
+
+    logger.info("discovered %d candidate repos", len(repos))
+    return repos
+
+
+def clone_repo(repo_url: str, dest: Path) -> bool:
+    """Shallow-clone a repo. Returns True on success."""
+    if dest.exists():
+        shutil.rmtree(dest, ignore_errors=True)
+    try:
+        subprocess.run(
+            ["git", "clone", "--depth", "1", "--quiet", repo_url, str(dest)],
+            check=True,
+            timeout=120,
+            capture_output=True,
+        )
+        return True
+    except subprocess.CalledProcessError as exc:
+        logger.warning("clone failed for %s: %s", repo_url, exc.stderr.decode()[:200])
+        return False
+    except subprocess.TimeoutExpired:
+        logger.warning("clone timeout for %s", repo_url)
+        return False
+
+
+async def score_one(repo_url: str) -> RepoRecord | None:
+    """Full per-repo pipeline. Returns a RepoRecord or None on failure."""
+    name = repo_url.rstrip("/").split(":")[-1].replace(".git", "")
+    dest = CLONE_DIR / name.replace("/", "_")
+    if not clone_repo(repo_url, dest):
+        return None
+
+    try:
+        signals: dict[str, Any] = {}
+        signals.update(extract_stars(dest))
+        signals.update(extract_forks(dest))
+        signals.update(extract_issues(dest))
+        signals.update(extract_prs(dest))
+        signals.update(extract_releases(dest))
+        signals.update(extract_contributors(dest))
+
+        events = [
+            {"weight": float(s.get("weight", 1.0)), "timestamp": s["timestamp"]}
+            for s in signals.values()
+            if "timestamp" in s
+        ]
+        score = score_repo(events)
+        if score < MIN_PUBLISH_SCORE:
+            logger.info("skipping %s (score %.3f below threshold)", name, score)
+            return None
+
+        return RepoRecord(name=name, url=repo_url, score=score, signals=signals)
+    except Exception:
+        logger.exception("scoring failed for %s", name)
+        return None
+    finally:
+        shutil.rmtree(dest, ignore_errors=True)
+
+
+async def run_pipeline() -> dict[str, Any]:
+    """Run the full nightly pipeline. Returns a summary dict."""
+    started = datetime.now(timezone.utc)
+    logger.info("pipeline started at %s", started.isoformat())
+
+    repos = await discover_repos()
+    if not repos:
+        logger.warning("no repos to process; aborting")
+        return {"status": "empty", "started": started.isoformat()}
+
+    sem = asyncio.Semaphore(CONCURRENCY)
+
+    async def bounded(repo_url: str) -> RepoRecord | None:
+        async with sem:
+            return await score_one(repo_url)
+
+    records = await asyncio.gather(*[bounded(r) for r in repos])
+    valid = [r for r in records if r is not None]
+    valid.sort(key=lambda r: r.score, reverse=True)
+
+    store = SnapshotStore()
+    snapshot_id = await store.save_snapshot(valid)
+
+    await publish_snapshot(snapshot_id, valid)
+    await bust_cdn(["/api/repos/*"])
+
+    finished = datetime.now(timezone.utc)
+    duration = (finished - started).total_seconds()
+    logger.info(
+        "pipeline finished: %d/%d repos scored in %.1fs (snapshot=%s)",
+        len(valid), len(repos), duration, snapshot_id,
+    )
+    return {
+        "status": "ok",
+        "started": started.isoformat(),
+        "finished": finished.isoformat(),
+        "duration_s": duration,
+        "discovered": len(repos),
+        "scored": len(valid),
+        "snapshot_id": snapshot_id,
+    }
+
+
+def enqueue_manual(repo_url: str, priority: int = 10) -> str:
+    """Manually enqueue a single repo for out-of-band scoring."""
+    redis = Redis.from_url(REDIS_URL, decode_responses=True)
+    queue = Queue(QUEUE_NAME, connection=redis)
+    job = queue.enqueue(
+        "ghrank.worker.score_one_job",
+        repo_url,
+        priority=priority,
+        job_timeout=300,
+    )
+    return job.id
+
+
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
+    summary = asyncio.run(run_pipeline())
+    print(json.dumps(summary, indent=2))
+    sys.exit(0 if summary["status"] == "ok" else 1)</code></pre>
+            </div>
+
+            <h2>2. Treat the data layer as a first-class citizen</h2>
+            <p>Most performance problems in large React apps are actually data-fetching problems. Use a real data library (React Query, SWR, Apollo) and stop managing server state in <code>useState</code>.</p>
+            <div class="post-image">
+              <div class="post-image-wrap lazy-wrap" id="postImage2">
+                <img data-lazy alt="Data layer architecture overview">
+              </div>
+              <div class="post-image-caption"><span class="caption-tag">FIG.02</span>Server-state vs client-state separation</div>
+            </div>
+
+            <blockquote>
+              <p>Server state is not your state. It is a cache of someone else&rsquo;s data. Treat it accordingly.</p>
+            </blockquote>
+
+            <h2>3. Three rules for state</h2>
+            <ul>
+              <li><strong>Server state</strong> &mdash; belongs in a data library, never in Redux or context.</li>
+              <li><strong>URL state</strong> &mdash; anything that should survive a refresh goes in the URL (search params, route params).</li>
+              <li><strong>Client state</strong> &mdash; the smallest category. If you have a lot here, you are probably duplicating server state.</li>
+            </ul>
+            <div class="post-image">
+              <div class="post-image-wrap lazy-wrap" id="postImage3">
+                <img data-lazy alt="State management decision tree">
+              </div>
+              <div class="post-image-caption"><span class="caption-tag">FIG.03</span>Decision tree for picking the right state bucket</div>
+            </div>
+
+            <h3>A quick note on composition</h3>
+            <p>Prefer small, composable components over configurable mega-components. A <code>&lt;Button&gt;</code> with 40 props is a sign you have built a configuration API, not a component. Split it into <code>&lt;Button&gt;</code>, <code>&lt;IconButton&gt;</code>, and <code>&lt;ButtonGroup&gt;</code> and your life gets easier.</p>
+
+            <p>Curious what others are doing &mdash; especially anyone who has migrated a large app to the App Router. Drop your structure below.</p>
+          </div>
+
+          <div class="post-actions">
+            <button class="post-action-btn action-like is-active" data-action="like">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <span class="action-count">124</span>
+              Like
+            </button>
+            <button class="post-action-btn action-bookmark" data-action="bookmark">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              Bookmark
+            </button>
+            <button class="post-action-btn action-share" data-action="share">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Share
+            </button>
+            <button class="post-action-btn action-reply" data-action="reply">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+              Reply
+            </button>
+          </div>
+        </article>
+
+        <!-- REPLIES -->
+        <section class="post-replies">
+          <div class="replies-header">
+            <h2 class="replies-title">12 Replies</h2>
+            <div class="replies-sort">
+              <span class="replies-sort-label">Sort</span>
+              <button class="sort-btn" data-sort="oldest">Oldest</button>
+              <button class="sort-btn is-active" data-sort="newest">Newest</button>
+              <button class="sort-btn" data-sort="best">Best</button>
+            </div>
+          </div>
+
+          <div class="replies-list" id="repliesList">
+
+            <!-- Reply 1 -->
+            <div class="reply-item">
+              <div class="reply-avatar">
+                <img src="../styles/images/demo/prompt_3.jpg" alt="">
+              </div>
+              <div class="reply-body">
+                <div class="reply-head">
+                  <span class="reply-author">@mira_kade</span>
+                  <span class="reply-badge">Top Contributor</span>
+                  <span class="reply-time">3 hours ago</span>
+                </div>
+                <div class="reply-content">
+                  <p>The feature-based folder structure is the hill I will die on. We migrated from type-based to feature-based last year and the onboarding time for new engineers dropped from ~2 weeks to ~3 days. The <code>index.ts</code> as public API is the key insight &mdash; it forces you to think about what is actually reusable.</p>
+                  <p>One addition: use ESLint&rsquo;s <code>no-restricted-imports</code> to enforce the boundary. If someone reaches into <code>features/auth/components/LoginForm.tsx</code> from outside the feature, the build fails. Saves you from drift over time.</p>
+                </div>
+                <div class="reply-actions">
+                  <button class="reply-action-btn action-like" data-action="like">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <span class="action-count">38</span>
+                  </button>
+                  <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
+                </div>
+
+                <!-- Nested reply -->
+                <div class="reply-children">
+                  <div class="reply-item">
+                    <div class="reply-avatar">
+                      <img src="../styles/images/demo/prompt_4.jpg" alt="">
+                    </div>
+                    <div class="reply-body">
+                      <div class="reply-head">
+                        <span class="reply-author">@raven_vex</span>
+                        <span class="reply-badge">OP</span>
+                        <span class="reply-time">2 hours ago</span>
+                      </div>
+                      <div class="reply-content">
+                        <p>Good call on the ESLint rule. We have been doing this manually in code review and it is exhausting. Adding <code>no-restricted-imports</code> this week.</p>
+                      </div>
+                      <div class="reply-actions">
+                        <button class="reply-action-btn action-like" data-action="like">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                          <span class="action-count">12</span>
+                        </button>
+                        <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reply 2 -->
+            <div class="reply-item">
+              <div class="reply-avatar">
+                <img src="../styles/images/demo/prompt_5.jpg" alt="">
+              </div>
+              <div class="reply-body">
+                <div class="reply-head">
+                  <span class="reply-author">@jin_tao</span>
+                  <span class="reply-time">2 hours ago</span>
+                </div>
+                <div class="reply-content">
+                  <p>Disagree slightly on the data library take. We tried React Query on a codebase with a lot of imperative WebSocket updates and it got messy fast. The cache invalidation story for real-time data is not great &mdash; you end up fighting the library.</p>
+                  <p>For REST-heavy CRUD apps, absolutely. For anything with a persistent socket, evaluate Zustand + manual subscription patterns first.</p>
+                </div>
+                <div class="reply-actions">
+                  <button class="reply-action-btn action-like" data-action="like">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <span class="action-count">24</span>
+                  </button>
+                  <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
+                </div>
+
+                <div class="reply-children">
+                  <div class="reply-item">
+                    <div class="reply-avatar">
+                      <img src="../styles/images/demo/prompt_6.jpg" alt="">
+                    </div>
+                    <div class="reply-body">
+                      <div class="reply-head">
+                        <span class="reply-author">@alex_dev</span>
+                        <span class="reply-time">1 hour ago</span>
+                      </div>
+                      <div class="reply-content">
+                        <p>Fair point. We use React Query for REST and a separate Zustand store for the socket layer, with the socket store calling <code>queryClient.invalidateQueries</code> when it receives an event that affects cached data. Best of both worlds.</p>
+                      </div>
+                      <div class="reply-actions">
+                        <button class="reply-action-btn action-like" data-action="like">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                          <span class="action-count">9</span>
+                        </button>
+                        <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reply 3 -->
+            <div class="reply-item">
+              <div class="reply-avatar">
+                <img src="../styles/images/demo/prompt_7.jpg" alt="">
+              </div>
+              <div class="reply-body">
+                <div class="reply-head">
+                  <span class="reply-author">@sam构筑</span>
+                  <span class="reply-time">1 hour ago</span>
+                </div>
+                <div class="reply-content">
+                  <p>The composition point hit hard. We had a <code>&lt;Card&gt;</code> component with 32 props including <code>showHeader</code>, <code>headerVariant</code>, <code>footerAlign</code>, <code>collapsible</code>... Splitting it into <code>&lt;Card&gt;</code>, <code>&lt;CardHeader&gt;</code>, <code>&lt;CardBody&gt;</code>, <code>&lt;CardFooter&gt;</code> with compound components removed ~400 lines of conditional logic.</p>
+                </div>
+                <div class="reply-actions">
+                  <button class="reply-action-btn action-like is-active" data-action="like">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <span class="action-count">31</span>
+                  </button>
+                  <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reply 4 -->
+            <div class="reply-item">
+              <div class="reply-avatar">
+                <img src="../styles/images/demo/prompt_8.jpg" alt="">
+              </div>
+              <div class="reply-body">
+                <div class="reply-head">
+                  <span class="reply-author">@nova_codes</span>
+                  <span class="reply-time">45 minutes ago</span>
+                </div>
+                <div class="reply-content">
+                  <p>Anyone migrated a feature-based structure to the App Router? The route colocation rules fight with the feature folder pattern and I have not found a clean answer yet. Currently duplicating some logic between <code>app/</code> routes and <code>features/</code>.</p>
+                </div>
+                <div class="reply-actions">
+                  <button class="reply-action-btn action-like" data-action="like">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <span class="action-count">15</span>
+                  </button>
+                  <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reply 5 -->
+            <div class="reply-item">
+              <div class="reply-avatar">
+                <img src="../styles/images/demo/prompt_9.jpg" alt="">
+              </div>
+              <div class="reply-body">
+                <div class="reply-head">
+                  <span class="reply-author">@kira_dev</span>
+                  <span class="reply-time">20 minutes ago</span>
+                </div>
+                <div class="reply-content">
+                  <p>Saved this thread. The &ldquo;server state is not your state&rdquo; line is going on a sticky note.</p>
+                </div>
+                <div class="reply-actions">
+                  <button class="reply-action-btn action-like" data-action="like">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <span class="action-count">6</span>
+                  </button>
+                  <button class="reply-action-btn action-reply" data-action="reply">Reply</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- REPLY EDITOR -->
+        <section class="post-reply-editor" id="replyEditor">
+          <h3 class="reply-editor-title">Write a Reply</h3>
+
+          <div class="compose-body">
+            <div class="compose-topbar">
+              <div class="compose-topbar-label">Write a reply</div>
+              <div class="compose-avatar"><img src="../styles/images/demo/prompt_1.jpg" alt="" class="compose-avatar-img"></div>
+            </div>
+            <div id="bubbleMenu" class="bubble-menu" style="display:none;">
+              <button class="bm-btn bm-heading-toggle" data-bm="heading" title="Text type">
+                <span class="bm-heading-label">H</span>
+                <svg class="bm-chevron" width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M2 3l2 2 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="bm-sep"></div>
+              <button class="bm-btn" data-bm="bold" title="Bold"><b>B</b></button>
+              <button class="bm-btn" data-bm="italic" title="Italic"><i>I</i></button>
+              <button class="bm-btn" data-bm="underline" title="Underline"><u>U</u></button>
+              <button class="bm-btn" data-bm="strike" title="Strikethrough"><s>S</s></button>
+              <button class="bm-btn" data-bm="code" title="Inline Code">&lt;/&gt;</button>
+              <button class="bm-btn" data-bm="highlight" title="Highlight">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </button>
+              <div class="bm-sep"></div>
+              <button class="bm-btn" data-bm="link" title="Link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              </button>
+            </div>
+            <div id="headingDropdown" class="heading-dropdown" style="display:none;">
+              <button class="hd-item" data-hd="paragraph" title="Plain text"><span class="hd-icon hd-text">Aa</span><span class="hd-label">Plain text</span></button>
+              <button class="hd-item" data-hd="heading1" title="Heading 1"><span class="hd-icon hd-h1">H1</span><span class="hd-label">Heading 1</span></button>
+              <button class="hd-item" data-hd="heading2" title="Heading 2"><span class="hd-icon hd-h2">H2</span><span class="hd-label">Heading 2</span></button>
+              <button class="hd-item" data-hd="heading3" title="Heading 3"><span class="hd-icon hd-h3">H3</span><span class="hd-label">Heading 3</span></button>
+            </div>
+            <div id="floatingMenu" class="floating-menu" style="display:none;">
+              <button class="fm-btn" data-fm="heading1" title="Heading 1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1"/></svg></button>
+              <button class="fm-btn" data-fm="heading2" title="Heading 2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1"/></svg></button>
+              <button class="fm-btn" data-fm="heading3" title="Heading 3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1"/></svg></button>
+              <div class="fm-sep"></div>
+              <button class="fm-btn" data-fm="bulletList" title="Bullet List"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg></button>
+              <button class="fm-btn" data-fm="orderedList" title="Numbered List"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6h11"/><path d="M10 12h11"/><path d="M10 18h11"/><path d="M4 8V4h4"/><path d="M8 8L4 4"/><path d="M4 20l4-4H4"/></svg></button>
+              <button class="fm-btn" data-fm="blockquote" title="Blockquote"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"/></svg></button>
+              <div class="fm-sep"></div>
+              <button class="fm-btn" data-fm="codeBlock" title="Code Block"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></button>
+              <button class="fm-btn" data-fm="horizontalRule" title="Divider"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"/></svg></button>
+            </div>
+            <div id="tiptapEditor" class="tiptap-editor"></div>
+            <div class="compose-bottom">
+              <div class="compose-bottom-left">
+                <span class="compose-char-count"><span id="charCounter">0</span>/500</span>
+              </div>
+              <button class="compose-submit" id="composeSubmitBtn">Post Reply</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Bottom Ad -->
+        <div class="ad-slot ad-slot-wide">
+          <div class="ad-slot-content">
+            <span class="ad-cta">NORTHWIND CAPITAL</span> &mdash; Backing open source intelligence. <a href="#" style="color:var(--gold);text-decoration:none;">Learn more &rsaquo;</a>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<div id="chrome-footer"></div>
+
+<div id="overlay-root"></div>
+
+  <script src="../src/addons/GhRank/dist/tiptap-editor.min.js"></script>
+  <script src="../js/tiptap-init.js?v=9"></script>
+  <script src="../js/code-block.js?v=5"></script>
+  <script type="text/babel" src="../js/core.js"></script>
+  <script type="text/babel">GHRANK.mountChrome();</script>
+
+</body>
+</html>
+

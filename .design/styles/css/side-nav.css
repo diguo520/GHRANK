@@ -1,0 +1,674 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   side-nav.css — GHRANK 右侧悬浮导航 + 弹出面板样式
+   ────────────────────────────────────────────────────────────────────────
+   对应 React 组件（core.js）：SideNav
+   包含：
+   1. 右侧悬浮导航按钮组（.gh-side-nav + .gh-side-nav-item）
+      —— 通知 / 消息 / 钱包 / 笔记 / 发帖 / 设置 / 回到顶部
+   2. 弹出面板（.gh-side-panel）—— 通知列表 / 消息列表 / 钱包 / 发帖分类
+   3. 面板内容项：.gh-evt（通知事件）/ .gh-msg（消息）/ .gh-wallet（钱包）/ .gh-cat（分类）
+   4. 通知徽章（.gh-side-nav-badge）含脉冲动画
+   5. 遮罩层（.gh-side-backdrop）
+   依赖 index.css 中的 CSS 变量
+   风格：EVE Online 科幻 HUD —— 悬浮按钮 + 玻璃质感面板
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ═══ 1. 右侧悬浮导航容器 ═══ */
+.gh-side-nav {
+  position: fixed;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* 滚动超过阈值后显示 */
+.gh-side-nav.is-ready {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gh-side-nav.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ═══ 2. 导航按钮 ═══ */
+.gh-side-nav-item {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.gh-side-nav-item svg {
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+.gh-side-nav-item:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(245, 197, 24, 0.3);
+}
+
+/* 面板打开时的按钮高亮 */
+.gh-side-nav-item.is-panel-open,
+.gh-side-nav-item.active {
+  background: var(--gold-subtle);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* 回到顶部按钮 */
+.gh-side-nav-top {
+  composes: gh-side-nav-item;
+}
+
+/* ═══ 3. 通知徽章 ═══ */
+.gh-side-nav-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: var(--danger);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: 0 0 6px rgba(248, 81, 73, 0.6);
+}
+
+/* 数量较多时脉冲提示 */
+.gh-side-nav-badge.is-pulse {
+  animation: pulse-badge 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(248, 81, 73, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(248, 81, 73, 0.9);
+    transform: scale(1.12);
+  }
+}
+
+/* ═══ 4. 分隔线 ═══ */
+.gh-side-nav-divider {
+  width: 24px;
+  height: 1px;
+  background: var(--border);
+  margin: var(--sp-1) 0;
+}
+
+/* ═══ 5. 面板容器与遮罩 ═══ */
+.gh-side-panels {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+}
+
+.gh-side-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  /* 移除 backdrop-filter 避免模糊面板内容 */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.gh-side-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 弹出面板 —— 从右侧滑入 */
+.gh-side-panel {
+  position: fixed;
+  right: 72px;
+  top: 50%;
+  width: 320px;
+  max-width: calc(100vw - 96px);
+  max-height: 70vh;
+  /* 使用不透明背景确保内容清晰 */
+  background: #111318;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  transform: translateY(-50%) translateX(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* 确保文字渲染清晰 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.gh-side-panel.is-open {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  pointer-events: auto;
+}
+
+/* 面板头部 */
+.gh-side-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.gh-side-panel-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.gh-side-panel-close {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.gh-side-panel-close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gh-side-panel-close:hover {
+  color: var(--danger);
+  background: var(--surface-overlay);
+}
+
+/* 面板主体（可滚动） */
+.gh-side-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-2);
+  color: var(--text);
+}
+
+/* ═══ 6. 通知事件项（.gh-evt） ═══ */
+.gh-evt {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+  position: relative;
+}
+
+.gh-evt:hover {
+  background: var(--surface-overlay);
+}
+
+/* 未读项左侧金色指示条 */
+.gh-evt.is-unread {
+  background: rgba(245, 197, 24, 0.04);
+}
+
+.gh-evt.is-unread::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 60%;
+  background: var(--gold);
+  border-radius: 1px;
+}
+
+.gh-evt-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--surface-overlay);
+}
+
+.gh-evt-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 系统通知头像（六边形 Logo） */
+.gh-evt-avatar-system {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gold-subtle);
+  clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
+  border: none;
+  overflow: visible;
+}
+
+.gh-evt-avatar-system .logo-hex {
+  width: 100%;
+  height: 100%;
+  border: none;
+  clip-path: none;
+  background: transparent;
+}
+
+.gh-evt-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.gh-evt-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-bottom: 2px;
+}
+
+.gh-evt-user {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.gh-evt-user-system { color: var(--gold); }
+
+.gh-evt-time {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.gh-evt-action {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.gh-evt-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.gh-evt-target {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cyan);
+}
+
+.gh-evt-amount {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+  background: rgba(63, 185, 80, 0.1);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* 未读小圆点 */
+.gh-evt-icon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+  margin-top: 6px;
+  box-shadow: 0 0 6px rgba(245, 197, 24, 0.6);
+}
+
+/* ═══ 7. 消息项（.gh-msg） ═══ */
+.gh-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.gh-msg:hover { background: var(--surface-overlay); }
+
+.gh-msg.is-unread {
+  background: rgba(245, 197, 24, 0.04);
+}
+
+/* 消息头像（字母占位） */
+.gh-msg-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--gold-subtle);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.gh-msg-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.gh-msg-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-bottom: 2px;
+}
+
+.gh-msg-user {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.gh-msg-time {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.gh-msg-preview {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* 消息未读小圆点 */
+.gh-msg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+  margin-top: 6px;
+  box-shadow: 0 0 6px rgba(245, 197, 24, 0.6);
+}
+
+/* ═══ 8. 钱包面板（.gh-wallet） ═══ */
+.gh-wallet-balance {
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface-overlay);
+  border-radius: 6px;
+  margin: var(--sp-2);
+}
+
+.gh-wallet-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: var(--sp-1);
+}
+
+.gh-wallet-amount {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+}
+
+.gh-wallet-num {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.gh-wallet-cur {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.gh-wallet-pending {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--green);
+  margin-top: var(--sp-1);
+}
+
+/* 钱包操作按钮 */
+.gh-wallet-actions {
+  display: flex;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+
+.gh-wallet-btn {
+  flex: 1;
+  padding: var(--sp-2);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.gh-wallet-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-subtle);
+}
+
+.gh-wallet-section-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  padding: 0 var(--sp-3);
+  margin-bottom: var(--sp-2);
+}
+
+/* 交易记录列表 */
+.gh-tx-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 var(--sp-1);
+}
+
+.gh-tx {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.gh-tx:hover { background: var(--surface-overlay); }
+
+.gh-tx-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.gh-tx-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-tx-time {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.gh-tx-amount {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* 收入绿色，支出红色 */
+.gh-tx-amount.gh-tx-in { color: var(--green); }
+.gh-tx-amount.gh-tx-out { color: var(--danger); }
+
+/* ═══ 9. 发帖分类项（.gh-cat） ═══ */
+.gh-cat {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.gh-cat:hover { background: var(--surface-overlay); }
+
+.gh-cat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--gold-subtle);
+  border-radius: 6px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.gh-cat-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gh-cat-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gh-cat-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.gh-cat-desc {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.gh-cat-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  background: var(--surface-overlay);
+  padding: 2px var(--sp-2);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ═══ 10. 响应式 ═══ */
+@media (max-width: 768px) {
+  .gh-side-nav {
+    right: 10px;
+    gap: var(--sp-1);
+  }
+
+  .gh-side-nav-item {
+    width: 36px;
+    height: 36px;
+  }
+
+  .gh-side-nav-item svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* 移动端面板贴近右侧 */
+  .gh-side-panel {
+    right: 56px;
+    width: calc(100vw - 72px);
+    max-width: 320px;
+  }
+}

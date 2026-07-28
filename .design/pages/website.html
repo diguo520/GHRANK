@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHRANK // Website Directory — Curated AI, Dev, Design &amp; Productivity Links</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/css/index.css">
+  <link rel="stylesheet" href="../styles/css/header.css">
+  <link rel="stylesheet" href="../styles/css/footer.css">
+  <link rel="stylesheet" href="../styles/css/side-nav.css">
+  <link rel="stylesheet" href="../styles/css/search-overlay.css">
+  <link rel="stylesheet" href="../styles/css/loading.css">
+  <link rel="stylesheet" href="../styles/css/website.css">
+  <!-- React 19 CJS + Babel Standalone（本地 vendor，免构建接入） -->
+  <script src="../js/vendor/react-cjs-shim.js"></script>
+  <script src="../js/vendor/babel.min.js"></script>
+</head>
+<body>
+
+<div id="chrome-root"></div>
+
+<div class="scan-line"></div>
+
+<div id="chrome-ticker"></div>
+<div id="chrome-navbar"></div>
+
+<div class="main-content">
+
+  <!-- WEBSITE LAYOUT -->
+  <div class="website-layout">
+
+    <!-- SIDEBAR NAV — categories with vertical connector line -->
+    <aside class="website-sidebar">
+      <div class="website-nav-group-title">Browse Categories</div>
+      <nav class="website-nav-tree" id="websiteNavTree">
+        <a class="website-nav-item is-active" data-category="all" href="#all">
+          <span class="website-nav-index">01</span>
+          <span class="website-nav-name">All Sites</span>
+          <span class="website-nav-count">1,284</span>
+        </a>
+        <a class="website-nav-item" data-category="ai-tools" href="#ai-tools">
+          <span class="website-nav-index">02</span>
+          <span class="website-nav-name">AI Tools</span>
+          <span class="website-nav-count">386</span>
+        </a>
+        <a class="website-nav-item" data-category="developer" href="#developer">
+          <span class="website-nav-index">03</span>
+          <span class="website-nav-name">Developer</span>
+          <span class="website-nav-count">242</span>
+        </a>
+        <a class="website-nav-item" data-category="design" href="#design">
+          <span class="website-nav-index">04</span>
+          <span class="website-nav-name">Design</span>
+          <span class="website-nav-count">198</span>
+        </a>
+        <a class="website-nav-item" data-category="productivity" href="#productivity">
+          <span class="website-nav-index">05</span>
+          <span class="website-nav-name">Productivity</span>
+          <span class="website-nav-count">156</span>
+        </a>
+        <a class="website-nav-item" data-category="learning" href="#learning">
+          <span class="website-nav-index">06</span>
+          <span class="website-nav-name">Learning</span>
+          <span class="website-nav-count">134</span>
+        </a>
+        <a class="website-nav-item" data-category="news" href="#news">
+          <span class="website-nav-index">07</span>
+          <span class="website-nav-name">News &amp; Media</span>
+          <span class="website-nav-count">89</span>
+        </a>
+        <a class="website-nav-item" data-category="open-source" href="#open-source">
+          <span class="website-nav-index">08</span>
+          <span class="website-nav-name">Open Source</span>
+          <span class="website-nav-count">76</span>
+        </a>
+      </nav>
+
+      <div class="website-nav-more">
+        <div class="website-nav-more-title">More</div>
+        <a class="website-nav-more-item" href="#">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 2v12M2 8h12"/></svg>
+          <span>Submit a Site</span>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a class="website-nav-more-item" href="#">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M8 4v4M8 11.5v.01"/></svg>
+          <span>Report Broken Link</span>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a class="website-nav-more-item" href="#">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="4" width="12" height="8"/><path d="M2 7l6 4 6-4"/></svg>
+          <span>Subscribe</span>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="website-content">
+
+      <!-- SEARCH BAR -->
+      <div class="website-search-bar">
+        <div class="website-search-input-wrap">
+          <span class="website-search-icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>
+          </span>
+          <input type="text" id="websiteSearch" placeholder="Search 1,284 sites by name, url, or description..." spellcheck="false" autocomplete="off">
+          <span class="website-search-count" id="websiteSearchCount">24 sites</span>
+        </div>
+        <div class="website-sort">
+          <label for="websiteSort">Sort</label>
+          <select id="websiteSort" class="website-sort-select">
+            <option value="popular">Popular</option>
+            <option value="newest">Newest</option>
+            <option value="alphabetical">Alphabetical</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- HERO HEADER -->
+      <header class="website-hero">
+        <div class="website-hero-eyebrow">// CURATED DIRECTORY</div>
+        <h1 class="website-hero-title">Website Directory</h1>
+        <p class="website-hero-subtitle">A hand-curated index of the tools, platforms, and communities powering the agentic web &mdash; ranked by traffic, vetted by maintainers.</p>
+      </header>
+
+      <!-- RESULT META -->
+      <div class="website-result-meta" id="websiteResultMeta">
+        <span class="website-result-meta-cat" id="websiteResultCat">All Sites</span>
+        <span class="website-result-meta-sep">/</span>
+        <span class="website-result-meta-count" id="websiteResultCount">24 results</span>
+      </div>
+
+      <!-- CARD GRID -->
+      <div class="website-grid" id="websiteGrid">
+
+        <!-- AI TOOLS -->
+        <div class="website-card" data-category="ai-tools" data-name="OpenAI" data-url="openai.com" data-desc="Creator of GPT models, ChatGPT, DALL-E, and the API platform powering the modern AI ecosystem." data-visits="4800000" onclick="window.open('https://openai.com','_blank')">
+          <div class="website-card-favicon cat-ai-tools">O</div>
+          <div class="website-card-body">
+            <div class="website-card-name">OpenAI</div>
+            <div class="website-card-url">openai.com</div>
+            <div class="website-card-desc">Creator of GPT models, ChatGPT, DALL-E, and the API platform powering the modern AI ecosystem.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-ai">AI Tools</span>
+              <span class="website-card-visits">&#x25C8; 4.8M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="ai-tools" data-name="Hugging Face" data-url="huggingface.co" data-desc="The platform where the ML community collaborates on models, datasets, and applications." data-visits="3200000" onclick="window.open('https://huggingface.co','_blank')">
+          <div class="website-card-favicon cat-ai-tools">H</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Hugging Face</div>
+            <div class="website-card-url">huggingface.co</div>
+            <div class="website-card-desc">The platform where the ML community collaborates on models, datasets, and applications.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-ai">AI Tools</span>
+              <span class="website-card-visits">&#x25C8; 3.2M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="ai-tools" data-name="Replicate" data-url="replicate.com" data-desc="Run open-source models in the cloud with a simple API, or deploy your own custom models." data-visits="980000" onclick="window.open('https://replicate.com','_blank')">
+          <div class="website-card-favicon cat-ai-tools">R</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Replicate</div>
+            <div class="website-card-url">replicate.com</div>
+            <div class="website-card-desc">Run open-source models in the cloud with a simple API, or deploy your own custom models.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-ai">AI Tools</span>
+              <span class="website-card-visits">&#x25C8; 980K visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="ai-tools" data-name="Anthropic" data-url="anthropic.com" data-desc="AI safety company building Claude, the assistant for reliable and interpretable AI systems." data-visits="4100000" onclick="window.open('https://anthropic.com','_blank')">
+          <div class="website-card-favicon cat-ai-tools">A</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Anthropic</div>
+            <div class="website-card-url">anthropic.com</div>
+            <div class="website-card-desc">AI safety company building Claude, the assistant for reliable and interpretable AI systems.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-ai">AI Tools</span>
+              <span class="website-card-visits">&#x25C8; 4.1M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="ai-tools" data-name="Cohere" data-url="cohere.com" data-desc="Enterprise-grade LLMs and retrieval APIs for search, summarization, and RAG workflows." data-visits="720000" onclick="window.open('https://cohere.com','_blank')">
+          <div class="website-card-favicon cat-ai-tools">C</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Cohere</div>
+            <div class="website-card-url">cohere.com</div>
+            <div class="website-card-desc">Enterprise-grade LLMs and retrieval APIs for search, summarization, and RAG workflows.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-ai">AI Tools</span>
+              <span class="website-card-visits">&#x25C8; 720K visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="ai-tools" data-name="Stability AI" data-url="stability.ai" data-desc="Open generative AI research lab behind Stable Diffusion and a suite of multimodal models." data-visits="640000" onclick="window.open('https://stability.ai','_blank')">
+          <div class="website-card-favicon cat-ai-tools">S</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Stability AI</div>
+            <div class="website-card-url">stability.ai</div>
+            <div class="website-card-desc">Open generative AI research lab behind Stable Diffusion and a suite of multimodal models.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-ai">AI Tools</span>
+              <span class="website-card-visits">&#x25C8; 640K visits</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEVELOPER -->
+        <div class="website-card" data-category="developer" data-name="GitHub" data-url="github.com" data-desc="The complete developer platform to build, scale, and deliver secure software." data-visits="3200000" onclick="window.open('https://github.com','_blank')">
+          <div class="website-card-favicon cat-developer">G</div>
+          <div class="website-card-body">
+            <div class="website-card-name">GitHub</div>
+            <div class="website-card-url">github.com</div>
+            <div class="website-card-desc">The complete developer platform to build, scale, and deliver secure software.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-tools">Developer</span>
+              <span class="website-card-visits">&#x25C8; 3.2M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="developer" data-name="Stack Overflow" data-url="stackoverflow.com" data-desc="The largest online community for programmers to learn, share knowledge, and advance careers." data-visits="2800000" onclick="window.open('https://stackoverflow.com','_blank')">
+          <div class="website-card-favicon cat-developer">S</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Stack Overflow</div>
+            <div class="website-card-url">stackoverflow.com</div>
+            <div class="website-card-desc">The largest online community for programmers to learn, share knowledge, and advance careers.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-tools">Developer</span>
+              <span class="website-card-visits">&#x25C8; 2.8M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="developer" data-name="MDN Web Docs" data-url="developer.mozilla.org" data-desc="Mozilla's open-source documentation for web platform standards, APIs, and browser features." data-visits="1900000" onclick="window.open('https://developer.mozilla.org','_blank')">
+          <div class="website-card-favicon cat-developer">M</div>
+          <div class="website-card-body">
+            <div class="website-card-name">MDN Web Docs</div>
+            <div class="website-card-url">developer.mozilla.org</div>
+            <div class="website-card-desc">Mozilla's open-source documentation for web platform standards, APIs, and browser features.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-tools">Developer</span>
+              <span class="website-card-visits">&#x25C8; 1.9M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="developer" data-name="Vercel" data-url="vercel.com" data-desc="The platform for frontend developers, providing the speed and reliability of serverless infrastructure." data-visits="860000" onclick="window.open('https://vercel.com','_blank')">
+          <div class="website-card-favicon cat-developer">V</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Vercel</div>
+            <div class="website-card-url">vercel.com</div>
+            <div class="website-card-desc">The platform for frontend developers, providing the speed and reliability of serverless infrastructure.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-tools">Developer</span>
+              <span class="website-card-visits">&#x25C8; 860K visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="developer" data-name="Cloudflare" data-url="cloudflare.com" data-desc="Connect, protect, and build on the internet with a global edge network and developer platform." data-visits="2400000" onclick="window.open('https://cloudflare.com','_blank')">
+          <div class="website-card-favicon cat-developer">C</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Cloudflare</div>
+            <div class="website-card-url">cloudflare.com</div>
+            <div class="website-card-desc">Connect, protect, and build on the internet with a global edge network and developer platform.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-tools">Developer</span>
+              <span class="website-card-visits">&#x25C8; 2.4M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DESIGN -->
+        <div class="website-card" data-category="design" data-name="Figma" data-url="figma.com" data-desc="The collaborative interface design tool for teams to create, prototype, and ship products together." data-visits="5200000" onclick="window.open('https://figma.com','_blank')">
+          <div class="website-card-favicon cat-design">F</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Figma</div>
+            <div class="website-card-url">figma.com</div>
+            <div class="website-card-desc">The collaborative interface design tool for teams to create, prototype, and ship products together.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-design">Design</span>
+              <span class="website-card-visits">&#x25C8; 5.2M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="design" data-name="Dribbble" data-url="dribbble.com" data-desc="The community for designers to share work, get inspired, and find their next opportunity." data-visits="1400000" onclick="window.open('https://dribbble.com','_blank')">
+          <div class="website-card-favicon cat-design">D</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Dribbble</div>
+            <div class="website-card-url">dribbble.com</div>
+            <div class="website-card-desc">The community for designers to share work, get inspired, and find their next opportunity.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-design">Design</span>
+              <span class="website-card-visits">&#x25C8; 1.4M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="design" data-name="Behance" data-url="behance.net" data-desc="Adobe's platform for creatives to showcase and discover leading creative portfolios worldwide." data-visits="1800000" onclick="window.open('https://behance.net','_blank')">
+          <div class="website-card-favicon cat-design">B</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Behance</div>
+            <div class="website-card-url">behance.net</div>
+            <div class="website-card-desc">Adobe's platform for creatives to showcase and discover leading creative portfolios worldwide.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-design">Design</span>
+              <span class="website-card-visits">&#x25C8; 1.8M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="design" data-name="Coolors" data-url="coolors.co" data-desc="Generate, explore, and export beautiful color palettes in seconds for any design project." data-visits="510000" onclick="window.open('https://coolors.co','_blank')">
+          <div class="website-card-favicon cat-design">C</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Coolors</div>
+            <div class="website-card-url">coolors.co</div>
+            <div class="website-card-desc">Generate, explore, and export beautiful color palettes in seconds for any design project.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-design">Design</span>
+              <span class="website-card-visits">&#x25C8; 510K visits</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRODUCTIVITY -->
+        <div class="website-card" data-category="productivity" data-name="Notion" data-url="notion.so" data-desc="The connected workspace for docs, wikis, and projects that helps teams move faster together." data-visits="6100000" onclick="window.open('https://notion.so','_blank')">
+          <div class="website-card-favicon cat-productivity">N</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Notion</div>
+            <div class="website-card-url">notion.so</div>
+            <div class="website-card-desc">The connected workspace for docs, wikis, and projects that helps teams move faster together.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-frontend">Productivity</span>
+              <span class="website-card-visits">&#x25C8; 6.1M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="productivity" data-name="Linear" data-url="linear.app" data-desc="The issue tracking tool built for high-performance software teams with speed and focus." data-visits="990000" onclick="window.open('https://linear.app','_blank')">
+          <div class="website-card-favicon cat-productivity">L</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Linear</div>
+            <div class="website-card-url">linear.app</div>
+            <div class="website-card-desc">The issue tracking tool built for high-performance software teams with speed and focus.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-frontend">Productivity</span>
+              <span class="website-card-visits">&#x25C8; 990K visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="productivity" data-name="Obsidian" data-url="obsidian.md" data-desc="A knowledge base that works on local Markdown files, giving you full control over your notes." data-visits="470000" onclick="window.open('https://obsidian.md','_blank')">
+          <div class="website-card-favicon cat-productivity">O</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Obsidian</div>
+            <div class="website-card-url">obsidian.md</div>
+            <div class="website-card-desc">A knowledge base that works on local Markdown files, giving you full control over your notes.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-frontend">Productivity</span>
+              <span class="website-card-visits">&#x25C8; 470K visits</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEARNING -->
+        <div class="website-card" data-category="learning" data-name="freeCodeCamp" data-url="freecodecamp.org" data-desc="Learn to code for free with thousands of interactive challenges and full certifications." data-visits="1300000" onclick="window.open('https://freecodecamp.org','_blank')">
+          <div class="website-card-favicon cat-learning">f</div>
+          <div class="website-card-body">
+            <div class="website-card-name">freeCodeCamp</div>
+            <div class="website-card-url">freecodecamp.org</div>
+            <div class="website-card-desc">Learn to code for free with thousands of interactive challenges and full certifications.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-data">Learning</span>
+              <span class="website-card-visits">&#x25C8; 1.3M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="learning" data-name="Coursera" data-url="coursera.org" data-desc="Online courses, certificates, and degrees from world-class universities and companies." data-visits="2200000" onclick="window.open('https://coursera.org','_blank')">
+          <div class="website-card-favicon cat-learning">C</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Coursera</div>
+            <div class="website-card-url">coursera.org</div>
+            <div class="website-card-desc">Online courses, certificates, and degrees from world-class universities and companies.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-data">Learning</span>
+              <span class="website-card-visits">&#x25C8; 2.2M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEWS & MEDIA -->
+        <div class="website-card" data-category="news" data-name="Hacker News" data-url="news.ycombinator.com" data-desc="A social news website focusing on computer science, startups, and the tech industry." data-visits="1100000" onclick="window.open('https://news.ycombinator.com','_blank')">
+          <div class="website-card-favicon cat-news">Y</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Hacker News</div>
+            <div class="website-card-url">news.ycombinator.com</div>
+            <div class="website-card-desc">A social news website focusing on computer science, startups, and the tech industry.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-security">News &amp; Media</span>
+              <span class="website-card-visits">&#x25C8; 1.1M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="news" data-name="TechCrunch" data-url="techcrunch.com" data-desc="Breaking technology news, startup funding rounds, and analysis of the tech industry." data-visits="1700000" onclick="window.open('https://techcrunch.com','_blank')">
+          <div class="website-card-favicon cat-news">T</div>
+          <div class="website-card-body">
+            <div class="website-card-name">TechCrunch</div>
+            <div class="website-card-url">techcrunch.com</div>
+            <div class="website-card-desc">Breaking technology news, startup funding rounds, and analysis of the tech industry.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-security">News &amp; Media</span>
+              <span class="website-card-visits">&#x25C8; 1.7M visits</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- OPEN SOURCE -->
+        <div class="website-card" data-category="open-source" data-name="Linux Foundation" data-url="linuxfoundation.org" data-desc="The nonprofit consortium enabling the open source ecosystem for projects like Linux and Kubernetes." data-visits="380000" onclick="window.open('https://linuxfoundation.org','_blank')">
+          <div class="website-card-favicon cat-open-source">L</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Linux Foundation</div>
+            <div class="website-card-url">linuxfoundation.org</div>
+            <div class="website-card-desc">The nonprofit consortium enabling the open source ecosystem for projects like Linux and Kubernetes.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-backend">Open Source</span>
+              <span class="website-card-visits">&#x25C8; 380K visits</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-card" data-category="open-source" data-name="Apache Software Foundation" data-url="apache.org" data-desc="A decentralized open source community developing 350+ projects including Kafka, Spark, and HTTP Server." data-visits="290000" onclick="window.open('https://apache.org','_blank')">
+          <div class="website-card-favicon cat-open-source">A</div>
+          <div class="website-card-body">
+            <div class="website-card-name">Apache Software Foundation</div>
+            <div class="website-card-url">apache.org</div>
+            <div class="website-card-desc">A decentralized open source community developing 350+ projects including Kafka, Spark, and HTTP Server.</div>
+            <div class="website-card-footer">
+              <span class="website-card-tag tag-backend">Open Source</span>
+              <span class="website-card-visits">&#x25C8; 290K visits</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div class="website-empty" id="websiteEmpty" hidden>
+        <div class="website-empty-icon">&#x23F3;</div>
+        <div class="website-empty-text">No sites match your filters</div>
+        <div class="website-empty-hint">Try a different search term or category</div>
+      </div>
+
+    </main>
+  </div>
+
+</div>
+
+<div id="chrome-footer"></div>
+
+<div id="overlay-root"></div>
+
+<!-- TOAST (page-local, simple) -->
+<div class="website-toast" id="websiteToast" role="status" aria-live="polite"></div>
+
+  <script type="text/babel" src="../js/core.js"></script>
+  <script type="text/babel" src="../js/website.js"></script>
+
+</body>
+</html>

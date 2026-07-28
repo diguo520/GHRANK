@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHRANK // Access Terminal — Authentication</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/css/index.css">
+  <link rel="stylesheet" href="../styles/css/header.css">
+  <link rel="stylesheet" href="../styles/css/footer.css">
+  <link rel="stylesheet" href="../styles/css/side-nav.css">
+  <link rel="stylesheet" href="../styles/css/search-overlay.css">
+  <link rel="stylesheet" href="../styles/css/loading.css">
+  <link rel="stylesheet" href="../styles/css/login.css">
+  <!-- React 19 CJS + Babel Standalone（本地 vendor，免构建接入） -->
+  <script src="../js/vendor/react-cjs-shim.js"></script>
+  <script src="../js/vendor/babel.min.js"></script>
+</head>
+<body>
+
+<div id="chrome-root"></div>
+
+<div class="scan-line"></div>
+
+<div id="chrome-ticker"></div>
+<div id="chrome-navbar"></div>
+
+<div class="main-content">
+
+  <!-- LOGIN PAGE CONTENT -->
+  <div class="login-page-wrapper">
+
+    <!-- Decorative side label (left) -->
+    <div class="login-side-label login-side-label-left">
+      <span class="login-side-text">GHRANK</span>
+      <span class="login-side-sep">//</span>
+      <span class="login-side-text">SECURE</span>
+      <span class="login-side-sep">//</span>
+      <span class="login-side-text">ACCESS</span>
+    </div>
+
+    <!-- Decorative side label (right) -->
+    <div class="login-side-label login-side-label-right">
+      <span class="login-side-hex">&#x2B22;</span>
+    </div>
+
+    <!-- Terminal Header -->
+    <div class="login-terminal-header">
+      <div class="login-terminal-header-inner">
+        <span class="login-terminal-prompt">&gt;_</span>
+        <span class="login-terminal-label">AUTHENTICATION</span>
+        <span class="login-terminal-blink typewriter">&#9646;</span>
+      </div>
+    </div>
+
+    <!-- Login Card -->
+    <div class="login-card hud-panel" id="loginCard">
+
+      <!-- Extra corner brackets for the card -->
+      <div class="login-corner login-corner-tl"></div>
+      <div class="login-corner login-corner-tr"></div>
+      <div class="login-corner login-corner-bl"></div>
+      <div class="login-corner login-corner-br"></div>
+
+      <!-- Tab Switcher -->
+      <div class="login-tabs">
+        <button class="login-tab active" data-tab="signin" id="tabSignIn">SIGN IN</button>
+        <button class="login-tab" data-tab="register" id="tabRegister">REGISTER</button>
+        <div class="login-tab-slider" id="tabSlider"></div>
+      </div>
+
+      <!-- Sign In Form -->
+      <form class="login-form" id="signinForm" data-tab-content="signin" novalidate>
+        <div class="login-field">
+          <label class="login-label" for="signinEmail">EMAIL / USERNAME</label>
+          <input class="login-input" type="text" id="signinEmail" name="email" placeholder="Enter email or username" autocomplete="username" spellcheck="false" required>
+          <div class="login-field-error" id="signinEmailError"></div>
+        </div>
+        <div class="login-field">
+          <label class="login-label" for="signinPassword">PASSWORD</label>
+          <input class="login-input" type="password" id="signinPassword" name="password" placeholder="Enter password" autocomplete="current-password" required>
+          <div class="login-field-error" id="signinPasswordError"></div>
+        </div>
+        <div class="login-options-row">
+          <label class="login-checkbox-label">
+            <input type="checkbox" class="login-checkbox" id="rememberMe">
+            <span class="login-checkbox-custom"></span>
+            <span class="login-checkbox-text">Remember me</span>
+          </label>
+          <a href="#" class="login-forgot-link">Forgot password?</a>
+        </div>
+        <button type="submit" class="login-submit-btn" id="signinSubmitBtn">
+          <span class="login-submit-text">SIGN IN</span>
+          <span class="login-submit-loader" hidden>
+            <span class="login-spinner"></span>
+            AUTHENTICATING...
+          </span>
+        </button>
+
+        <!-- Divider -->
+        <div class="login-divider">
+          <span class="login-divider-line"></span>
+          <span class="login-divider-text">OR CONTINUE WITH</span>
+          <span class="login-divider-line"></span>
+        </div>
+
+        <!-- Social Buttons -->
+        <div class="login-social-row">
+          <button type="button" class="login-social-btn" id="btnGithub">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            <span>Continue with GitHub</span>
+          </button>
+          <button type="button" class="login-social-btn" id="btnGoogle">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.76A7.18 7.18 0 0 1 12 4.82c1.73 0 3.3.6 4.53 1.77l3.37-3.37A11.97 11.97 0 0 0 12 0 12 12 0 0 0 .46 9.76l4.81 3.73z"/><path fill="#34A853" d="M12 24a11.97 11.97 0 0 0 8.31-3.25l-4.55-3.54A7.07 7.07 0 0 1 5.27 14.24L.46 18A12 12 0 0 0 12 24z"/><path fill="#4A90D9" d="M23.49 12.27c0-.82-.07-1.6-.2-2.36H12v4.63h6.44a5.52 5.52 0 0 1-2.39 3.62l4.55 3.54c2.66-2.45 4.19-6.07 4.19-9.43z"/><path fill="#FBBC05" d="M5.27 14.24a7.12 7.12 0 0 1 0-4.48L.46 6A12 12 0 0 0 .46 18l4.81-3.76z"/></svg>
+            <span>Continue with Google</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Register Form -->
+      <form class="login-form hidden" id="registerForm" data-tab-content="register" novalidate>
+        <div class="login-field">
+          <label class="login-label" for="regUsername">USERNAME</label>
+          <input class="login-input" type="text" id="regUsername" name="username" placeholder="Choose a username" autocomplete="username" spellcheck="false" required>
+          <div class="login-field-error" id="regUsernameError"></div>
+        </div>
+        <div class="login-field">
+          <label class="login-label" for="regEmail">EMAIL</label>
+          <input class="login-input" type="email" id="regEmail" name="email" placeholder="Enter your email" autocomplete="email" spellcheck="false" required>
+          <div class="login-field-error" id="regEmailError"></div>
+        </div>
+        <div class="login-field">
+          <label class="login-label" for="regPassword">PASSWORD</label>
+          <input class="login-input" type="password" id="regPassword" name="password" placeholder="Min 6 characters" autocomplete="new-password" required minlength="6">
+          <div class="login-field-error" id="regPasswordError"></div>
+        </div>
+        <div class="login-field">
+          <label class="login-label" for="regConfirm">CONFIRM PASSWORD</label>
+          <input class="login-input" type="password" id="regConfirm" name="confirmPassword" placeholder="Repeat password" autocomplete="new-password" required minlength="6">
+          <div class="login-field-error" id="regConfirmError"></div>
+        </div>
+        <button type="submit" class="login-submit-btn" id="registerSubmitBtn">
+          <span class="login-submit-text">CREATE ACCOUNT</span>
+          <span class="login-submit-loader" hidden>
+            <span class="login-spinner"></span>
+            CREATING...
+          </span>
+        </button>
+
+        <!-- Divider -->
+        <div class="login-divider">
+          <span class="login-divider-line"></span>
+          <span class="login-divider-text">OR CONTINUE WITH</span>
+          <span class="login-divider-line"></span>
+        </div>
+
+        <!-- Social Buttons -->
+        <div class="login-social-row">
+          <button type="button" class="login-social-btn" id="btnGithubReg">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            <span>Continue with GitHub</span>
+          </button>
+          <button type="button" class="login-social-btn" id="btnGoogleReg">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.76A7.18 7.18 0 0 1 12 4.82c1.73 0 3.3.6 4.53 1.77l3.37-3.37A11.97 11.97 0 0 0 12 0 12 12 0 0 0 .46 9.76l4.81 3.73z"/><path fill="#34A853" d="M12 24a11.97 11.97 0 0 0 8.31-3.25l-4.55-3.54A7.07 7.07 0 0 1 5.27 14.24L.46 18A12 12 0 0 0 12 24z"/><path fill="#4A90D9" d="M23.49 12.27c0-.82-.07-1.6-.2-2.36H12v4.63h6.44a5.52 5.52 0 0 1-2.39 3.62l4.55 3.54c2.66-2.45 4.19-6.07 4.19-9.43z"/><path fill="#FBBC05" d="M5.27 14.24a7.12 7.12 0 0 1 0-4.48L.46 6A12 12 0 0 0 .46 18l4.81-3.76z"/></svg>
+            <span>Continue with Google</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Decorative hex pattern below card -->
+    <div class="login-hex-deco">
+      <span>&#x2B22; &#x2B22; &#x2B22;</span>
+    </div>
+
+</div>
+
+<div id="chrome-footer"></div>
+
+<div id="overlay-root"></div>
+
+  <script type="text/babel" src="../js/core.js"></script>
+  <script type="text/babel" src="../js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   search-overlay.css — GHRANK 搜索覆盖层样式
+   ────────────────────────────────────────────────────────────────────────
+   对应 React 组件（core.js）：SearchOverlay
+   包含：
+   1. 全屏覆盖层 + 背景遮罩（.search-overlay / .search-overlay-backdrop）
+   2. 搜索容器 + 输入框（.search-overlay-container / .search-overlay-input）
+   3. 搜索结果列表（.search-results / .search-result-item）
+   4. 空状态提示（.search-results-empty）
+   5. 底部快捷键提示（.search-footer-hints / .search-hint kbd）
+   依赖 index.css 中的 CSS 变量
+   风格：EVE Online 科幻 HUD —— 玻璃质感 + 金色高亮
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ═══ 1. 覆盖层与遮罩 ═══ */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.search-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.search-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ═══ 2. 搜索容器 ═══ */
+.search-overlay-container {
+  position: relative;
+  max-width: 640px;
+  margin: 80px auto 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  /* 入场时轻微上滑 */
+  transform: translateY(-12px);
+  transition: transform 0.25s ease;
+}
+
+.search-overlay.open .search-overlay-container {
+  transform: translateY(0);
+}
+
+/* ═══ 3. 输入框区域 ═══ */
+.search-overlay-input-wrap {
+  display: flex;
+  align-items: center;
+  padding: var(--sp-4);
+  border-bottom: 1px solid var(--border);
+  gap: var(--sp-3);
+}
+
+.search-overlay-search-icon {
+  font-size: 20px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.search-overlay-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 500;
+  min-width: 0;
+}
+
+.search-overlay-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ESC 提示标签 */
+.search-overlay-esc {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--surface-overlay);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  letter-spacing: 1px;
+}
+
+/* ═══ 4. 搜索结果容器 ═══ */
+.search-results {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* 结果区头部标签 */
+.search-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-2) var(--sp-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.search-results-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.search-results-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gold);
+}
+
+/* ═══ 5. 空状态 ═══ */
+.search-results-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-7) var(--sp-4);
+  text-align: center;
+  gap: var(--sp-2);
+}
+
+.search-results-empty-icon {
+  font-size: 32px;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.search-results-empty-text {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.search-results-empty-hint {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ═══ 6. 单条搜索结果 ═══ */
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover,
+.search-result-item.active {
+  background: rgba(245, 197, 24, 0.08);
+}
+
+/* 左侧圆形/六边形头像 —— 首字母占位 */
+.search-result-avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--gold-subtle);
+  border: 1px solid rgba(245, 197, 24, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* 中间信息区 */
+.search-result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-result-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-desc {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 右侧元信息：星数 + 标签 */
+.search-result-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.search-result-stars {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--star-gold);
+}
+
+.search-result-tag {
+  display: inline-block;
+  padding: 1px var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: 3px;
+  background: var(--surface-overlay);
+  color: var(--text-dim);
+  border: 1px solid var(--border-subtle);
+}
+
+/* 复用 index.css 中的标签配色 */
+.search-result-tag.tag-frontend { background: rgba(57, 210, 192, 0.12); color: var(--cyan); border-color: rgba(57, 210, 192, 0.3); }
+.search-result-tag.tag-backend  { background: rgba(245, 197, 24, 0.12); color: var(--gold); border-color: rgba(245, 197, 24, 0.3); }
+.search-result-tag.tag-ai       { background: rgba(163, 113, 247, 0.12); color: var(--purple); border-color: rgba(163, 113, 247, 0.3); }
+.search-result-tag.tag-devops   { background: rgba(247, 120, 186, 0.12); color: var(--pink); border-color: rgba(247, 120, 186, 0.3); }
+.search-result-tag.tag-games    { background: rgba(232, 93, 4, 0.12); color: var(--orange); border-color: rgba(232, 93, 4, 0.3); }
+.search-result-tag.tag-mobile   { background: rgba(163, 113, 247, 0.12); color: var(--purple); border-color: rgba(163, 113, 247, 0.3); }
+.search-result-tag.tag-data     { background: rgba(57, 210, 192, 0.12); color: var(--cyan); border-color: rgba(57, 210, 192, 0.3); }
+
+/* ═══ 7. 底部快捷键提示 ═══ */
+.search-footer-hints {
+  display: flex;
+  align-items: center;
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid var(--border);
+  gap: var(--sp-4);
+}
+
+.search-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.search-hint kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 5px;
+  background: var(--surface-overlay);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1;
+}
+
+/* ═══ 8. 响应式 ═══ */
+@media (max-width: 768px) {
+  .search-overlay-container {
+    margin: 60px var(--sp-3) 0;
+    max-width: none;
+  }
+
+  .search-overlay-input-wrap {
+    padding: var(--sp-3);
+  }
+
+  .search-overlay-input {
+    font-size: 16px;
+  }
+
+  /* 移动端隐藏描述，紧凑显示 */
+  .search-result-desc {
+    display: none;
+  }
+
+  .search-result-item {
+    padding: var(--sp-2) var(--sp-3);
+  }
+
+  .search-footer-hints {
+    gap: var(--sp-3);
+    padding: var(--sp-2) var(--sp-3);
+  }
+
+  .search-hint { font-size: 10px; }
+}

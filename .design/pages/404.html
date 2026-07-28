@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — Signal Not Found | GHRANK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/css/index.css">
+  <link rel="stylesheet" href="../styles/css/header.css">
+  <link rel="stylesheet" href="../styles/css/footer.css">
+  <link rel="stylesheet" href="../styles/css/side-nav.css">
+  <link rel="stylesheet" href="../styles/css/search-overlay.css">
+  <link rel="stylesheet" href="../styles/css/loading.css">
+  <link rel="stylesheet" href="../styles/css/404.css">
+  <!-- React 19 CJS + Babel Standalone（本地 vendor，免构建接入） -->
+  <script src="../js/vendor/react-cjs-shim.js"></script>
+  <script src="../js/vendor/babel.min.js"></script>
+</head>
+<body>
+
+<div id="chrome-root"></div>
+
+<div class="scan-line"></div>
+
+<div id="chrome-ticker"></div>
+<div id="chrome-navbar"></div>
+
+<div class="main-content">
+
+  <!-- 页面主体 React 组件挂载点（ErrorPage404 通过 portal 渲染到此） -->
+  <div id="chrome-body"></div>
+
+  <!-- 404 ERROR VIEWPORT -->
+  <section class="error-viewport">
+    <div class="error-panel">
+      <div class="corner-tr"></div>
+      <div class="corner-bl"></div>
+      <div class="error-panel-content">
+
+        <!-- Radar / Sonar -->
+        <div class="radar-container">
+          <div class="radar-cross-h"></div>
+          <div class="radar-cross-v"></div>
+          <div class="radar-ring radar-ring-1"></div>
+          <div class="radar-ring radar-ring-2"></div>
+          <div class="radar-ring radar-ring-3"></div>
+          <div class="radar-sweep"></div>
+          <div class="radar-center-dot"></div>
+        </div>
+
+        <!-- 404 Code -->
+        <div class="error-code">404</div>
+
+        <!-- Error Label -->
+        <div class="error-label">// SIGNAL NOT FOUND</div>
+
+        <!-- Error Message -->
+        <p class="error-message">The page you're looking for has been lost in the void. The target coordinate does not exist in our index.</p>
+
+        <!-- System Diagnostics -->
+        <div class="error-diagnostics" id="errorDiagnostics">
+          <div class="diag-line">SYS.INIT: GHRANK ROUTING ENGINE <span class="diag-status ok">[OK]</span></div>
+          <div class="diag-line">SYS.CHECK: ROUTE_LOOKUP <span class="diag-status fail">[FAILED]</span></div>
+          <div class="diag-line">SYS.CHECK: NODE_VERIFY <span class="diag-status timeout">[TIMEOUT]</span></div>
+          <div class="diag-line">SYS.CHECK: SIGNAL_STRENGTH <span class="diag-status fail">[NULL]</span></div>
+          <div class="diag-line">SYS.CHECK: CACHE_QUERY <span class="diag-status ok">[HIT]</span></div>
+          <div class="diag-line">SYS.CHECK: INDEX_SCAN <span class="diag-status warn">[EMPTY]</span></div>
+          <div class="diag-line" id="diagLast">SYS.DIAG: AWAITING_INSTRUCTION<span class="diag-cursor"></span></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="error-actions">
+          <a href="index.html" class="btn-return">&#8592; RETURN TO BASE</a>
+          <a href="#" class="btn-report">&#9888; REPORT ANOMALY</a>
+        </div>
+
+        <!-- Quick Nav -->
+        <div class="quick-nav">
+          <div class="quick-nav-label">// QUICK NAV</div>
+          <div class="quick-nav-grid">
+            <a href="index.html" class="quick-nav-card">
+              <span class="quick-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <path d="M11 2L2 9v11h7v-7h4v7h7V9L11 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                  <path d="M7 9l4-3 4 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="quick-nav-name">HOME</span>
+            </a>
+            <a href="news.html" class="quick-nav-card">
+              <span class="quick-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <path d="M5 16V8a6 6 0 0112 0v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2 16h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M8 16v3a2 2 0 004 0v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="11" cy="7" r="1.5" fill="currentColor" opacity="0.5"/>
+                  <circle cx="11" cy="7" r="4.5" stroke="currentColor" stroke-width="1.2" opacity="0.3"/>
+                </svg>
+              </span>
+              <span class="quick-nav-name">NEWS</span>
+            </a>
+            <a href="prompt.html" class="quick-nav-card">
+              <span class="quick-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <rect x="3" y="3" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M8 9l3 2-3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M12 13h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="quick-nav-name">PROMPT</span>
+            </a>
+            <a href="search.html" class="quick-nav-card">
+              <span class="quick-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <circle cx="9.5" cy="9.5" r="6" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M14 14l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M7.5 9.5h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+                  <path d="M9.5 7.5v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+                </svg>
+              </span>
+              <span class="quick-nav-name">SEARCH</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div id="chrome-footer"></div>
+
+<div id="overlay-root"></div>
+
+  <!-- 顺序：core.js 先注册 GHRANK.mountChrome，404.js 再定义组件并自动挂载 -->
+  <script type="text/babel" src="../js/core.js"></script>
+  <script type="text/babel" src="../js/404.js"></script>
+</body>
+</html>

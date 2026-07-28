@@ -1,0 +1,435 @@
+/* ============================================================
+   404.css — GHRANK 404 错误页面样式
+   EVE Online 科幻 HUD 风格：雷达扫描 + 终端诊断 + 金色发光
+   依赖 index.css 中定义的 CSS 变量
+   ============================================================ */
+
+/* ── 错误视口容器 ── */
+.error-viewport {
+  position: relative;
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px 80px;
+  overflow: hidden;
+}
+
+/* 雷达扫描背景动画装饰 */
+.error-viewport::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1200px;
+  height: 1200px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(245, 197, 24, 0.03) 0%, transparent 60%);
+  pointer-events: none;
+  animation: error-bg-pulse 8s ease-in-out infinite;
+}
+
+@keyframes error-bg-pulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* ── 错误面板 ── */
+.error-panel {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 48px 48px 40px;
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(245, 197, 24, 0.04);
+}
+
+/* ── 面板角落装饰 ── */
+.error-panel .corner-tr,
+.error-panel .corner-bl {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+.error-panel .corner-tr {
+  top: -1px;
+  right: -1px;
+  border-top: 2px solid var(--gold);
+  border-right: 2px solid var(--gold);
+}
+
+.error-panel .corner-bl {
+  bottom: -1px;
+  left: -1px;
+  border-bottom: 2px solid var(--gold);
+  border-left: 2px solid var(--gold);
+}
+
+.error-panel-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+}
+
+/* ── 雷达/声纳装饰 ── */
+.radar-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin-bottom: 8px;
+}
+
+.radar-cross-h,
+.radar-cross-v {
+  position: absolute;
+  background: var(--border);
+}
+
+.radar-cross-h {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.radar-cross-v {
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+
+.radar-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.radar-ring-1 {
+  width: 50px;
+  height: 50px;
+  border-color: rgba(245, 197, 24, 0.2);
+}
+
+.radar-ring-2 {
+  width: 90px;
+  height: 90px;
+  border-color: rgba(245, 197, 24, 0.15);
+}
+
+.radar-ring-3 {
+  width: 130px;
+  height: 130px;
+  border-color: rgba(245, 197, 24, 0.1);
+}
+
+/* 雷达扫描旋转 */
+.radar-sweep {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70px;
+  height: 70px;
+  transform-origin: 0 0;
+  background: conic-gradient(
+    from 0deg,
+    rgba(245, 197, 24, 0.35),
+    rgba(245, 197, 24, 0.05) 60deg,
+    transparent 90deg
+  );
+  border-radius: 50%;
+  transform: translate(0, 0);
+  animation: radar-sweep-rotate 4s linear infinite;
+}
+
+@keyframes radar-sweep-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.radar-center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px var(--gold);
+  animation: radar-dot-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes radar-dot-pulse {
+  0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.4); }
+}
+
+/* ── 404 错误码（大号金色发光数字）── */
+.error-code {
+  font-family: var(--font-display);
+  font-size: 120px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--gold);
+  letter-spacing: -0.04em;
+  text-shadow:
+    0 0 30px rgba(245, 197, 24, 0.4),
+    0 0 60px rgba(245, 197, 24, 0.2);
+  margin: 8px 0 4px;
+}
+
+/* ── 错误标签 ── */
+.error-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--cyan);
+  text-transform: uppercase;
+}
+
+/* ── 错误描述消息 ── */
+.error-message {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-dim);
+  max-width: 480px;
+  margin: 0;
+}
+
+/* ── 系统诊断日志 ── */
+.error-diagnostics {
+  width: 100%;
+  max-width: 520px;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 16px 18px;
+  margin-top: 8px;
+}
+
+.diag-line {
+  display: block;
+  letter-spacing: 0.04em;
+}
+
+.diag-status {
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.diag-status.ok {
+  color: var(--green);
+}
+
+.diag-status.fail {
+  color: #F85149;
+}
+
+.diag-status.timeout {
+  color: var(--orange);
+}
+
+.diag-status.warn {
+  color: var(--gold);
+}
+
+.diag-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 12px;
+  background: var(--cyan);
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: diag-cursor-blink 1s steps(2) infinite;
+}
+
+@keyframes diag-cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* ── 操作按钮 ── */
+.error-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.btn-return,
+.btn-report {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  padding: 11px 22px;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+}
+
+.btn-return {
+  color: var(--bg);
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 16px rgba(245, 197, 24, 0.2);
+}
+
+.btn-return:hover {
+  background: #ffd633;
+  box-shadow: 0 0 24px rgba(245, 197, 24, 0.35);
+}
+
+.btn-report {
+  color: var(--text-dim);
+  background: transparent;
+}
+
+.btn-report:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(245, 197, 24, 0.04);
+}
+
+/* ── 快速导航 ── */
+.quick-nav {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.quick-nav-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.quick-nav-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.quick-nav-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 8px;
+  text-decoration: none;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.quick-nav-card:hover {
+  border-color: var(--gold);
+  background: rgba(245, 197, 24, 0.04);
+}
+
+.quick-nav-icon {
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.quick-nav-card:hover .quick-nav-icon {
+  color: var(--gold);
+}
+
+.quick-nav-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+.quick-nav-card:hover .quick-nav-name {
+  color: var(--text);
+}
+
+/* ── 响应式 ── */
+@media (max-width: 768px) {
+  .error-viewport {
+    padding: 40px 16px 60px;
+  }
+
+  .error-panel {
+    padding: 32px 24px 28px;
+  }
+
+  .error-code {
+    font-size: 80px;
+  }
+
+  .error-message {
+    font-size: 14px;
+  }
+
+  .error-diagnostics {
+    font-size: 10px;
+    padding: 14px 14px;
+  }
+
+  .quick-nav-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .error-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-return,
+  .btn-report {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .radar-container {
+    width: 110px;
+    height: 110px;
+  }
+
+  .radar-ring-3 {
+    width: 100px;
+    height: 100px;
+  }
+
+  .radar-sweep {
+    width: 55px;
+    height: 55px;
+  }
+}

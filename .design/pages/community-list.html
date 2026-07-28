@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHRANK // Community — Category</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/css/index.css">
+  <link rel="stylesheet" href="../styles/css/header.css">
+  <link rel="stylesheet" href="../styles/css/footer.css">
+  <link rel="stylesheet" href="../styles/css/side-nav.css">
+  <link rel="stylesheet" href="../styles/css/search-overlay.css">
+  <link rel="stylesheet" href="../styles/css/loading.css">
+  <link rel="stylesheet" href="../styles/css/community.css?v=7">
+  <!-- React 19 CJS + Babel Standalone（本地 vendor，免构建接入） -->
+  <script src="../js/vendor/react-cjs-shim.js"></script>
+  <script src="../js/vendor/babel.min.js"></script>
+</head>
+<body class="community-list-page">
+
+<div id="chrome-root"></div>
+<div id="chrome-body"></div>
+
+<div class="scan-line"></div>
+
+<div id="chrome-ticker"></div>
+<div id="chrome-navbar"></div>
+
+<div class="main-content">
+
+  <!-- COMMUNITY LAYOUT -->
+  <div class="community-layout">
+
+    <!-- SIDEBAR (mirrors community.html so navigation feels consistent) -->
+    <aside class="community-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Browse Sections</div>
+        <nav class="sidebar-nav" id="communityNavTree">
+          <a class="sidebar-nav-item" data-section="show" href="community-list.html?section=show">
+            <span class="sidebar-nav-icon">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10"/><path d="M5 6h6M5 9h4"/></svg>
+            </span>
+            <span class="sidebar-nav-label">Show &amp; Tell</span>
+            <span class="sidebar-nav-count" data-count-key="show">642</span>
+          </a>
+          <a class="sidebar-nav-item" data-section="questions" href="community-list.html?section=questions">
+            <span class="sidebar-nav-icon">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="5.5"/><path d="M6.5 6.5a1.5 1.5 0 0 1 3 0c0 1-.5 1.3-1 1.6-.3.2-.5.4-.5.8v.6"/><circle cx="8" cy="11.5" r="0.5" fill="currentColor"/></svg>
+            </span>
+            <span class="sidebar-nav-label">Questions</span>
+            <span class="sidebar-nav-count" data-count-key="questions">1,089</span>
+          </a>
+          <a class="sidebar-nav-item" data-section="discussions" href="community-list.html?section=discussions">
+            <span class="sidebar-nav-icon">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 4h10v6H6l-3 3V4z"/></svg>
+            </span>
+            <span class="sidebar-nav-label">Discussions</span>
+            <span class="sidebar-nav-count" data-count-key="discussions">876</span>
+          </a>
+          <a class="sidebar-nav-item" data-section="tutorials" href="community-list.html?section=tutorials">
+            <span class="sidebar-nav-icon">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 3l4 5-4 5M8 13h6"/></svg>
+            </span>
+            <span class="sidebar-nav-label">Tutorials</span>
+            <span class="sidebar-nav-count" data-count-key="tutorials">234</span>
+          </a>
+          <a class="sidebar-nav-item" data-section="news" href="community-list.html?section=news">
+            <span class="sidebar-nav-icon">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10"/><path d="M2 6h12M5 9h4M5 11h3"/></svg>
+            </span>
+            <span class="sidebar-nav-label">News &amp; Updates</span>
+            <span class="sidebar-nav-count" data-count-key="news">198</span>
+          </a>
+          <a class="sidebar-nav-item" data-section="offtopic" href="community-list.html?section=offtopic">
+            <span class="sidebar-nav-icon">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 3h8v10H4z"/><path d="M6 6h4M6 9h4"/></svg>
+            </span>
+            <span class="sidebar-nav-label">Off-Topic</span>
+            <span class="sidebar-nav-count" data-count-key="offtopic">156</span>
+          </a>
+          <a class="sidebar-nav-item" data-section="devlogs" href="community-list.html?section=devlogs">
+            <span class="sidebar-nav-icon">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="5 6 8 3 11 6"/><polyline points="5 10 8 13 11 10"/><path d="M8 3v10"/></svg>
+            </span>
+            <span class="sidebar-nav-label">Dev Logs</span>
+            <span class="sidebar-nav-count" data-count-key="devlogs">89</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Community Stats</div>
+        <div class="community-stats-grid">
+          <div class="community-stat-card">
+            <div class="community-stat-card-value">48.3K</div>
+            <div class="community-stat-card-label">Members</div>
+          </div>
+          <div class="community-stat-card">
+            <div class="community-stat-card-value" id="communityOnline">1,247</div>
+            <div class="community-stat-card-label">Online</div>
+          </div>
+          <div class="community-stat-card">
+            <div class="community-stat-card-value">186</div>
+            <div class="community-stat-card-label">Posts Today</div>
+          </div>
+          <div class="community-stat-card">
+            <div class="community-stat-card-value">1,432</div>
+            <div class="community-stat-card-label">Replies Today</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <a href="community-new.html" class="sidebar-new-post-btn">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v10M3 8h10"/></svg>
+          New Post
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="ad-slot ad-slot-sidebar">
+          <div class="ad-slot-content">
+            <div class="ad-line-1">Sponsored</div>
+            <div class="ad-line-2">VEX LABS</div>
+            <div class="ad-line-3">Build faster. Ship smarter.</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="community-content">
+
+      <!-- Breadcrumb -->
+      <div class="section-breadcrumb">
+        <a href="community.html">Community</a>
+        <span class="crumb-sep">›</span>
+        <span class="crumb-current" id="sectionCrumb">Category</span>
+      </div>
+
+      <!-- Section hero (compact) -->
+      <div class="community-hero" id="sectionHero">
+        <div class="section-hero-row">
+          <div class="section-hero-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16v11H8l-4 4V5z"/></svg>
+          </div>
+          <div>
+            <div class="community-hero-eyebrow">// GHRANK COMMUNITY</div>
+            <h1 class="community-hero-title" id="sectionTitle">Category</h1>
+            <p class="community-hero-sub" id="sectionCount">— threads</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs (same semantics as community.html) -->
+      <div class="community-tabs" id="communityTabs">
+        <button class="community-tab" data-tab="All">All</button>
+        <button class="community-tab" data-tab="New">New</button>
+        <button class="community-tab" data-tab="Hot">Hot Topics</button>
+        <button class="community-tab" data-tab="Latest">Latest Replies</button>
+        <button class="community-tab" data-tab="Top">Most Replies</button>
+      </div>
+
+      <!-- Thread List — 静态骨架屏（JS 渲染真实帖子时 innerHTML 直接替换） -->
+      <div class="thread-list" id="threadList">
+        <div class="skel-thread-item">
+          <div class="skel-circle"></div>
+          <div class="skel-lines"><div class="skel-bar" style="width:60%;height:14px"></div><div class="skel-bar medium" style="height:11px"></div></div>
+          <div class="skel-circle sm"></div>
+        </div>
+        <div class="skel-thread-item">
+          <div class="skel-circle"></div>
+          <div class="skel-lines"><div class="skel-bar" style="width:45%;height:14px"></div><div class="skel-bar medium" style="height:11px"></div></div>
+          <div class="skel-circle sm"></div>
+        </div>
+        <div class="skel-thread-item">
+          <div class="skel-circle"></div>
+          <div class="skel-lines"><div class="skel-bar" style="width:70%;height:14px"></div><div class="skel-bar medium" style="height:11px"></div></div>
+          <div class="skel-circle sm"></div>
+        </div>
+        <div class="skel-thread-item">
+          <div class="skel-circle"></div>
+          <div class="skel-lines"><div class="skel-bar" style="width:55%;height:14px"></div><div class="skel-bar medium" style="height:11px"></div></div>
+          <div class="skel-circle sm"></div>
+        </div>
+        <div class="skel-thread-item">
+          <div class="skel-circle"></div>
+          <div class="skel-lines"><div class="skel-bar" style="width:65%;height:14px"></div><div class="skel-bar medium" style="height:11px"></div></div>
+          <div class="skel-circle sm"></div>
+        </div>
+        <div class="skel-thread-item">
+          <div class="skel-circle"></div>
+          <div class="skel-lines"><div class="skel-bar" style="width:50%;height:14px"></div><div class="skel-bar medium" style="height:11px"></div></div>
+          <div class="skel-circle sm"></div>
+        </div>
+      </div>
+
+      <!-- INFINITE SCROLL SENTINEL (unified with index) -->
+      <div class="infinite-scroll-sentinel" id="threadLoader">
+        <div class="scroll-loader">
+          <div class="scroll-loader-spinner"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+</div>
+
+<div id="chrome-footer"></div>
+
+<div id="overlay-root"></div>
+
+<!-- COMMUNITY TOAST -->
+<div class="community-toast" id="communityToast"></div>
+
+<script type="text/babel" src="../js/core.js?v=3"></script>
+<script type="text/babel" src="../js/community.js?v=17"></script>
+
+</body>
+</html>

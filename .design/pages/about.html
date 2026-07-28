@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHRANK // About — Mission, Sponsors, Changelog &amp; Terms</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/css/index.css">
+  <link rel="stylesheet" href="../styles/css/header.css">
+  <link rel="stylesheet" href="../styles/css/footer.css">
+  <link rel="stylesheet" href="../styles/css/side-nav.css">
+  <link rel="stylesheet" href="../styles/css/search-overlay.css">
+  <link rel="stylesheet" href="../styles/css/loading.css">
+  <link rel="stylesheet" href="../styles/css/about.css">
+  <!-- React 19 CJS + Babel Standalone（本地 vendor，免构建接入） -->
+  <script src="../js/vendor/react-cjs-shim.js"></script>
+  <script src="../js/vendor/babel.min.js"></script>
+</head>
+<body>
+
+<div id="chrome-root"></div>
+
+<div class="scan-line"></div>
+
+<div id="chrome-ticker"></div>
+<div id="chrome-navbar"></div>
+
+<div class="main-content">
+
+  <!-- ABOUT LAYOUT -->
+  <div class="about-layout">
+
+    <!-- SIDEBAR NAV — 参考图片：浏览目录 + 竖向连线 + 当前项高亮 + 更多入口 -->
+    <aside class="about-sidebar">
+      <div class="about-nav-group-title">Browse Directory</div>
+      <nav class="about-nav-tree" id="aboutNavTree">
+        <a class="about-nav-item is-active" data-panel="about" href="#about">
+          <span class="about-nav-index">01</span>
+          <span>About Us</span>
+        </a>
+        <a class="about-nav-item" data-panel="sponsors" href="#sponsors">
+          <span class="about-nav-index">02</span>
+          <span>Sponsors</span>
+        </a>
+        <a class="about-nav-item" data-panel="changelog" href="#changelog">
+          <span class="about-nav-index">03</span>
+          <span>Changelog</span>
+        </a>
+        <a class="about-nav-item" data-panel="terms" href="#terms">
+          <span class="about-nav-index">04</span>
+          <span>Terms of Service</span>
+        </a>
+      </nav>
+
+      <div class="about-nav-more">
+        <div class="about-nav-more-title">More Entry Points</div>
+        <a class="about-nav-more-item" href="index.html">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4h12M2 8h12M2 12h8"/></svg>
+          <span>Browse Rankings</span>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a class="about-nav-more-item" href="prompt.html">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10"/><path d="M5 6h6M5 9h4"/></svg>
+          <span>Prompt Marketplace</span>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a class="about-nav-more-item" href="search.html">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>
+          <span>Search</span>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT — 无刷新切换面板 -->
+    <main class="about-content">
+
+      <!-- ── Panel 01: About Us ── -->
+      <section class="about-panel is-active" id="panel-about">
+        <header class="about-panel-header">
+          <div class="about-panel-eyebrow">Section 01 / Mission</div>
+          <h1 class="about-panel-title">About GHRANK</h1>
+          <p class="about-panel-subtitle">Open source intelligence for the agentic web &mdash; ranked, scored, and delivered in real time.</p>
+        </header>
+
+        <div class="about-prose">
+          <p>GHRANK is an independent intelligence platform that tracks, scores, and ranks open source repositories, AI agents, prompt assets, and skills across the global developer ecosystem. Our scoring model combines GitHub activity, community impact, time-decay weighting, and market signals to surface what actually matters.</p>
+
+          <p>We believe open source intelligence should be transparent, traceable, and accessible. Every ranking on GHRANK can be inspected &mdash; the factors, the weights, and the raw signals are all visible to the community.</p>
+
+          <div class="about-stats-grid">
+            <div class="about-stat-card">
+              <div class="about-stat-val">2,400+</div>
+              <div class="about-stat-label">Sources Tracked</div>
+            </div>
+            <div class="about-stat-card">
+              <div class="about-stat-val">186K</div>
+              <div class="about-stat-label">Repos Indexed</div>
+            </div>
+            <div class="about-stat-card">
+              <div class="about-stat-val">14</div>
+              <div class="about-stat-label">Core Maintainers</div>
+            </div>
+          </div>
+
+          <h3>What We Do</h3>
+          <ul>
+            <li>Aggregate GitHub, marketplace, and community signals into a single weighted score</li>
+            <li>Rank repositories, prompts, and agent skills by real impact &mdash; not just stars</li>
+            <li>Provide a marketplace where creators can publish and monetize intelligence assets</li>
+            <li>Maintain a transparent, auditable scoring methodology with time-decay weighting</li>
+          </ul>
+
+          <h3>Core Principles</h3>
+          <ul>
+            <li><strong>Transparency</strong> &mdash; scoring factors and weights are public</li>
+            <li><strong>Independence</strong> &mdash; rankings cannot be bought or sponsored</li>
+            <li><strong>Community</strong> &mdash; open feedback channels for every ranked entity</li>
+            <li><strong>Privacy</strong> &mdash; no tracking pixels, no behavioral profiling</li>
+          </ul>
+
+          <h3>Team</h3>
+          <div class="about-team-grid">
+            <div class="about-team-card">
+              <div class="about-team-avatar">AS</div>
+              <div>
+                <div class="about-team-name">AlexShader</div>
+                <div class="about-team-role">Founder / Scoring</div>
+              </div>
+            </div>
+            <div class="about-team-card">
+              <div class="about-team-avatar">RV</div>
+              <div>
+                <div class="about-team-name">Raven Vex</div>
+                <div class="about-team-role">Lead Engineer</div>
+              </div>
+            </div>
+            <div class="about-team-card">
+              <div class="about-team-avatar">MK</div>
+              <div>
+                <div class="about-team-name">Mira Kade</div>
+                <div class="about-team-role">Community Ops</div>
+              </div>
+            </div>
+            <div class="about-team-card">
+              <div class="about-team-avatar">JT</div>
+              <div>
+                <div class="about-team-name">Jin Tao</div>
+                <div class="about-team-role">Marketplace</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Panel 02: Sponsors ── -->
+      <section class="about-panel" id="panel-sponsors">
+        <header class="about-panel-header">
+          <div class="about-panel-eyebrow">Section 02 / Backers</div>
+          <h1 class="about-panel-title">Sponsors</h1>
+          <p class="about-panel-subtitle">Organizations and individuals backing GHRANK&rsquo;s infrastructure and independence.</p>
+        </header>
+
+        <div class="about-prose">
+          <p>GHRANK is community-funded. Sponsorships cover infrastructure, data ingestion, and full-time maintainers &mdash; never ranking placement. Rankings are independent of sponsorship status, always.</p>
+
+          <h3>Tiered Backers</h3>
+          <div class="sponsor-grid">
+            <div class="sponsor-card">
+              <div class="sponsor-tier">Platinum</div>
+              <div class="sponsor-name">Vex Labs</div>
+              <div class="sponsor-amount">$50,000 / yr</div>
+            </div>
+            <div class="sponsor-card">
+              <div class="sponsor-tier">Platinum</div>
+              <div class="sponsor-name">Northwind Capital</div>
+              <div class="sponsor-amount">$50,000 / yr</div>
+            </div>
+            <div class="sponsor-card">
+              <div class="sponsor-tier">Gold</div>
+              <div class="sponsor-name">Hyperion AI</div>
+              <div class="sponsor-amount">$20,000 / yr</div>
+            </div>
+            <div class="sponsor-card">
+              <div class="sponsor-tier">Gold</div>
+              <div class="sponsor-name">ByteForge</div>
+              <div class="sponsor-amount">$20,000 / yr</div>
+            </div>
+            <div class="sponsor-card">
+              <div class="sponsor-tier">Silver</div>
+              <div class="sponsor-name">OpenSignal</div>
+              <div class="sponsor-amount">$8,000 / yr</div>
+            </div>
+            <div class="sponsor-card">
+              <div class="sponsor-tier">Silver</div>
+              <div class="sponsor-name">Quantum Bridge</div>
+              <div class="sponsor-amount">$8,000 / yr</div>
+            </div>
+          </div>
+
+          <h3>How Sponsorship Works</h3>
+          <ul>
+            <li>Sponsorships fund infrastructure, data pipelines, and maintainer stipends only</li>
+            <li>Sponsors receive no ranking advantage &mdash; the scoring model is independent</li>
+            <li>All sponsors are listed publicly here with their tier and contribution amount</li>
+            <li>Sponsors may display a &ldquo;Backs GHRANK&rdquo; badge; this is the only perk</li>
+          </ul>
+
+          <h3>Become a Sponsor</h3>
+          <p>Interested in backing open source intelligence? Reach out at <span style="color:var(--gold);font-family:var(--font-mono);">sponsors@ghrank.io</span> and we&rsquo;ll walk you through the tiers and what they fund.</p>
+        </div>
+      </section>
+
+      <!-- ── Panel 03: Changelog ── -->
+      <section class="about-panel" id="panel-changelog">
+        <header class="about-panel-header">
+          <div class="about-panel-eyebrow">Section 03 / Releases</div>
+          <h1 class="about-panel-title">Changelog</h1>
+          <p class="about-panel-subtitle">Every shipped improvement, fix, and breaking change &mdash; newest first.</p>
+        </header>
+
+        <div class="about-prose">
+          <div class="changelog-timeline">
+            <div class="changelog-entry">
+              <span class="changelog-version">v2.4.0</span>
+              <span class="changelog-date">2026-07-26</span>
+              <ul class="changelog-list">
+                <li><span class="changelog-tag changelog-tag-new">New</span>Prompt detail page with carousel preview and reward/tipping flow</li>
+                <li><span class="changelog-tag changelog-tag-new">New</span>Sidebar scroll-switching navigation for About / Sponsors / Changelog / Terms</li>
+                <li><span class="changelog-tag changelog-tag-imp">Imp</span>Login-gated interactions: follow, tip, bookmark, reply, and review composer</li>
+                <li><span class="changelog-tag changelog-tag-fix">Fix</span>Toast notifications now consistently fired for all auth-gated actions</li>
+              </ul>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-version">v2.3.1</span>
+              <span class="changelog-date">2026-07-12</span>
+              <ul class="changelog-list">
+                <li><span class="changelog-tag changelog-tag-fix">Fix</span>Time-decay weighting corrected for repositories inactive &gt;180 days</li>
+                <li><span class="changelog-tag changelog-tag-fix">Fix</span>Search overlay escape-key regression on Firefox</li>
+                <li><span class="changelog-tag changelog-tag-imp">Imp</span>Ticker animation GPU-composited for smoother scrolling</li>
+              </ul>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-version">v2.3.0</span>
+              <span class="changelog-date">2026-06-28</span>
+              <ul class="changelog-list">
+                <li><span class="changelog-tag changelog-tag-new">New</span>Agent Skills marketplace with SOC occupational classification</li>
+                <li><span class="changelog-tag changelog-tag-new">New</span>User center sidebar with notebook previews and session stats</li>
+                <li><span class="changelog-tag changelog-tag-imp">Imp</span>Scoring model v3 &mdash; now weights community impact 2&times; over raw stars</li>
+              </ul>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-version">v2.2.0</span>
+              <span class="changelog-date">2026-05-15</span>
+              <ul class="changelog-list">
+                <li><span class="changelog-tag changelog-tag-new">New</span>Tiptap-based Notion-like review composer with bubble menu</li>
+                <li><span class="changelog-tag changelog-tag-new">New</span>Live stats row on prompt detail with real-time view counts</li>
+                <li><span class="changelog-tag changelog-tag-fix">Fix</span>Avatar resolver now gracefully falls back to initials on 404</li>
+              </ul>
+            </div>
+            <div class="changelog-entry">
+              <span class="changelog-version">v2.1.0</span>
+              <span class="changelog-date">2026-04-02</span>
+              <ul class="changelog-list">
+                <li><span class="changelog-tag changelog-tag-new">New</span>Cinematic dark theme with gold/cyan accent system</li>
+                <li><span class="changelog-tag changelog-tag-imp">Imp</span>Navigation restructured into 7 primary sections</li>
+                <li><span class="changelog-tag changelog-tag-imp">Imp</span>Loading sequence with scan-line and entrance animations</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Panel 04: Terms of Service ── -->
+      <section class="about-panel" id="panel-terms">
+        <header class="about-panel-header">
+          <div class="about-panel-eyebrow">Section 04 / Legal</div>
+          <h1 class="about-panel-title">Terms of Service</h1>
+          <p class="about-panel-subtitle">The agreement between you and GHRANK. Last updated 2026-07-26.</p>
+        </header>
+
+        <div class="about-prose">
+          <p>By accessing GHRANK you agree to the terms below. These terms are written in plain language &mdash; if a section is ambiguous, the plain-language meaning controls.</p>
+
+          <div class="terms-block">
+            <h4>1. Acceptance of Terms</h4>
+            <p>By accessing or using GHRANK (&ldquo;the Service&rdquo;), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service.</p>
+          </div>
+
+          <div class="terms-block">
+            <h4>2. Use of the Service</h4>
+            <p>You may use GHRANK for personal, educational, and commercial research. You may not scrape, resell, or republish ranking data wholesale without attribution. Automated access must respect our rate limits and identify the client.</p>
+          </div>
+
+          <div class="terms-block">
+            <h4>3. Accounts</h4>
+            <p>Some features require an account. You are responsible for safeguarding your credentials and for all activity under your account. We may suspend accounts that violate these terms or engage in abuse, spam, or manipulation.</p>
+          </div>
+
+          <div class="terms-block">
+            <h4>4. Marketplace &amp; Transactions</h4>
+            <p>The GHRANK marketplace allows creators to publish prompts and skills. Purchases are between you and the creator; GHRANK facilitates the transaction but is not a party to it. Tips and rewards are non-refundable except in cases of demonstrable fraud.</p>
+          </div>
+
+          <div class="terms-block">
+            <h4>5. Rankings &amp; Scoring</h4>
+            <p>Rankings are generated by an automated scoring model and are provided &ldquo;as is.&rdquo; We do not guarantee the accuracy, completeness, or timeliness of any ranking. Rankings do not constitute an endorsement. Sponsorship does not influence ranking placement.</p>
+          </div>
+
+          <div class="terms-block">
+            <h4>6. Intellectual Property</h4>
+            <p>GHRANK&rsquo;s software, design, and scoring methodology are protected by intellectual property laws. Creator-published content remains the property of the creator. You retain rights to content you submit and grant GHRANK a license to display it within the Service.</p>
+          </div>
+
+          <div class="terms-block">
+            <h4>7. Privacy</h4>
+            <p>We collect minimal data necessary to operate the Service. We do not sell personal data, deploy behavioral tracking pixels, or profile users for advertising. See our Privacy Policy for details.</p>
+          </div>
+
+          <div class="terms-block">
+            <h4>8. Termination</h4>
+            <p>You may delete your account at any time. We may suspend or terminate access if you violate these Terms or pose a risk to the Service, other users, or third parties.</p>
+          </div>
+
+          <div class="terms-block">
+            <h4>9. Changes to These Terms</h4>
+            <p>We may update these Terms periodically. Material changes will be announced via the Changelog and, where required, by email. Continued use after changes take effect constitutes acceptance.</p>
+          </div>
+
+          <div class="terms-block">
+            <h4>10. Contact</h4>
+            <p>Questions about these terms? Reach out at <span style="color:var(--gold);font-family:var(--font-mono);">legal@ghrank.io</span>.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="about-back-top">
+        <a href="#about" data-panel="about">&uarr; BACK TO TOP</a>
+      </div>
+
+    </main>
+  </div>
+
+</div>
+
+<div id="chrome-footer"></div>
+
+<div id="overlay-root"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//   ABOUT PAGE — Sidebar scroll-switching navigation
+//   无刷新切换：点击侧边栏导航项 → 切换主内容面板
+//   支持 hash 路由 + 键盘上下方向键 + 滚动同步高亮
+// ═══════════════════════════════════════════════════════════════
+(function() {
+  'use strict';
+
+  var navItems = document.querySelectorAll('.about-nav-item[data-panel]');
+  var panels = document.querySelectorAll('.about-panel');
+  var backTopLink = document.querySelector('.about-back-top a[data-panel]');
+
+  function activatePanel(name) {
+    // 切换导航高亮
+    for (var i = 0; i < navItems.length; i++) {
+      var item = navItems[i];
+      if (item.getAttribute('data-panel') === name) {
+        item.classList.add('is-active');
+      } else {
+        item.classList.remove('is-active');
+      }
+    }
+    // 切换面板显示
+    for (var j = 0; j < panels.length; j++) {
+      var panel = panels[j];
+      if (panel.id === 'panel-' + name) {
+        panel.classList.add('is-active');
+      } else {
+        panel.classList.remove('is-active');
+      }
+    }
+    // 更新 hash（无刷新）
+    if (location.hash !== '#' + name) {
+      history.replaceState(null, '', '#' + name);
+    }
+    // 滚动到内容顶部（保留 sticky nav 上方空间）
+    var layout = document.querySelector('.about-layout');
+    if (layout) {
+      var top = layout.getBoundingClientRect().top + window.pageYOffset - 80;
+      if (window.pageYOffset > top + 20) {
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+    }
+  }
+
+  // 点击导航项
+  for (var k = 0; k < navItems.length; k++) {
+    navItems[k].addEventListener('click', function(e) {
+      e.preventDefault();
+      activatePanel(this.getAttribute('data-panel'));
+    });
+  }
+
+  // 返回顶部链接
+  if (backTopLink) {
+    backTopLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      activatePanel('about');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // 初始 hash 路由
+  var validPanels = ['about', 'sponsors', 'changelog', 'terms'];
+  var initial = location.hash.replace('#', '');
+  if (validPanels.indexOf(initial) === -1) initial = 'about';
+  activatePanel(initial);
+
+  // hash 变化时同步（支持浏览器前进/后退）
+  window.addEventListener('hashchange', function() {
+    var name = location.hash.replace('#', '');
+    if (validPanels.indexOf(name) !== -1) {
+      activatePanel(name);
+    }
+  });
+
+  // 键盘方向键切换（上下）
+  document.addEventListener('keydown', function(e) {
+    // 忽略输入框内的按键
+    var tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      var current = location.hash.replace('#', '');
+      if (validPanels.indexOf(current) === -1) current = 'about';
+      var idx = validPanels.indexOf(current);
+      if (e.key === 'ArrowDown') {
+        idx = Math.min(validPanels.length - 1, idx + 1);
+      } else {
+        idx = Math.max(0, idx - 1);
+      }
+      activatePanel(validPanels[idx]);
+      e.preventDefault();
+    }
+  });
+})();
+</script>
+
+  <script type="text/babel" src="../js/core.js"></script>
+  <script type="text/babel">GHRANK.mountChrome();</script>
+
+</body>
+</html>
