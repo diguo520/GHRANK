@@ -102,6 +102,56 @@
       footerText: 'Prompt Marketplace &mdash; Trade intelligence. Powered by GHRANK.',
       footerLinks: ['About Us', 'Sponsors', 'Changelog', 'Terms']
     },
+    skills: {
+      tickerLabel: 'SKILLS FEED',
+      tickerItems: [
+        { text: 'claude-code <span>TOP</span>', href: 'skills-detail.html?id=skill-1' },
+        { text: 'ai-sdk <span>HOT</span>', href: 'skills-detail.html?id=skill-9' },
+        { text: 'superpowers <span>NEW</span>', href: 'skills-detail.html?id=skill-25' },
+        { text: 'browser-use <span>+12%</span>', href: 'skills-detail.html?id=skill-41' },
+        { text: 'remotion <span>TRENDING</span>', href: 'skills-detail.html?id=skill-57' },
+        { text: 'cloudflare-workers <span>+89 uses</span>', href: 'skills-detail.html?id=skill-73' }
+      ],
+      searchPlaceholder: 'Search skills...',
+      footerText: 'GHRANK Skills Market &mdash; Discover, compare and install Agent Skills.',
+      footerLinks: ['About Us', 'Sponsors', 'Changelog', 'Terms']
+    },
+    'skills-detail': {
+      tickerLabel: 'SKILLS FEED',
+      tickerItems: [
+        { text: 'claude-code <span>TOP</span>', href: 'skills-detail.html?id=skill-1' },
+        { text: 'ai-sdk <span>HOT</span>', href: 'skills-detail.html?id=skill-9' },
+        { text: 'superpowers <span>NEW</span>', href: 'skills-detail.html?id=skill-25' },
+        { text: 'browser-use <span>+12%</span>', href: 'skills-detail.html?id=skill-41' },
+        { text: 'remotion <span>TRENDING</span>', href: 'skills-detail.html?id=skill-57' },
+        { text: 'cloudflare-workers <span>+89 uses</span>', href: 'skills-detail.html?id=skill-73' }
+      ],
+      searchPlaceholder: 'Search skills...',
+      footerText: 'GHRANK Skills Market &mdash; Discover, compare and install Agent Skills.',
+      footerLinks: ['About Us', 'Sponsors', 'Changelog', 'Terms']
+    },
+    'skills-owner': {
+      tickerLabel: 'SKILLS FEED',
+      tickerItems: [
+        { text: 'Anthropics <span>8 skills</span>', href: 'skills-owner.html?owner=anthropics' },
+        { text: 'Vercel Labs <span>8 skills</span>', href: 'skills-owner.html?owner=vercel-labs' },
+        { text: 'ByteDance <span>8 skills</span>', href: 'skills-owner.html?owner=bytedance' }
+      ],
+      searchPlaceholder: 'Search skills...',
+      footerText: 'GHRANK Skills Market &mdash; Creator profiles and published skills.',
+      footerLinks: ['About Us', 'Sponsors', 'Changelog', 'Terms']
+    },
+    'skills-categories': {
+      tickerLabel: 'SKILLS FEED',
+      tickerItems: [
+        { text: 'Development <span>7.4K skills</span>', href: 'skills.html' },
+        { text: 'Tools <span>6.6K skills</span>', href: 'skills.html' },
+        { text: 'Data &amp; AI <span>4.3K skills</span>', href: 'skills.html' }
+      ],
+      searchPlaceholder: 'Search skills...',
+      footerText: 'GHRANK Skills Market &mdash; Browse all skill categories.',
+      footerLinks: ['About Us', 'Sponsors', 'Changelog', 'Terms']
+    },
     detail: {
       tickerLabel: 'LIVE FEED',
       tickerItems: [

@@ -225,7 +225,7 @@
    ═══════════════════════════════════════════════════════════════ */
 .prompt-card-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   grid-auto-rows: 200px;
   grid-auto-flow: dense;
   gap: 16px;
@@ -417,30 +417,16 @@
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
-.tag-image {
-  color: var(--cyan);
-  background: rgba(57, 210, 192, 0.15);
-  border: 1px solid var(--cyan-dim);
-}
-.tag-animation {
-  color: var(--purple);
-  background: rgba(163, 113, 247, 0.15);
-  border: 1px solid var(--purple-dim);
-}
-.tag-video {
-  color: var(--orange);
-  background: rgba(232, 93, 4, 0.15);
-  border: 1px solid var(--orange-dim);
-}
-.tag-html {
-  color: var(--green);
-  background: rgba(63, 185, 80, 0.15);
-  border: 1px solid var(--green-dim);
-}
+/* 图片卡片上的标签统一使用深色底 + 金色字/边框，确保在复杂图片上依然清晰可读 */
+.tag-image,
+.tag-animation,
+.tag-video,
+.tag-html,
 .tag-data {
-  color: var(--pink);
-  background: rgba(247, 120, 186, 0.15);
-  border: 1px solid var(--pink-dim);
+  color: var(--gold);
+  background: rgba(8, 8, 10, 0.78);
+  border: 1px solid var(--border-gold);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -933,7 +919,7 @@
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 1200px) {
   .prompt-card-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
   .listing-grid .prompt-card-grid {
     grid-template-columns: repeat(2, 1fr);

@@ -1232,11 +1232,16 @@
     }));
   }
 
-  /* ── 自动挂载到 GHRANK chrome 层 ── */
-  // 使用 auto-detect：mountChrome() 会根据 URL 自动识别 'community' 或 'community-list'
-  if (global.GHRANK && typeof global.GHRANK.mountChrome === 'function') {
-    global.GHRANK.mountChrome(null, CommunityPage);
-  } else {
-    console.error('[GHRANK/Community] GHRANK.mountChrome 未找到，请确保 core.js 先于 community.js 加载');
+  /* ── 自动挂载到 GHRANK chrome 层 ──
+     babel 外部脚本执行顺序不保证，core.js 可能尚未编译完成；
+     通过轮询等待 GHRANK.mountChrome 就绪后再挂载，避免竞态导致 chrome 缺失 */
+  function mountWhenReady() {
+    if (global.GHRANK && typeof global.GHRANK.mountChrome === 'function') {
+      // auto-detect：mountChrome() 会根据 URL 自动识别 'community' 或 'community-list'
+      global.GHRANK.mountChrome(null, CommunityPage);
+    } else {
+      setTimeout(mountWhenReady, 50);
+    }
   }
+  mountWhenReady();
 })(window);

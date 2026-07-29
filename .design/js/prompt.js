@@ -28,6 +28,7 @@
    ═══════════════════════════════════════════════════════════════════════ */
 (function (global) {
   'use strict';
+  console.log('[prompt.js] IIFE loaded');
 
   var { useState, useEffect, useCallback, useRef, useMemo } = React;
 
@@ -305,6 +306,47 @@
   // 暴露为全局，供打赏按钮等其他模块复用同款底部 toast
   global.showToast = showToast;
 
+  // ═══════════════════════════════════════════════════════════════
+  // REPLY EDITOR HELPERS — 轻量级 contenteditable 回复编辑器
+  // prompt-detail.html 的 .reply-tiptap-host 作为编辑宿主；
+  // 不依赖完整 Tiptap 包，保证每个回复框都能独立初始化。
+  // ═══════════════════════════════════════════════════════════════
+  function initReplyEditor(formOrHost, initialText) {
+    var host = formOrHost.classList && formOrHost.classList.contains('reply-tiptap-host')
+      ? formOrHost
+      : formOrHost.querySelector('.reply-tiptap-host');
+    if (!host) return;
+    host.setAttribute('contenteditable', 'true');
+    host.setAttribute('role', 'textbox');
+    host.setAttribute('aria-multiline', 'true');
+    if (initialText) {
+      host.textContent = initialText;
+    }
+    // 聚焦并移动光标到末尾
+    host.focus();
+    var range = document.createRange();
+    range.selectNodeContents(host);
+    range.collapse(false);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  function destroyReplyEditor(formOrHost) {
+    var host = formOrHost.classList && formOrHost.classList.contains('reply-tiptap-host')
+      ? formOrHost
+      : formOrHost.querySelector('.reply-tiptap-host');
+    if (!host) return;
+    host.setAttribute('contenteditable', 'false');
+    host.blur();
+  }
+
+  function getReplyText(form) {
+    var host = form ? form.querySelector('.reply-tiptap-host') : null;
+    if (!host) return '';
+    return (host.textContent || '').trim();
+  }
+
   // 创建评论 HTML
   function createReviewHTML(username, comment, rating, helpful, avatarIndex, includeImages, activeFilter) {
     var imgNum = (avatarIndex % 20) + 1;
@@ -333,7 +375,7 @@
         '</div>' +
         '<div class="thread-body">' +
           '<div class="thread-meta">' +
-            '<span class="thread-author"><span class="at-prefix">@</span>' + username + '</span>' +
+            '<span class="thread-author">' + username + '</span>' +
             '<span class="thread-badge">Purchased</span>' +
             '<span class="thread-date">' + dateStr + '</span>' +
             '<span class="thread-floor">#' + floor + '</span>' +
@@ -428,6 +470,7 @@
         所有 DOM 交互通过 useEffect 管理
      ═══════════════════════════════════════════════════════════════ */
   function PromptPage() {
+    console.log('[PromptPage] component rendered');
 
     // ── 组件内部状态 ──
     // 活动徽章筛选（liked/saved/tipped 对应 filter chip）
@@ -441,6 +484,7 @@
     var promptObserverRef = useRef(null);
     var reviewsPageRef = useRef(1);
     var reviewsFilterRef = useRef('all');
+    var categoryFilterRef = useRef('all');
     var ioObserverRef = useRef(null);
     var activityObsRef = useRef(null);
 
@@ -464,6 +508,7 @@
     //   EFFECT 1: 初始化 — 单次挂载，合并所有 init 逻辑
     // ═══════════════════════════════════════════════════════════════
     useEffect(function () {
+      console.log('[PromptPage] useEffect init running');
       var timers = [];
       var observers = [];
       // 集中管理 document 级事件监听器，cleanup 时统一移除（防止内存泄漏）
@@ -662,7 +707,7 @@
           '</div>' +
           '<div class="thread-body">' +
             '<div class="thread-meta">' +
-              '<span class="thread-author"><span class="at-prefix">@</span>You</span>' +
+              '<span class="thread-author">You</span>' +
               '<span class="thread-activity liked"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M8 14s-5-3-6-7c-1-3 1-5 3-5 1.5 0 2.5 1 3 2 .5-1 1.5-2 3-2 2 0 4 2 3 5-1 4-6 7-6 7z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span> +1</span>' +
               '<span class="thread-date">Just now</span>' +
             '</div>' +
@@ -780,13 +825,33 @@
         });
       });
 
+      // 分类筛选：根据 data-model 动态过滤 featuredGrid 中的卡片
+      function applyCategoryFilter(selectedModel) {
+        var cards = document.querySelectorAll('#featuredGrid .prompt-card');
+        cards.forEach(function (card, i) {
+          var cardModels = (card.getAttribute('data-model') || '').split(' ').filter(Boolean);
+          var show = selectedModel === 'all' || cardModels.indexOf(selectedModel) !== -1;
+          if (show) {
+            card.style.display = '';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(16px)';
+            setTimeout(function () {
+              card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            }, i * 30);
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
       var chips = document.querySelectorAll('.prompt-chip');
-      var allCards = document.querySelectorAll('.prompt-card');
       chips.forEach(function (chip) {
         chip.addEventListener('click', function () {
           // Toggle：再次点击已选中的分类则恢复全部
           var wasActive = chip.classList.contains('active');
-          var selectedModel = chip.getAttribute('data-model');
+          var selectedModel = chip.getAttribute('data-model') || 'all';
 
           // 如果点击的是非 "All" 且已激活，取消并恢复 "All"
           if (wasActive && selectedModel !== 'all') {
@@ -799,22 +864,8 @@
             chip.classList.add('active');
           }
 
-          allCards.forEach(function (card, i) {
-            var cardModels = (card.getAttribute('data-model') || '').split(' ');
-            var show = selectedModel === 'all' || cardModels.indexOf(selectedModel) !== -1;
-            if (show) {
-              card.style.display = '';
-              card.style.opacity = '0';
-              card.style.transform = 'translateY(16px)';
-              setTimeout(function () {
-                card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-              }, i * 50);
-            } else {
-              card.style.display = 'none';
-            }
-          });
+          categoryFilterRef.current = selectedModel;
+          applyCategoryFilter(selectedModel);
         });
       });
 
@@ -1294,6 +1345,11 @@
             }
           });
 
+          // 若当前有分类筛选激活，对新加载的卡片同步应用过滤
+          if (categoryFilterRef.current !== 'all') {
+            applyCategoryFilter(categoryFilterRef.current);
+          }
+
           scrollPageRef.current++;
           scrollLoadingRef.current = false;
           sentinel.classList.remove('loading');
@@ -1556,7 +1612,13 @@
         if (composeBtn) {
           composeBtn.addEventListener('click', function () {
             var input = document.querySelector('.compose-input');
-            if (input && input.value && input.value.trim()) {
+            var text = '';
+            if (input && input.value) {
+              text = input.value.trim();
+            } else if (window.__tiptapEditor && typeof window.__tiptapEditor.getText === 'function') {
+              text = window.__tiptapEditor.getText().trim();
+            }
+            if (text) {
               bump('comments', 1);
               bump('commenters', 1);
             }
@@ -1746,7 +1808,9 @@
   global.PromptPage = PromptPage;
 
   /* ── 自动挂载到 GHRANK chrome 层 ── */
+  console.log('[prompt.js] mounting check', !!global.GHRANK, typeof global.GHRANK.mountChrome);
   if (global.GHRANK && typeof global.GHRANK.mountChrome === 'function') {
+    console.log('[prompt.js] calling mountChrome');
     global.GHRANK.mountChrome('prompt', PromptPage);
   } else {
     console.error('[GHRANK/Prompt] GHRANK.mountChrome 未找到，请确保 core.js 先于 prompt.js 加载');

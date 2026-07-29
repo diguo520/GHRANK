@@ -69,7 +69,7 @@
     },
     {
       "id": "skills",
-      "title": "Skills Ranking",
+      "title": "Skills Market",
       "file": "pages/skills.html",
       "type": "page",
       "isEntry": false,
@@ -84,17 +84,17 @@
       "x": 0, "y": 0, "width": 1280, "height": 720
     },
     {
-      "id": "skills-categories",
-      "title": "Skill Categories",
-      "file": "pages/skills-categories.html",
+      "id": "skills-owner",
+      "title": "Skill Owner",
+      "file": "pages/skills-owner.html",
       "type": "page",
       "isEntry": false,
       "x": 0, "y": 0, "width": 1280, "height": 720
     },
     {
-      "id": "skills-occupations",
-      "title": "Skill Occupations",
-      "file": "pages/skills-occupations.html",
+      "id": "skills-categories",
+      "title": "Skill Categories",
+      "file": "pages/skills-categories.html",
       "type": "page",
       "isEntry": false,
       "x": 0, "y": 0, "width": 1280, "height": 720

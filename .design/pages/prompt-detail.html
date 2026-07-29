@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="../styles/css/search-overlay.css">
   <link rel="stylesheet" href="../styles/css/loading.css">
   <link rel="stylesheet" href="../styles/css/prompt.css?v=3">
-  <link rel="stylesheet" href="../styles/css/prompt-detail.css">
+  <link rel="stylesheet" href="../styles/css/prompt-detail.css?v=4">
   <link rel="stylesheet" href="../styles/css/code-block.css?v=5">
   <link rel="stylesheet" href="../styles/css/tiptap-hud.css">
   <!-- React 19 CJS + Babel Standalone（本地 vendor，免构建接入） -->
@@ -24,6 +24,7 @@
 <body>
 
 <div id="chrome-root"></div>
+<div id="chrome-body"></div>
 
 <div class="scan-line"></div>
 
@@ -71,6 +72,48 @@
           <span class="carousel-dot"></span>
         </div>
       </div>
+
+      <!-- Tags & Stats moved below preview image area -->
+      <div class="detail-preview-meta">
+        <div class="detail-tags">
+          <span class="detail-tag">portrait</span>
+          <span class="detail-tag">cinematic</span>
+          <span class="detail-tag">photorealistic</span>
+          <span class="detail-tag">bokeh</span>
+          <span class="detail-tag">dramatic</span>
+          <span class="detail-tag">editorial</span>
+        </div>
+        <div class="detail-stats-row" id="liveStatsRow">
+          <div class="detail-stat-item" data-stat="views">
+            <span class="detail-stat-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3c4 0 7 5 7 5s-3 5-7 5-7-5-7-5 3-5 7-5z" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg></span>
+            <div class="detail-stat-body">
+              <div class="detail-stat-val" id="statViews">12,847</div>
+              <div class="detail-stat-label">Views</div>
+            </div>
+          </div>
+          <div class="detail-stat-item" data-stat="commenters">
+            <span class="detail-stat-icon"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M3 13c0-2.5 2.5-4 5-4s5 1.5 5 4" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></span>
+            <div class="detail-stat-body">
+              <div class="detail-stat-val" id="statCommenters">186</div>
+              <div class="detail-stat-label">Commenters</div>
+            </div>
+          </div>
+          <div class="detail-stat-item" data-stat="comments">
+            <span class="detail-stat-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12v9H8l-3 2v-2H2V4z" stroke="currentColor" stroke-width="1.4" fill="none"/></svg></span>
+            <div class="detail-stat-body">
+              <div class="detail-stat-val" id="statComments">248</div>
+              <div class="detail-stat-label">Comments</div>
+            </div>
+          </div>
+          <div class="detail-stat-item" data-stat="tips">
+            <span class="detail-stat-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h8v7H7l-2 1.5V11H3V4z" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M11 6h1.5a1 1 0 0 1 0 2H11" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M5 2c.2-.7.8-1 1.3-1" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.6"/><path d="M7.7 2c.2-.7.8-1 1.3-1" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.6"/></svg></span>
+            <div class="detail-stat-body">
+              <div class="detail-stat-val" id="statTips">94</div>
+              <div class="detail-stat-label">Tips</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- RIGHT: Info Panel -->
@@ -80,7 +123,7 @@
         <h1 class="detail-info-title">Cinematic Portrait Generator</h1>
 
         <div class="detail-info-author">
-          <div class="detail-author-avatar"><img src="../styles/images/demo/prompt_1.jpg" alt="" class="detail-avatar-img"></div>
+          <div class="detail-author-avatar online"><img src="../styles/images/demo/prompt_1.jpg" alt="" class="detail-avatar-img"></div>
           <div class="detail-author-meta">
             <div class="detail-author-name">AlexShader</div>
             <div class="detail-author-label">Top Seller &middot; 142 prompts</div>
@@ -145,33 +188,6 @@
           </div>
         </div>
 
-        <div class="detail-tags">
-          <span class="detail-tag">portrait</span>
-          <span class="detail-tag">cinematic</span>
-          <span class="detail-tag">photorealistic</span>
-          <span class="detail-tag">bokeh</span>
-          <span class="detail-tag">dramatic</span>
-          <span class="detail-tag">editorial</span>
-        </div>
-
-        <div class="detail-stats-row" id="liveStatsRow">
-          <div class="detail-stat-item" data-stat="views">
-            <div class="detail-stat-val" id="statViews">12,847</div>
-            <div class="detail-stat-label">Views</div>
-          </div>
-          <div class="detail-stat-item" data-stat="commenters">
-            <div class="detail-stat-val" id="statCommenters">186</div>
-            <div class="detail-stat-label">Commenters</div>
-          </div>
-          <div class="detail-stat-item" data-stat="comments">
-            <div class="detail-stat-val" id="statComments">248</div>
-            <div class="detail-stat-label">Comments</div>
-          </div>
-          <div class="detail-stat-item" data-stat="tips">
-            <div class="detail-stat-val" id="statTips">94</div>
-            <div class="detail-stat-label">Tips</div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -338,7 +354,7 @@
           <div class="thread-avatar" style="background:rgba(57,210,192,0.15);color:#39D2C0;"><img data-lazy="../styles/images/demo/prompt_1.jpg" src="../styles/images/demo/prompt_1.jpg" alt="" class="thread-avatar-img"></div>
           <div class="thread-body">
             <div class="thread-meta">
-              <span class="thread-author"><span class="at-prefix">@</span>MarcusVFX</span>
+              <span class="thread-author">MarcusVFX</span>
               <span class="thread-badge">Purchased</span>
               <span class="thread-date">Jan 15, 2025</span>
               <span class="thread-floor">#1</span>
@@ -375,7 +391,7 @@
             <div class="thread-avatar small online" style="background:rgba(245,197,24,0.12);color:#f5c518;"><img data-lazy="../styles/images/demo/prompt_2.jpg" src="../styles/images/demo/prompt_2.jpg" alt="" class="thread-avatar-img"></div>
             <div class="thread-body">
               <div class="thread-meta">
-                <span class="thread-author"><span class="at-prefix">@</span>AlexShader</span>
+                <span class="thread-author">AlexShader</span>
                 <span class="thread-badge author-badge">Author</span>
                 <span class="thread-activity tipped"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><rect x="4" y="5" width="7" height="6" rx="0.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M11 7h1a1 1 0 0 1 0 2h-1" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></span> +$3</span>
                 <span class="thread-activity liked"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M8 14s-5-3-6-7c-1-3 1-5 3-5 1.5 0 2.5 1 3 2 .5-1 1.5-2 3-2 2 0 4 2 3 5-1 4-6 7-6 7z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span> +5</span>
@@ -394,7 +410,7 @@
             <div class="thread-avatar small online" style="background:rgba(248,81,73,0.12);color:#F85149;"><img data-lazy="../styles/images/demo/prompt_3.jpg" src="../styles/images/demo/prompt_3.jpg" alt="" class="thread-avatar-img"></div>
             <div class="thread-body">
               <div class="thread-meta">
-                <span class="thread-author"><span class="at-prefix">@</span>KevinLens</span>
+                <span class="thread-author">KevinLens</span>
                 <span class="thread-activity tipped"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><rect x="4" y="5" width="7" height="6" rx="0.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M11 7h1a1 1 0 0 1 0 2h-1" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></span> +$5</span>
                 <span class="thread-activity liked"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M8 14s-5-3-6-7c-1-3 1-5 3-5 1.5 0 2.5 1 3 2 .5-1 1.5-2 3-2 2 0 4 2 3 5-1 4-6 7-6 7z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span> +3</span>
                 <span class="thread-activity saved"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M4 1h8v14l-4-3-4 3V1z" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span> +2</span>
@@ -413,7 +429,7 @@
             <div class="thread-avatar small online" style="background:rgba(63,185,80,0.12);color:#3FB950;"><img data-lazy="../styles/images/demo/prompt_5.jpg" src="../styles/images/demo/prompt_5.jpg" alt="" class="thread-avatar-img"></div>
             <div class="thread-body">
               <div class="thread-meta">
-                <span class="thread-author"><span class="at-prefix">@</span>DesignNinja</span>
+                <span class="thread-author">DesignNinja</span>
                 <span class="thread-activity saved"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M4 1h8v14l-4-3-4 3V1z" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span> +4</span>
                 <span class="thread-date">Jan 16, 2025</span>
               </div>
@@ -427,10 +443,10 @@
             </div>
           </div>
           <div class="thread-reply" data-reply-floor="1.4">
-            <div class="thread-avatar small online away" style="background:rgba(248,81,73,0.12);color:#F85149;"><img data-lazy="../styles/images/demo/prompt_3.jpg" src="../styles/images/demo/prompt_3.jpg" alt="" class="thread-avatar-img"></div>
+            <div class="thread-avatar small online" style="background:rgba(248,81,73,0.12);color:#F85149;"><img data-lazy="../styles/images/demo/prompt_3.jpg" src="../styles/images/demo/prompt_3.jpg" alt="" class="thread-avatar-img"></div>
             <div class="thread-body">
               <div class="thread-meta">
-                <span class="thread-author"><span class="at-prefix">@</span>KevinLens</span>
+                <span class="thread-author">KevinLens</span>
                 <span class="thread-activity liked"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M8 14s-5-3-6-7c-1-3 1-5 3-5 1.5 0 2.5 1 3 2 .5-1 1.5-2 3-2 2 0 4 2 3 5-1 4-6 7-6 7z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span> +2</span>
                 <span class="thread-date">Jan 17, 2025</span>
               </div>
@@ -447,7 +463,7 @@
             <div class="thread-avatar small online" style="background:rgba(245,197,24,0.12);color:#f5c518;"><img data-lazy="../styles/images/demo/prompt_2.jpg" src="../styles/images/demo/prompt_2.jpg" alt="" class="thread-avatar-img"></div>
             <div class="thread-body">
               <div class="thread-meta">
-                <span class="thread-author"><span class="at-prefix">@</span>AlexShader</span>
+                <span class="thread-author">AlexShader</span>
                 <span class="thread-badge author-badge">Author</span>
                 <span class="thread-activity tipped"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><rect x="4" y="5" width="7" height="6" rx="0.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M11 7h1a1 1 0 0 1 0 2h-1" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></span> +$3</span>
                 <span class="thread-activity liked"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M8 14s-5-3-6-7c-1-3 1-5 3-5 1.5 0 2.5 1 3 2 .5-1 1.5-2 3-2 2 0 4 2 3 5-1 4-6 7-6 7z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span> +8</span>
@@ -473,7 +489,7 @@
           <div class="thread-avatar" style="background:rgba(188,140,255,0.15);color:#BC8CFF;"><img data-lazy="../styles/images/demo/prompt_4.jpg" src="../styles/images/demo/prompt_4.jpg" alt="" class="thread-avatar-img"></div>
           <div class="thread-body">
             <div class="thread-meta">
-              <span class="thread-author"><span class="at-prefix">@</span>SarahCreates</span>
+              <span class="thread-author">SarahCreates</span>
               <span class="thread-badge">Purchased</span>
               <span class="thread-date">Jan 12, 2025</span>
               <span class="thread-floor">#2</span>
@@ -504,10 +520,10 @@
         </div>
         <div class="thread-replies">
           <div class="thread-reply" data-reply-floor="2.1">
-            <div class="thread-avatar small online away" style="background:rgba(63,185,80,0.12);color:#3FB950;"><img data-lazy="../styles/images/demo/prompt_5.jpg" src="../styles/images/demo/prompt_5.jpg" alt="" class="thread-avatar-img"></div>
+            <div class="thread-avatar small online" style="background:rgba(63,185,80,0.12);color:#3FB950;"><img data-lazy="../styles/images/demo/prompt_5.jpg" src="../styles/images/demo/prompt_5.jpg" alt="" class="thread-avatar-img"></div>
             <div class="thread-body">
               <div class="thread-meta">
-                <span class="thread-author"><span class="at-prefix">@</span>DesignNinja</span>
+                <span class="thread-author">DesignNinja</span>
                 <span class="thread-activity liked"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M8 14s-5-3-6-7c-1-3 1-5 3-5 1.5 0 2.5 1 3 2 .5-1 1.5-2 3-2 2 0 4 2 3 5-1 4-6 7-6 7z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span> +2</span>
                 <span class="thread-activity saved"><span class="ta-icon"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M4 1h8v14l-4-3-4 3V1z" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span> +1</span>
                 <span class="thread-date">Jan 13, 2025</span>
@@ -531,7 +547,7 @@
           <div class="thread-avatar" style="background:rgba(245,197,24,0.15);color:#f5c518;"><img data-lazy="../styles/images/demo/prompt_6.jpg" src="../styles/images/demo/prompt_6.jpg" alt="" class="thread-avatar-img"></div>
           <div class="thread-body">
             <div class="thread-meta">
-              <span class="thread-author"><span class="at-prefix">@</span>JPhotoStudio</span>
+              <span class="thread-author">JPhotoStudio</span>
               <span class="thread-badge">Purchased</span>
               <span class="thread-date">Jan 8, 2025</span>
               <span class="thread-floor">#3</span>
@@ -566,7 +582,7 @@
           <div class="thread-avatar" style="background:rgba(88,166,255,0.15);color:#58A6FF;"><img data-lazy="../styles/images/demo/prompt_7.jpg" src="../styles/images/demo/prompt_7.jpg" alt="" class="thread-avatar-img"></div>
           <div class="thread-body">
             <div class="thread-meta">
-              <span class="thread-author"><span class="at-prefix">@</span>ReneDesign</span>
+              <span class="thread-author">ReneDesign</span>
               <span class="thread-badge">Purchased</span>
               <span class="thread-date">Dec 28, 2024</span>
               <span class="thread-floor">#4</span>
@@ -608,7 +624,7 @@
           <div class="thread-avatar" style="background:rgba(247,120,186,0.15);color:#F778BA;"><img data-lazy="../styles/images/demo/prompt_8.jpg" src="../styles/images/demo/prompt_8.jpg" alt="" class="thread-avatar-img"></div>
           <div class="thread-body">
             <div class="thread-meta">
-              <span class="thread-author"><span class="at-prefix">@</span>LiamArt</span>
+              <span class="thread-author">LiamArt</span>
               <span class="thread-badge">Purchased</span>
               <span class="thread-date">Dec 22, 2024</span>
               <span class="thread-floor">#5</span>
@@ -643,23 +659,11 @@
 
     </div>
 
-    <!-- Load More -->
-    <div class="reviews-load-more">
-      <button class="load-more-btn">Load More Reviews</button>
+    <!-- Load More Sentinel -->
+    <div class="reviews-load-sentinel" id="reviewsLoadSentinel">
+      <div class="scroll-loader"><div class="scroll-loader-spinner"></div></div>
     </div>
-
-    <!-- Image Lightbox -->
-    <div class="lightbox hidden" id="imageLightbox">
-      <div class="lightbox-overlay"></div>
-      <div class="lightbox-content">
-        <button class="lightbox-close">&times;</button>
-        <div class="lightbox-image"></div>
-        <div class="lightbox-nav">
-          <button class="lightbox-prev">&#x25C0;</button>
-          <button class="lightbox-next">&#x25B6;</button>
-        </div>
-      </div>
-    </div>
+    <div class="reviews-end-of-feed hidden" id="reviewsEndOfFeed">// End of feed</div>
   </div>
 
     </div>
@@ -673,15 +677,33 @@
 
 <div id="overlay-root"></div>
 
-<script>
-// Deferred promise so prompt.js can await tiptap module tools
-window.__replyToolsDeferred = {};
-window.__replyToolsDeferred.promise = new Promise(function(resolve) {
-  window.__replyToolsDeferred.resolve = resolve;
-});
-</script>
+<!-- Image Lightbox：放在 body 末尾，避免被评论列的 transform 形成包含块，确保 fixed 定位相对视口居中 -->
+<div class="lightbox hidden" id="imageLightbox">
+  <div class="lightbox-overlay"></div>
+  <div class="lightbox-content">
+    <button class="lightbox-close">&times;</button>
+    <div class="lightbox-image"><img class="lightbox-img" alt=""></div>
+    <div class="lightbox-nav">
+      <button class="lightbox-prev">&#x25C0;</button>
+      <button class="lightbox-next">&#x25B6;</button>
+    </div>
+  </div>
+</div>
+
 <script type="text/babel" src="../js/core.js?v=4"></script>
-<script type="text/babel" src="../js/prompt.js?v=3"></script>
+<script type="text/babel" src="../js/babel-test.js"></script>
+<script>
+  // prompt-detail.html 使用原生静态内容，只需挂载 chrome 层，不渲染 React 页面主体
+  // core.js 经 Babel 异步转换，轮询等待 GHRANK 就绪后再挂载
+  (function tryMountChrome() {
+    if (window.GHRANK && typeof window.GHRANK.mountChrome === 'function') {
+      window.GHRANK.mountChrome('prompt');
+      return;
+    }
+    setTimeout(tryMountChrome, 50);
+  })();
+</script>
+<script src="../js/prompt-detail-init.js?v=3"></script>
 <script src="../src/addons/GhRank/dist/tiptap-editor.min.js"></script>
 <script src="../js/tiptap-init.js?v=7"></script>
 <script src="../js/code-block.js?v=5"></script>
