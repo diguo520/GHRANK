@@ -161,7 +161,7 @@
           '</div>' +
           '<div class="thread-reply-form hidden">' +
             '<div class="reply-form-header"><span class="reply-form-to">Replying to <strong>@' + username + '</strong></span><button class="reply-form-close">&times;</button></div>' +
-            '<div class="reply-tiptap-host" data-placeholder="Write a reply..."></div>' +
+            '<textarea class="reply-textarea" rows="3" maxlength="500" placeholder="Write a reply..."></textarea>' +
             '<div class="reply-form-actions"><button class="reply-submit">Reply</button></div>' +
           '</div>' +
         '</div>' +
@@ -221,35 +221,20 @@
     });
   }
 
-  // Reply editor helpers (lightweight contenteditable)
-  function initReplyEditor(formOrHost, initialText) {
-    var host = formOrHost.classList && formOrHost.classList.contains('reply-tiptap-host')
-      ? formOrHost : formOrHost.querySelector('.reply-tiptap-host');
-    if (!host) return;
-    host.setAttribute('contenteditable', 'true');
-    host.setAttribute('role', 'textbox');
-    host.setAttribute('aria-multiline', 'true');
-    if (initialText) host.textContent = initialText;
-    host.focus();
-    var range = document.createRange();
-    range.selectNodeContents(host);
-    range.collapse(false);
-    var sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-  }
-
-  function destroyReplyEditor(formOrHost) {
-    var host = formOrHost.classList && formOrHost.classList.contains('reply-tiptap-host')
-      ? formOrHost : formOrHost.querySelector('.reply-tiptap-host');
-    if (!host) return;
-    host.setAttribute('contenteditable', 'false');
-    host.blur();
-  }
-
+  // Reply textarea helpers
   function getReplyText(form) {
-    var host = form ? form.querySelector('.reply-tiptap-host') : null;
-    return host ? (host.textContent || '').trim() : '';
+    var ta = form ? form.querySelector('.reply-textarea') : null;
+    return ta ? (ta.value || '').trim() : '';
+  }
+
+  function focusReplyTextarea(form) {
+    var ta = form ? form.querySelector('.reply-textarea') : null;
+    if (ta) ta.focus();
+  }
+
+  function clearReplyTextarea(form) {
+    var ta = form ? form.querySelector('.reply-textarea') : null;
+    if (ta) ta.value = '';
   }
 
   function init() {
@@ -353,8 +338,8 @@
       var replyForm = thread ? thread.querySelector('.thread-reply-form') : null;
       if (!replyForm) return;
       replyForm.classList.toggle('hidden');
-      if (!replyForm.classList.contains('hidden')) initReplyEditor(replyForm, '');
-      else destroyReplyEditor(replyForm);
+      if (!replyForm.classList.contains('hidden')) focusReplyTextarea(replyForm);
+      else clearReplyTextarea(replyForm);
     }
     addDocListener('click', handleReplyToggle);
 
@@ -371,7 +356,7 @@
       replyForm.classList.remove('hidden');
       var replyTo = replyForm.querySelector('.reply-form-to');
       if (replyTo) replyTo.innerHTML = 'Replying to <strong>@' + authorName + '</strong>';
-      initReplyEditor(replyForm, '');
+      focusReplyTextarea(replyForm);
     }
     addDocListener('click', handleReplyToReply);
 
@@ -380,9 +365,7 @@
       if (!btn) return;
       var form = btn.closest('.thread-reply-form');
       if (form) {
-        destroyReplyEditor(form);
-        var host = form.querySelector('.reply-tiptap-host');
-        if (host) host.innerHTML = '';
+        clearReplyTextarea(form);
         form.classList.add('hidden');
       }
     }
@@ -425,9 +408,7 @@
         thread.appendChild(wrap);
       }
       showToast('Reply posted' + (replyToName ? ' to @' + replyToName : ''));
-      destroyReplyEditor(form);
-      var host = form.querySelector('.reply-tiptap-host');
-      if (host) host.innerHTML = '';
+      clearReplyTextarea(form);
       form.classList.add('hidden');
     }
     addDocListener('click', handleReplySubmit);
@@ -508,11 +489,11 @@
     });
 
     // ─── Review composer char counter ───
-    var composeInput = document.querySelector('.compose-input');
+    var reviewTextarea = document.getElementById('reviewTextarea');
     var charCounter = document.getElementById('charCounter');
-    if (composeInput && charCounter) {
-      composeInput.addEventListener('input', function () {
-        var len = composeInput.value.length;
+    if (reviewTextarea && charCounter) {
+      reviewTextarea.addEventListener('input', function () {
+        var len = reviewTextarea.value.length;
         charCounter.textContent = len;
         charCounter.classList.toggle('over-limit', len > 500);
       });
@@ -521,7 +502,7 @@
     var submitBtn = document.querySelector('.compose-submit');
     if (submitBtn) {
       submitBtn.addEventListener('click', function () {
-        var input = document.querySelector('.compose-input');
+        var input = document.getElementById('reviewTextarea');
         if (!input || !input.value.trim()) return;
         showToast('Review submitted successfully!');
         input.value = '';
@@ -797,10 +778,8 @@
       var composeBtn = document.getElementById('composeSubmitBtn') || document.querySelector('.compose-submit');
       if (composeBtn) {
         composeBtn.addEventListener('click', function () {
-          var input = document.querySelector('.compose-input');
-          var text = '';
-          if (input && input.value) text = input.value.trim();
-          else if (window.__tiptapEditor && typeof window.__tiptapEditor.getText === 'function') text = window.__tiptapEditor.getText().trim();
+          var input = document.getElementById('reviewTextarea');
+          var text = input && input.value ? input.value.trim() : '';
           if (text) { bump('comments', 1); bump('commenters', 1); }
         });
       }
@@ -810,10 +789,8 @@
         if (!btn) return;
         var form = btn.closest('.thread-reply-form');
         if (!form) return;
-        var host = form.querySelector('.reply-tiptap-host');
-        var text = '';
-        if (form._tiptapEditor && typeof form._tiptapEditor.getText === 'function') text = form._tiptapEditor.getText();
-        else if (host) text = host.textContent || '';
+        var ta = form.querySelector('.reply-textarea');
+        var text = ta ? ta.value || '' : '';
         if (text.trim()) bump('comments', 1);
       });
     }

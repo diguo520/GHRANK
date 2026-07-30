@@ -307,44 +307,36 @@
   global.showToast = showToast;
 
   // ═══════════════════════════════════════════════════════════════
-  // REPLY EDITOR HELPERS — 轻量级 contenteditable 回复编辑器
-  // prompt-detail.html 的 .reply-tiptap-host 作为编辑宿主；
-  // 不依赖完整 Tiptap 包，保证每个回复框都能独立初始化。
+  // REPLY EDITOR HELPERS — 轻量级 textarea 回复编辑器
+  // prompt-detail.html 的 .reply-textarea 作为输入控件；
+  // 不依赖任何富文本库，保证每个回复框都能独立使用。
   // ═══════════════════════════════════════════════════════════════
-  function initReplyEditor(formOrHost, initialText) {
-    var host = formOrHost.classList && formOrHost.classList.contains('reply-tiptap-host')
-      ? formOrHost
-      : formOrHost.querySelector('.reply-tiptap-host');
-    if (!host) return;
-    host.setAttribute('contenteditable', 'true');
-    host.setAttribute('role', 'textbox');
-    host.setAttribute('aria-multiline', 'true');
+  function initReplyEditor(formOrTextarea, initialText) {
+    var textarea = formOrTextarea.classList && formOrTextarea.classList.contains('reply-textarea')
+      ? formOrTextarea
+      : formOrTextarea.querySelector('.reply-textarea');
+    if (!textarea) return;
     if (initialText) {
-      host.textContent = initialText;
+      textarea.value = initialText;
     }
-    // 聚焦并移动光标到末尾
-    host.focus();
-    var range = document.createRange();
-    range.selectNodeContents(host);
-    range.collapse(false);
-    var sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
+    textarea.focus();
+    // 将光标移到末尾
+    var len = textarea.value.length;
+    textarea.setSelectionRange(len, len);
   }
 
-  function destroyReplyEditor(formOrHost) {
-    var host = formOrHost.classList && formOrHost.classList.contains('reply-tiptap-host')
-      ? formOrHost
-      : formOrHost.querySelector('.reply-tiptap-host');
-    if (!host) return;
-    host.setAttribute('contenteditable', 'false');
-    host.blur();
+  function destroyReplyEditor(formOrTextarea) {
+    var textarea = formOrTextarea.classList && formOrTextarea.classList.contains('reply-textarea')
+      ? formOrTextarea
+      : formOrTextarea.querySelector('.reply-textarea');
+    if (!textarea) return;
+    textarea.blur();
   }
 
   function getReplyText(form) {
-    var host = form ? form.querySelector('.reply-tiptap-host') : null;
-    if (!host) return '';
-    return (host.textContent || '').trim();
+    var textarea = form ? form.querySelector('.reply-textarea') : null;
+    if (!textarea) return '';
+    return (textarea.value || '').trim();
   }
 
   // 创建评论 HTML
@@ -395,7 +387,7 @@
               '<span class="reply-form-to">Replying to <strong>@' + username + '</strong></span>' +
               '<button class="reply-form-close">&times;</button>' +
             '</div>' +
-            '<div class="reply-tiptap-host" data-placeholder="Write a reply..."></div>' +
+            '<textarea class="reply-textarea" rows="3" maxlength="500" placeholder="Write a reply..."></textarea>' +
             '<div class="reply-form-actions">' +
               '<button class="reply-submit">Reply</button>' +
             '</div>' +
@@ -676,8 +668,8 @@
         var form = btn.closest('.thread-reply-form');
         if (form) {
           destroyReplyEditor(form);
-          var host = form.querySelector('.reply-tiptap-host');
-          if (host) host.innerHTML = '';
+          var textarea = form.querySelector('.reply-textarea');
+          if (textarea) textarea.value = '';
           form.classList.add('hidden');
         }
       }
@@ -729,8 +721,8 @@
         }
         showToast('Reply posted' + (replyToName ? ' to @' + replyToName : ''));
         destroyReplyEditor(form);
-        var host = form.querySelector('.reply-tiptap-host');
-        if (host) host.innerHTML = '';
+        var textarea = form.querySelector('.reply-textarea');
+        if (textarea) textarea.value = '';
         form.classList.add('hidden');
       }
       addDocListener('click', handleReplySubmit);
@@ -1611,12 +1603,10 @@
         var composeBtn = document.getElementById('composeSubmitBtn') || document.querySelector('.compose-submit');
         if (composeBtn) {
           composeBtn.addEventListener('click', function () {
-            var input = document.querySelector('.compose-input');
+            var input = document.querySelector('.compose-input') || document.querySelector('.compose-textarea') || document.getElementById('reviewTextarea');
             var text = '';
             if (input && input.value) {
               text = input.value.trim();
-            } else if (window.__tiptapEditor && typeof window.__tiptapEditor.getText === 'function') {
-              text = window.__tiptapEditor.getText().trim();
             }
             if (text) {
               bump('comments', 1);
@@ -1631,12 +1621,10 @@
           if (!btn) return;
           var form = btn.closest('.thread-reply-form');
           if (!form) return;
-          var host = form.querySelector('.reply-tiptap-host');
+          var textarea = form.querySelector('.reply-textarea');
           var text = '';
-          if (form._tiptapEditor && typeof form._tiptapEditor.getText === 'function') {
-            text = form._tiptapEditor.getText();
-          } else if (host) {
-            text = host.textContent || '';
+          if (textarea) {
+            text = textarea.value || '';
           }
           if (text.trim()) bump('comments', 1);
         }

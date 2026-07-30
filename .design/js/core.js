@@ -25,18 +25,18 @@
     index: {
       tickerLabel: 'LIVE FEED',
       tickerItems: [
-        { text: 'facebook/react <span>230K&#9733;</span>', href: 'detail.html' },
-        { text: 'torvalds/linux <span>182K&#9733;</span>', href: 'detail.html' },
-        { text: 'langchain-ai/langchain <span>96.7K&#9733;</span>', href: 'detail.html' },
-        { text: 'rust-lang/rust <span>99.8K&#9733;</span>', href: 'detail.html' },
-        { text: 'godotengine/godot <span>95.3K&#9733;</span>', href: 'detail.html' },
-        { text: 'nextjs/next.js <span>128K&#9733;</span>', href: 'detail.html' },
-        { text: 'docker/engine <span>69.4K&#9733;</span>', href: 'detail.html' },
-        { text: 'vuejs/core <span>48.2K&#9733;</span>', href: 'detail.html' },
-        { text: 'openai/whisper <span>72.8K&#9733;</span>', href: 'detail.html' },
-        { text: 'denoland/deno <span>98.2K&#9733;</span>', href: 'detail.html' },
-        { text: 'shadcn-ui/ui <span>81.4K&#9733;</span>', href: 'detail.html' },
-        { text: 'tiangolo/fastapi <span>82.1K&#9733;</span>', href: 'detail.html' }
+        { text: 'facebook/react <span>230K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'torvalds/linux <span>182K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'langchain-ai/langchain <span>96.7K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'rust-lang/rust <span>99.8K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'godotengine/godot <span>95.3K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'nextjs/next.js <span>128K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'docker/engine <span>69.4K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'vuejs/core <span>48.2K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'openai/whisper <span>72.8K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'denoland/deno <span>98.2K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'shadcn-ui/ui <span>81.4K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'tiangolo/fastapi <span>82.1K&#9733;</span>', href: 'community-detail.html' }
       ],
       searchPlaceholder: 'Search repos...',
       footerText: 'Data sourced from GitHub API &mdash; Ranked by multi-factor scoring with time-decay weighting',
@@ -155,14 +155,14 @@
     detail: {
       tickerLabel: 'LIVE FEED',
       tickerItems: [
-        { text: 'facebook/react <span>230K&#9733;</span>', href: 'detail.html' },
-        { text: 'torvalds/linux <span>182K&#9733;</span>', href: 'detail.html' },
-        { text: 'langchain-ai/langchain <span>96.7K&#9733;</span>', href: 'detail.html' },
-        { text: 'rust-lang/rust <span>99.8K&#9733;</span>', href: 'detail.html' },
-        { text: 'nextjs/next.js <span>128K&#9733;</span>', href: 'detail.html' },
-        { text: 'docker/engine <span>69.4K&#9733;</span>', href: 'detail.html' },
-        { text: 'vuejs/core <span>48.2K&#9733;</span>', href: 'detail.html' },
-        { text: 'openai/whisper <span>72.8K&#9733;</span>', href: 'detail.html' }
+        { text: 'facebook/react <span>230K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'torvalds/linux <span>182K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'langchain-ai/langchain <span>96.7K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'rust-lang/rust <span>99.8K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'nextjs/next.js <span>128K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'docker/engine <span>69.4K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'vuejs/core <span>48.2K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'openai/whisper <span>72.8K&#9733;</span>', href: 'community-detail.html' }
       ],
       searchPlaceholder: 'Search repos...',
       footerText: 'Data sourced from GitHub API &mdash; Ranked by multi-factor scoring with time-decay weighting',
@@ -275,7 +275,7 @@
       tickerItems: [
         { text: 'New user joined <span>+1</span>', href: 'login.html' },
         { text: 'AlexShader published a new prompt <span>NEW</span>', href: 'prompt-detail.html' },
-        { text: 'Top contributor this week <span>HOT</span>', href: 'detail.html' },
+        { text: 'Top contributor this week <span>HOT</span>', href: 'community-detail.html' },
         { text: 'Community milestone reached <span>10K users</span>', href: 'index.html' }
       ],
       searchPlaceholder: 'Search...',
@@ -285,12 +285,12 @@
     about: {
       tickerLabel: 'LIVE FEED',
       tickerItems: [
-        { text: 'facebook/react <span>230K&#9733;</span>', href: 'detail.html' },
-        { text: 'torvalds/linux <span>182K&#9733;</span>', href: 'detail.html' },
-        { text: 'rust-lang/rust <span>99.8K&#9733;</span>', href: 'detail.html' },
-        { text: 'nextjs/next.js <span>128K&#9733;</span>', href: 'detail.html' },
-        { text: 'docker/engine <span>69.4K&#9733;</span>', href: 'detail.html' },
-        { text: 'vuejs/core <span>48.2K&#9733;</span>', href: 'detail.html' }
+        { text: 'facebook/react <span>230K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'torvalds/linux <span>182K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'rust-lang/rust <span>99.8K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'nextjs/next.js <span>128K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'docker/engine <span>69.4K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'vuejs/core <span>48.2K&#9733;</span>', href: 'community-detail.html' }
       ],
       searchPlaceholder: 'Search repos...',
       footerText: 'Data sourced from GitHub API &mdash; Ranked by multi-factor scoring with time-decay weighting',
@@ -299,14 +299,14 @@
     '404': {
       tickerLabel: 'LIVE FEED',
       tickerItems: [
-        { text: 'facebook/react <span>230K&#9733;</span>', href: 'detail.html' },
-        { text: 'torvalds/linux <span>182K&#9733;</span>', href: 'detail.html' },
-        { text: 'langchain-ai/langchain <span>96.7K&#9733;</span>', href: 'detail.html' },
-        { text: 'rust-lang/rust <span>99.8K&#9733;</span>', href: 'detail.html' },
-        { text: 'nextjs/next.js <span>128K&#9733;</span>', href: 'detail.html' },
-        { text: 'docker/engine <span>69.4K&#9733;</span>', href: 'detail.html' },
-        { text: 'vuejs/core <span>48.2K&#9733;</span>', href: 'detail.html' },
-        { text: 'openai/whisper <span>72.8K&#9733;</span>', href: 'detail.html' }
+        { text: 'facebook/react <span>230K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'torvalds/linux <span>182K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'langchain-ai/langchain <span>96.7K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'rust-lang/rust <span>99.8K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'nextjs/next.js <span>128K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'docker/engine <span>69.4K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'vuejs/core <span>48.2K&#9733;</span>', href: 'community-detail.html' },
+        { text: 'openai/whisper <span>72.8K&#9733;</span>', href: 'community-detail.html' }
       ],
       searchPlaceholder: 'Search repos...',
       footerText: 'Data sourced from GitHub API &mdash; Ranked by multi-factor scoring with time-decay weighting',
@@ -475,26 +475,26 @@
      6. 共享组件 —— SearchOverlay
      ═══════════════════════════════════════════════════════════════ */
   var SEARCH_DATA = [
-    { name: 'facebook/react', desc: 'The library for web and native user interfaces.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '230K', url: 'detail.html' },
-    { name: 'torvalds/linux', desc: 'Linux kernel source tree. The core of the Linux operating system.', tag: 'Backend', tagClass: 'tag-backend', stars: '182K', url: 'detail.html' },
-    { name: 'vuejs/core', desc: 'The Progressive JavaScript Framework for building web UIs.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '48.2K', url: 'detail.html' },
-    { name: 'openai/whisper', desc: 'Robust Speech Recognition via Large-Scale Weak Supervision.', tag: 'AI/ML', tagClass: 'tag-ai', stars: '72.8K', url: 'detail.html' },
-    { name: 'docker/engine', desc: 'Docker Engine — open source containerization technology.', tag: 'DevOps', tagClass: 'tag-devops', stars: '69.4K', url: 'detail.html' },
-    { name: 'godotengine/godot', desc: 'Godot Engine — Multi-platform 2D and 3D game engine.', tag: 'Games', tagClass: 'tag-games', stars: '95.3K', url: 'detail.html' },
-    { name: 'tiangolo/fastapi', desc: 'FastAPI framework, high performance, easy to learn, fast to code.', tag: 'Backend', tagClass: 'tag-backend', stars: '82.1K', url: 'detail.html' },
-    { name: 'langchain-ai/langchain', desc: 'Build context-aware reasoning applications with LLMs.', tag: 'AI/ML', tagClass: 'tag-ai', stars: '96.7K', url: 'detail.html' },
-    { name: 'shadcn-ui/ui', desc: 'Beautifully designed components built with Radix UI and Tailwind CSS.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '81.4K', url: 'detail.html' },
-    { name: 'rust-lang/rust', desc: 'Empowering everyone to build reliable and efficient software.', tag: 'Backend', tagClass: 'tag-backend', stars: '99.8K', url: 'detail.html' },
-    { name: 'nextjs/next.js', desc: 'The React Framework for the Web. Full-stack web applications.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '128K', url: 'detail.html' },
-    { name: 'denoland/deno', desc: 'A modern runtime for JavaScript and TypeScript. Secure by default.', tag: 'Backend', tagClass: 'tag-backend', stars: '98.2K', url: 'detail.html' },
-    { name: 'kubernetes/kubernetes', desc: 'Production-Grade Container Scheduling and Management.', tag: 'DevOps', tagClass: 'tag-devops', stars: '112K', url: 'detail.html' },
-    { name: 'huggingface/transformers', desc: 'State-of-the-art ML for PyTorch, TensorFlow, and JAX.', tag: 'AI/ML', tagClass: 'tag-ai', stars: '134K', url: 'detail.html' },
-    { name: 'vercel/next.js', desc: 'The React Framework for the Web — by Vercel.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '128K', url: 'detail.html' },
-    { name: 'tailwindlabs/tailwindcss', desc: 'A utility-first CSS framework for rapid UI development.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '82.4K', url: 'detail.html' },
-    { name: 'flutter/flutter', desc: "Google's UI toolkit for building natively compiled applications.", tag: 'Mobile', tagClass: 'tag-mobile', stars: '164K', url: 'detail.html' },
-    { name: 'pandas-dev/pandas', desc: 'Flexible and powerful data analysis / manipulation library.', tag: 'Data Science', tagClass: 'tag-data', stars: '43.8K', url: 'detail.html' },
-    { name: 'spring-projects/spring-boot', desc: 'Spring Boot helps you create stand-alone, production-grade apps.', tag: 'Backend', tagClass: 'tag-backend', stars: '74.2K', url: 'detail.html' },
-    { name: 'mui/material-ui', desc: 'Ready-to-use Material Design components for React.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '95.8K', url: 'detail.html' }
+    { name: 'facebook/react', desc: 'The library for web and native user interfaces.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '230K', url: 'community-detail.html' },
+    { name: 'torvalds/linux', desc: 'Linux kernel source tree. The core of the Linux operating system.', tag: 'Backend', tagClass: 'tag-backend', stars: '182K', url: 'community-detail.html' },
+    { name: 'vuejs/core', desc: 'The Progressive JavaScript Framework for building web UIs.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '48.2K', url: 'community-detail.html' },
+    { name: 'openai/whisper', desc: 'Robust Speech Recognition via Large-Scale Weak Supervision.', tag: 'AI/ML', tagClass: 'tag-ai', stars: '72.8K', url: 'community-detail.html' },
+    { name: 'docker/engine', desc: 'Docker Engine — open source containerization technology.', tag: 'DevOps', tagClass: 'tag-devops', stars: '69.4K', url: 'community-detail.html' },
+    { name: 'godotengine/godot', desc: 'Godot Engine — Multi-platform 2D and 3D game engine.', tag: 'Games', tagClass: 'tag-games', stars: '95.3K', url: 'community-detail.html' },
+    { name: 'tiangolo/fastapi', desc: 'FastAPI framework, high performance, easy to learn, fast to code.', tag: 'Backend', tagClass: 'tag-backend', stars: '82.1K', url: 'community-detail.html' },
+    { name: 'langchain-ai/langchain', desc: 'Build context-aware reasoning applications with LLMs.', tag: 'AI/ML', tagClass: 'tag-ai', stars: '96.7K', url: 'community-detail.html' },
+    { name: 'shadcn-ui/ui', desc: 'Beautifully designed components built with Radix UI and Tailwind CSS.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '81.4K', url: 'community-detail.html' },
+    { name: 'rust-lang/rust', desc: 'Empowering everyone to build reliable and efficient software.', tag: 'Backend', tagClass: 'tag-backend', stars: '99.8K', url: 'community-detail.html' },
+    { name: 'nextjs/next.js', desc: 'The React Framework for the Web. Full-stack web applications.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '128K', url: 'community-detail.html' },
+    { name: 'denoland/deno', desc: 'A modern runtime for JavaScript and TypeScript. Secure by default.', tag: 'Backend', tagClass: 'tag-backend', stars: '98.2K', url: 'community-detail.html' },
+    { name: 'kubernetes/kubernetes', desc: 'Production-Grade Container Scheduling and Management.', tag: 'DevOps', tagClass: 'tag-devops', stars: '112K', url: 'community-detail.html' },
+    { name: 'huggingface/transformers', desc: 'State-of-the-art ML for PyTorch, TensorFlow, and JAX.', tag: 'AI/ML', tagClass: 'tag-ai', stars: '134K', url: 'community-detail.html' },
+    { name: 'vercel/next.js', desc: 'The React Framework for the Web — by Vercel.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '128K', url: 'community-detail.html' },
+    { name: 'tailwindlabs/tailwindcss', desc: 'A utility-first CSS framework for rapid UI development.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '82.4K', url: 'community-detail.html' },
+    { name: 'flutter/flutter', desc: "Google's UI toolkit for building natively compiled applications.", tag: 'Mobile', tagClass: 'tag-mobile', stars: '164K', url: 'community-detail.html' },
+    { name: 'pandas-dev/pandas', desc: 'Flexible and powerful data analysis / manipulation library.', tag: 'Data Science', tagClass: 'tag-data', stars: '43.8K', url: 'community-detail.html' },
+    { name: 'spring-projects/spring-boot', desc: 'Spring Boot helps you create stand-alone, production-grade apps.', tag: 'Backend', tagClass: 'tag-backend', stars: '74.2K', url: 'community-detail.html' },
+    { name: 'mui/material-ui', desc: 'Ready-to-use Material Design components for React.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '95.8K', url: 'community-detail.html' }
   ];
 
   function SearchOverlay({ open, onClose }) {
@@ -983,7 +983,8 @@
       }
 
       function processImages() {
-        var allImgs = document.querySelectorAll('img:not([data-lazy])');
+        // 排除页眉用户头像 nav-avatar-img，避免懒加载骨架包裹
+        var allImgs = document.querySelectorAll('img:not([data-lazy]):not(.nav-avatar-img)');
         allImgs.forEach(function (img) {
           var src = img.getAttribute('src') || '';
           if (!src) return;

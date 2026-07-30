@@ -532,7 +532,7 @@
   align-items: center;
   gap: 16px;
   padding: 14px 18px;
-  background: var(--skills-panel);
+  background: transparent;
   border: none;
   border-bottom: 1px solid var(--border-subtle);
   pointer-events: none;

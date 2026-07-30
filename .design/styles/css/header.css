@@ -9,6 +9,10 @@
    风格：EVE Online 科幻 HUD —— 深黑底 + 金色主色
    ═══════════════════════════════════════════════════════════════════════ */
 
+/* ── 容器预留高度：React portal 挂载前占位，防止内容跳动 ── */
+#chrome-ticker { height: 36px; }
+#chrome-navbar { height: 64px; }
+
 /* ═══ 1. Ticker 滚动播报条 ═══ */
 .ticker {
   display: flex;

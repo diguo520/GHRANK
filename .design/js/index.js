@@ -661,7 +661,7 @@ var INITIAL_CARDS = [
           card.setAttribute('data-category', item.category);
           card.setAttribute('data-updated', item.updated || 'day');
           card.setAttribute('data-likes', String(item.likes || 0));
-          card.onclick = function () { window.location.href = 'detail.html'; };
+          card.onclick = function () { window.location.href = 'community-detail.html'; };
           card.innerHTML = buildCardHTML(item);
 
           skel.replaceWith(card);
@@ -739,7 +739,7 @@ var INITIAL_CARDS = [
             card.setAttribute('data-category', item.category);
             card.setAttribute('data-updated', item.updated || 'day');
             card.setAttribute('data-likes', String(item.likes || 0));
-            card.onclick = function () { window.location.href = 'detail.html'; };
+            card.onclick = function () { window.location.href = 'community-detail.html'; };
             card.innerHTML = buildCardHTML(item);
             cardFrag.appendChild(card);
           });

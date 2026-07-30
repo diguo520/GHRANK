@@ -227,6 +227,12 @@
     }
   }
 
+  // 登录状态检查（与 prompt.js 保持一致，读取 localStorage 标记）
+  function isLoggedIn() {
+    try { return window.localStorage.getItem('ghrank_logged_in') === '1'; }
+    catch (e) { return false; }
+  }
+
   function createNewPostBtn() {
     var btn = document.createElement('a');
     btn.className = 'tieba-new-post-btn';
@@ -239,8 +245,10 @@
   function updateJoinBtnState(joinBtn, bar) {
     if (!joinBtn) return;
     var card = joinBtn.parentNode;
+    // 已加入且已登录才显示 New Post；未登录或未加入都显示 Join Tieba
     var joined = isBarJoined(bar.id);
-    if (joined) {
+    var loggedIn = isLoggedIn();
+    if (joined && loggedIn) {
       joinBtn.style.display = 'none';
       if (!document.getElementById('tiebaNewPostBtn')) {
         card.insertBefore(createNewPostBtn(), joinBtn.nextSibling);
@@ -548,12 +556,13 @@
       var slice = threads.slice(startIdx, endIdx);
 
       var html = '';
+      var barId = currentBarRef.current ? currentBarRef.current.id : '';
       for (var i = 0; i < slice.length; i++) {
         var t = slice[i];
         var entranceClass = append ? 'thread-fade-in' : '';
         var isOnline = Math.random() < 0.55;
         html +=
-          '<a class="thread-item ' + entranceClass + (isOnline ? ' is-author-online' : '') + '" href="community-detail.html?id=' + t.id + '" data-thread-id="' + t.id + '">' +
+          '<a class="thread-item ' + entranceClass + (isOnline ? ' is-author-online' : '') + '" href="community-detail.html?id=' + t.id + '&bar=' + encodeURIComponent(barId) + '" data-thread-id="' + t.id + '">' +
             '<div class="thread-avatar thread-avatar-lazy' + (isOnline ? ' is-online' : '') + '">' +
               '<img src="' + t.avatar + '" alt="' + t.author + '" loading="lazy" decoding="async">' +
               (isOnline ? '<span class="thread-avatar-online" aria-label="online"></span>' : '') +
@@ -704,7 +713,12 @@
 
         boundJoinBtn = joinBtn;
         boundJoinHandler = function () {
-          // 未加入用户点击后：Join 按钮消失，出现 New Post
+          // 未登录用户：提示登录，不执行加入操作
+          if (!isLoggedIn()) {
+            showToast('请登录');
+            return;
+          }
+          // 已登录用户：加入贴吧，Join 按钮消失，出现 New Post
           setBarJoined(bar.id, true);
           updateJoinBtnState(joinBtn, bar);
           showToast('Joined ' + bar.name);

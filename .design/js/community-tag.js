@@ -114,6 +114,26 @@
   // 分区映射
   var SECTIONS = ['Discussions', 'Show & Tell', 'Questions', 'Tutorials', 'News & Updates', 'Off-Topic', 'Dev Logs'];
 
+  // 标签 → 贴吧 ID 映射（用于帖子链接携带 bar 参数）
+  var TAG_TO_BAR = {
+    'AI-Agents': 'ai-agents',
+    'LLM': 'ai-agents',
+    'RAG': 'rag-builders',
+    'Vector-DB': 'vector-db',
+    'LLM-Finetune': 'llm-train',
+    'CLI-Tools': 'cli-craft',
+    'Open-Source': 'open-src',
+    'Scoring-Model': 'scoring',
+    'GHRANK-API': 'scoring',
+    'DevOps': 'devops',
+    'Tutorial': 'ai-agents'
+  };
+
+  // 根据标签获取对应贴吧 ID，未命中时回退到第一个贴吧
+  function tagToBarId(tag) {
+    return TAG_TO_BAR[tag] || 'ai-agents';
+  }
+
   // 常量
   var PAGE_SIZE = 6;
   var HEART_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
@@ -284,7 +304,7 @@
     for (var i = 0; i < HOT_TIEBAS.length; i++) {
       var bar = HOT_TIEBAS[i];
       html +=
-        '<a class="hot-bar-item" href="community-list.html?bar=' + encodeURIComponent(bar.id) + '">' +
+        '<a class="hot-bar-item" href="community-tiebas.html?bar=' + encodeURIComponent(bar.id) + '">' +
           '<span class="hot-bar-icon">' + escapeHtml(bar.icon) + '</span>' +
           '<div class="hot-bar-info">' +
             '<div class="hot-bar-name">' + escapeHtml(bar.name) + '</div>' +
@@ -468,7 +488,7 @@
         // 作者在线标识随机显示
         var isOnline = Math.random() < 0.55;
         html +=
-          '<a class="thread-item ' + entranceClass + (isOnline ? ' is-author-online' : '') + '" href="community-detail.html?id=' + t.id + '" data-thread-id="' + t.id + '">' +
+          '<a class="thread-item ' + entranceClass + (isOnline ? ' is-author-online' : '') + '" href="community-detail.html?id=' + t.id + '&bar=' + encodeURIComponent(tagToBarId(t.tag)) + '" data-thread-id="' + t.id + '">' +
             '<div class="thread-avatar thread-avatar-lazy' + (isOnline ? ' is-online' : '') + '">' +
               '<img src="' + t.avatar + '" alt="' + t.author + '" loading="lazy" decoding="async">' +
               (isOnline ? '<span class="thread-avatar-online" aria-label="online"></span>' : '') +

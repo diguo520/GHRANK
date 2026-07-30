@@ -2,7 +2,7 @@
    community.css — GHRANK 社区页面 (Comms Channel / Station Forum)
    EVE Online 科幻 HUD 风格：深色背景 + 金色主色 + 青/绿/橙/紫强调色
    依赖 index.css 中定义的 :root CSS 变量，本文件补充页面级派生变量
-   覆盖页面：community.html / community-list.html
+   覆盖页面：community.html / community-tag.html / community-tiebas.html
    （community-detail.html 与 community-new.html 的补充样式内联于各自页面）
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -376,7 +376,7 @@
   opacity: 1;
 }
 
-/* community-list.html 的紧凑 hero 变体 */
+/* 紧凑 hero 变体（用于 community-tag.html / community-tiebas.html） */
 .section-hero-row {
   display: flex;
   align-items: center;
@@ -398,7 +398,7 @@
   height: 24px;
 }
 
-/* ── 面包屑（community-list.html） ── */
+/* ── 面包屑（community-tag.html / community-tiebas.html 共享） ── */
 .section-breadcrumb {
   display: flex;
   align-items: center;
@@ -834,7 +834,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* ═══ Toast（社区提交反馈，community.html / community-list.html 共享） ═══ */
+/* ═══ Toast（社区提交反馈，community.html 共享） ═══ */
 .community-toast {
   position: fixed;
   bottom: 32px;
@@ -1289,6 +1289,38 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
 }
+
+/* ── 贴吧卡片骨架屏 ── */
+.bar-card-skeleton {
+  min-height: 140px;
+}
+.bar-card-skel-icon {
+  width: 44px;
+  height: 44px;
+  clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
+  flex-shrink: 0;
+}
+
+/* ── 贴吧网格哨兵 / 加载器 ── */
+.bar-grid-sentinel {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+.bar-grid-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.bar-grid-end {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  opacity: 0.5;
+}
 .bar-card {
   display: flex;
   flex-direction: column;
@@ -1546,12 +1578,77 @@
   border: 1px solid var(--border);
 }
 
+/* ── 更多入口（参考 about.css More Entry Points） ── */
+.sidebar-more-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sidebar-more-entry-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-more-entry-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.2s ease, background 0.2s ease;
+  border-radius: 4px;
+}
+.sidebar-more-entry-item svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+.sidebar-more-entry-item .arrow {
+  margin-left: auto;
+  color: var(--text-muted);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.sidebar-more-entry-item:hover {
+  color: var(--text);
+  background: rgba(245, 197, 24, 0.03);
+}
+.sidebar-more-entry-item:hover .arrow {
+  color: var(--gold);
+  transform: translateX(2px);
+}
+
 /* ── 版权 ── */
+.sidebar-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 0 4px 10px;
+  justify-content: center;
+}
+.sidebar-footer-links a {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.sidebar-footer-links a:hover {
+  color: var(--gold);
+}
 .sidebar-copyright {
-  padding: 14px 16px;
-  background: var(--bg-deep);
-  border: 1px solid var(--border-dim);
+  padding: 8px 0 0;
   text-align: center;
+  border-top: 1px solid var(--border-dim);
 }
 .sidebar-copyright-text {
   font-family: var(--font-display);

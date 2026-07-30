@@ -73,11 +73,6 @@
    0.5 EDITOR FLOATING MENU — 防止浮动菜单在图片上方显示
    ═══════════════════════════════════════════════════════════════ */
 
-/* 默认隐藏浮动菜单，由 JS 在编辑器激活后才显示 */
-.floating-menu {
-  display: none !important;
-}
-
 /* ═══════════════════════════════════════════════════════════════
    1. DETAIL LAYOUT — 双列网格布局（预览 | 信息面板）
    ═══════════════════════════════════════════════════════════════ */
@@ -1094,7 +1089,7 @@
   letter-spacing: 0.06em;
 }
 
-/* ── 评论编辑器（Tiptap） ── */
+/* ── 评论编辑器 ── */
 .review-compose {
   background: var(--bg-panel);
   border: 1px solid var(--border);
@@ -1139,15 +1134,32 @@
   display: block;
 }
 
-/* Tiptap 编辑器区域 */
-.tiptap-editor {
-  min-height: 120px;
+/* 主评论 textarea */
+.review-textarea {
+  width: 100%;
+  min-height: 100px;
   padding: var(--sp-4);
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--text);
   line-height: 1.6;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-subtle);
+  border-left: none;
+  border-right: none;
+  resize: vertical;
   outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-textarea::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.review-textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.08);
 }
 
 /* 底部操作栏 */
@@ -1728,26 +1740,29 @@
   color: var(--danger);
 }
 
-.reply-tiptap-host {
+.reply-textarea {
+  width: 100%;
   min-height: 60px;
   padding: var(--sp-3);
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--text-dim);
-  border: 1px solid var(--border);
+  color: var(--text);
+  line-height: 1.55;
   background: var(--bg-panel);
+  border: 1px solid var(--border);
+  resize: vertical;
   outline: none;
   transition: border-color 0.2s;
 }
 
-.reply-tiptap-host:empty::before {
-  content: attr(data-placeholder);
+.reply-textarea::placeholder {
   color: var(--text-muted);
-  pointer-events: none;
+  font-style: italic;
 }
 
-.reply-tiptap-host:focus {
+.reply-textarea:focus {
   border-color: var(--gold-dim);
+  box-shadow: 0 0 0 2px rgba(245, 197, 24, 0.06);
 }
 
 .reply-form-actions {

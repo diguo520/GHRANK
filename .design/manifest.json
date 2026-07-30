@@ -12,14 +12,6 @@
       "x": 0, "y": 0, "width": 1280, "height": 720
     },
     {
-      "id": "detail",
-      "title": "Project Detail",
-      "file": "pages/detail.html",
-      "type": "page",
-      "isEntry": false,
-      "x": 0, "y": 0, "width": 1280, "height": 720
-    },
-    {
       "id": "news",
       "title": "AI News",
       "file": "pages/news.html",

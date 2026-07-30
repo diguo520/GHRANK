@@ -135,6 +135,12 @@
     }
   }
 
+  // 登录状态检查（与 community-tiebas.js 保持一致，读取 localStorage 标记）
+  function isLoggedIn() {
+    try { return window.localStorage.getItem('ghrank_logged_in') === '1'; }
+    catch (e) { return false; }
+  }
+
   function showToast(toastEl, msg) {
     if (!toastEl) return;
     toastEl.textContent = msg;
@@ -291,13 +297,23 @@
 
       /* ── 填充 About this Tieba 卡片 ── */
       var aboutIcon = document.getElementById('aboutTiebaIcon');
-      var aboutName = document.getElementById('aboutTiebaName');
+      var aboutNameLink = document.getElementById('aboutTiebaNameLink');
       var aboutMeta = document.getElementById('aboutTiebaMeta');
       var aboutDesc = document.getElementById('aboutTiebaDesc');
       if (aboutIcon) aboutIcon.textContent = bar.icon;
-      if (aboutName) aboutName.textContent = bar.name;
+      if (aboutNameLink) {
+        aboutNameLink.textContent = bar.name;
+        aboutNameLink.href = 'community-tiebas.html?bar=' + encodeURIComponent(bar.id);
+      }
       if (aboutMeta) aboutMeta.textContent = fmtNum(bar.members) + ' members · ' + fmtNum(bar.posts) + ' posts';
       if (aboutDesc) aboutDesc.textContent = bar.desc;
+
+      /* ── 更新面包屑贴吧链接和名称 ── */
+      var crumbTiebaLink = document.getElementById('crumbTiebaLink');
+      if (crumbTiebaLink) {
+        crumbTiebaLink.textContent = bar.name;
+        crumbTiebaLink.href = 'community-tiebas.html?bar=' + encodeURIComponent(bar.id);
+      }
 
       var toastEl = document.getElementById('communityToast');
 
@@ -307,15 +323,28 @@
 
       /* ── Join Tieba 按钮 ── */
       var joinBtn = document.getElementById('detailJoinBtn');
+      var newPostBtn = document.querySelector('.detail-new-post-btn');
+      // 已加入且已登录才显示 New Post；否则显示 Join Tieba
+      var joined = isBarJoined(bar.id);
+      var loggedIn = isLoggedIn();
       if (joinBtn) {
-        // 已加入则直接隐藏按钮
-        if (isBarJoined(bar.id)) {
+        if (joined && loggedIn) {
           joinBtn.style.display = 'none';
+          if (newPostBtn) newPostBtn.style.display = '';
+        } else {
+          joinBtn.style.display = '';
+          if (newPostBtn) newPostBtn.style.display = 'none';
         }
         joinBtn.addEventListener('click', function () {
-          // 点击后标记为已加入并隐藏按钮
+          // 未登录时提示用户先登录
+          if (!isLoggedIn()) {
+            showToast(toastEl, 'Please log in to join this tieba');
+            return;
+          }
+          // 已登录：标记为已加入，切换按钮状态
           setBarJoined(bar.id, true);
           joinBtn.style.display = 'none';
+          if (newPostBtn) newPostBtn.style.display = '';
           showToast(toastEl, 'Joined ' + bar.name);
         });
       }

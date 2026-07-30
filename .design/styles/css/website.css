@@ -414,7 +414,7 @@
   gap: 16px;
 }
 
-/* ── 网站卡片 ── */
+/* ── 网站卡片（动态渲染，默认可见） ── */
 .website-card {
   display: flex;
   align-items: stretch;
@@ -426,6 +426,15 @@
   transition: border-color 0.22s, transform 0.22s, box-shadow 0.22s;
   position: relative;
   overflow: hidden;
+  animation: website-card-enter 0.35s ease;
+}
+/* 入场动画（不使用 forwards，避免 transform 与 hover 冲突） */
+.website-card-entered {
+  animation: website-card-enter 0.35s ease;
+}
+@keyframes website-card-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .website-card::before {
   content: '';
@@ -604,6 +613,180 @@
   color: var(--text-dim);
   letter-spacing: 0.04em;
   white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Toast 提示 & 空状态
+   ═══════════════════════════════════════════════════════════════ */
+.website-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-gold);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+.website-toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.website-toast-icon {
+  display: flex;
+  align-items: center;
+  color: var(--gold);
+}
+.website-toast-url {
+  color: var(--text-dim);
+  margin-left: 4px;
+}
+
+/* ── 空状态 ── */
+.website-empty {
+  text-align: center;
+  padding: 64px 20px;
+}
+.website-empty-icon {
+  font-size: 32px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.website-empty-text {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.website-empty-hint {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ── 骨架屏 ── */
+.website-skeleton-card {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  padding: 18px 20px;
+  background: transparent;
+  border: 1px solid var(--border);
+  pointer-events: none;
+}
+.website-skeleton-favicon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+.website-skeleton-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.website-skeleton-line {
+  height: 12px;
+  border-radius: 3px;
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.10) 50%,
+    rgba(255, 255, 255, 0.04) 75%);
+  background-size: 200% 100%;
+  animation: website-shimmer 1.6s infinite linear;
+}
+.website-skeleton-line.short { width: 40%; }
+.website-skeleton-line.medium { width: 65%; }
+.website-skeleton-line.long { width: 90%; }
+.website-skeleton-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+.website-skeleton-tag {
+  width: 70px;
+  height: 18px;
+}
+.website-skeleton-jump {
+  width: 50px;
+  height: 18px;
+}
+@keyframes website-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── 卡片跳转图标 ── */
+.website-card-jump {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.18s;
+}
+.website-card-jump svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+.website-card:hover .website-card-jump {
+  color: var(--gold);
+}
+
+/* ── 无限滚动加载器 ── */
+.website-scroll-loader {
+  /* 跨满 grid 所有列，与 end 标记保持一致的居中定位 */
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+.website-scroll-loader-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+  animation: website-loader-pulse 1.2s infinite;
+}
+.website-scroll-loader-dot:nth-child(2) { animation-delay: 0.2s; }
+.website-scroll-loader-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes website-loader-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+.website-scroll-end {
+  /* 跨满 grid 所有列，确保在右侧列表区域下方居中 */
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 24px 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 /* ═══════════════════════════════════════════════════════════════

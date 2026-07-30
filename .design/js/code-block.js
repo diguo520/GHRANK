@@ -300,7 +300,7 @@
     init();
   }
 
-  // 暴露给动态内容使用（例如 Tiptap 编辑器插入新代码块后）
+  // 暴露给动态内容使用（例如动态插入新代码块后）
   window.GHRankCodeBlock = {
     enhance: enhanceAll,
     enhanceBlock: enhanceBlock

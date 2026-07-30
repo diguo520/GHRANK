@@ -11,7 +11,7 @@
    4. 点赞交互、Toast 提示
    5. HUD 入场动画
    6. 在线人数波动
-   7. 分类横幅（community-list.html）
+   7. 分类横幅
 
    注意：页面静态结构已由 HTML 提供，本组件 return null，
         仅通过 useEffect 管理所有 DOM 交互。
@@ -150,11 +150,41 @@
     { id: 'devops',       name: 'DevOps Den',        icon: 'DO', desc: 'CI/CD, container orchestration, observability, and infrastructure-as-code for AI workloads.', members: 4100,  posts: 980,  tags: ['DevOps'] }
   ];
 
-  // 当前登录用户创建与关注的贴吧（community-list.html 使用）
+  // 标签 → 贴吧 ID 映射（用于帖子链接携带 bar 参数）
+  var TAG_TO_BAR = {
+    'AI-Agents': 'ai-agents',
+    'LLM': 'ai-agents',
+    'RAG': 'rag-builders',
+    'Vector-DB': 'vector-db',
+    'LLM-Finetune': 'llm-train',
+    'CLI-Tools': 'cli-craft',
+    'Open-Source': 'open-src',
+    'Scoring-Model': 'scoring',
+    'GHRANK-API': 'scoring',
+    'DevOps': 'devops',
+    'Tutorial': 'ai-agents'
+  };
+
+  // 根据标签获取对应贴吧 ID，未命中时回退到第一个贴吧
+  function tagToBarId(tag) {
+    return TAG_TO_BAR[tag] || TIEBA_CATALOG[0].id;
+  }
+
+  // 当前登录用户创建与关注的贴吧
+  // 扩展至 12 条以支持骨架屏 + 数据分块 + IntersectionObserver 无限滚动演示
   var MY_CREATED_BARS = [
     { id: 'my-ai-lab',    name: 'My AI Lab',         icon: 'MA', desc: 'A personal sandbox for testing agent prompts and sharing experiment notes.', members: 342,   posts: 128 },
     { id: 'ghrank-cn',    name: 'GHRANK CN',         icon: 'GC', desc: 'Chinese-speaking GHRANK community for local events and Mandarin discussions.', members: 1890,  posts: 560 },
-    { id: 'rust-scoring', name: 'Rust Scoring',      icon: 'RS', desc: 'Rewriting GHRANK scoring modules in Rust for performance and safety.', members: 780,   posts: 210 }
+    { id: 'rust-scoring', name: 'Rust Scoring',      icon: 'RS', desc: 'Rewriting GHRANK scoring modules in Rust for performance and safety.', members: 780,   posts: 210 },
+    { id: 'wasm-scoring', name: 'WASM Scoring',      icon: 'WS', desc: 'WebAssembly-based scoring runtime for browser-side rank computation.', members: 156,   posts: 42 },
+    { id: 'edge-agents',  name: 'Edge Agents',       icon: 'EA', desc: 'Deploy AI agents to edge runtimes: Cloudflare Workers, Deno Deploy, Vercel Edge.', members: 523,   posts: 89 },
+    { id: 'prompt-mkt',   name: 'Prompt Market',     icon: 'PM', desc: 'Buy, sell, and trade production-ready prompts with version control.', members: 2100,  posts: 680 },
+    { id: 'dev-stream',   name: 'Dev Stream Hub',    icon: 'DS', desc: 'Live coding streams, async dev logs, and pair-programming sessions.', members: 445,   posts: 134 },
+    { id: 'score-viz',    name: 'Score Viz Lab',     icon: 'SV', desc: 'Visualize GHRANK scoring signals with D3, Three.js, and Observable notebooks.', members: 312,   posts: 67 },
+    { id: 'agent-eval',   name: 'Agent Eval',        icon: 'AE', desc: 'Benchmark autonomous agents on standardized tool-use and reasoning tasks.', members: 890,   posts: 245 },
+    { id: 'repo-health',  name: 'Repo Health',       icon: 'RH', desc: 'Track repository health metrics: test coverage, dependency freshness, issue triage.', members: 678,   posts: 156 },
+    { id: 'ci-radar',     name: 'CI Radar',          icon: 'CR', desc: 'Monitor CI/CD pipelines across repos with real-time build status aggregation.', members: 234,   posts: 45 },
+    { id: 'model-card',   name: 'Model Card Gen',    icon: 'MC', desc: 'Auto-generate model cards from training configs, eval results, and metadata.', members: 567,   posts: 123 }
   ];
 
   var MY_FOLLOWED_BARS = [
@@ -162,7 +192,14 @@
     { id: 'rag-builders', name: 'RAG Builders',      icon: 'RG', desc: 'Build retrieval-augmented generation pipelines, share embedding strategies and chunking tips.', members: 8700,  posts: 2100 },
     { id: 'vector-db',    name: 'Vector DB Labs',    icon: 'VD', desc: 'Compare and optimize vector stores: pgvector, Pinecone, Weaviate, Qdrant and more.', members: 4900,  posts: 1200 },
     { id: 'cli-craft',    name: 'CLI Craftsmen',     icon: 'CL', desc: 'Share your favorite CLI tools, shell scripts, terminal workflows and dotfiles.', members: 3500,  posts: 890 },
-    { id: 'devops',       name: 'DevOps Den',        icon: 'DO', desc: 'CI/CD, container orchestration, observability, and infrastructure-as-code for AI workloads.', members: 4100,  posts: 980 }
+    { id: 'devops',       name: 'DevOps Den',        icon: 'DO', desc: 'CI/CD, container orchestration, observability, and infrastructure-as-code for AI workloads.', members: 4100,  posts: 980 },
+    { id: 'llm-train',    name: 'LLM Training',      icon: 'LL', desc: 'Fine-tuning, QLoRA, LoRA, dataset prep, and training infrastructure discussions.', members: 6300,  posts: 1800 },
+    { id: 'open-src',     name: 'Open Source Guild', icon: 'OS', desc: 'Open source governance, licensing, monetization, and community management.', members: 5200,  posts: 1450 },
+    { id: 'scoring',      name: 'Scoring Model Lab', icon: 'SC', desc: 'Deep dives into GHRANK scoring algorithms, signal weighting, and time-decay models.', members: 2800,  posts: 670 },
+    { id: 'prompt-eng',   name: 'Prompt Engineers',  icon: 'PE', desc: 'Advanced prompt engineering: chain-of-thought, ReAct, tree-of-thoughts, and beyond.', members: 3400,  posts: 890 },
+    { id: 'data-pipe',    name: 'Data Pipelines',    icon: 'DP', desc: 'ETL, streaming pipelines, data quality, and feature stores for ML workloads.', members: 2700,  posts: 560 },
+    { id: 'infra-pulse',  name: 'Infra Pulse',       icon: 'IP', desc: 'Infrastructure monitoring, SRE practices, and incident response for AI systems.', members: 1900,  posts: 430 },
+    { id: 'eval-hub',     name: 'Eval Hub',          icon: 'EH', desc: 'LLM evaluation frameworks: lm-eval-harness, OpenAI Evals, custom benchmarks.', members: 3200,  posts: 780 }
   ];
 
   // Title suffixes for synthesized threads (prevents repetition)
@@ -380,7 +417,7 @@
     for (var i = 0; i < HOT_TIEBAS.length; i++) {
       var bar = HOT_TIEBAS[i];
       html +=
-        '<a class="hot-bar-item" href="community-list.html?bar=' + encodeURIComponent(bar.id) + '">' +
+        '<a class="hot-bar-item" href="community-tiebas.html?bar=' + encodeURIComponent(bar.id) + '">' +
           '<span class="hot-bar-icon">' + escapeHtml(bar.icon) + '</span>' +
           '<div class="hot-bar-info">' +
             '<div class="hot-bar-name">' + escapeHtml(bar.name) + '</div>' +
@@ -391,38 +428,162 @@
     container.innerHTML = html;
   }
 
-  // 渲染贴吧卡片网格到 DOM（community-list.html 使用）
+  /* ═══ 贴吧卡片网格：骨架屏 + IntersectionObserver + 数据分块 ═══ */
+  var BAR_PAGE_SIZE = 6;
+  // 模块级状态：管理 IO 观察者、哨兵元素、分块进度
+  var barGridState = { observer: null, sentinel: null, visibleCount: 0, currentTab: null, isLoading: false };
+
+  // 创建贴吧卡片骨架屏元素（复用 loading.css 的 .skeleton / .skeleton-line）
+  function createBarCardSkeleton() {
+    var skel = document.createElement('div');
+    skel.className = 'skeleton-card bar-card-skeleton';
+    skel.innerHTML =
+      '<div class="bar-card-header">' +
+        '<div class="skeleton bar-card-skel-icon"></div>' +
+        '<div class="skeleton-line" style="width:50%;height:16px;"></div>' +
+      '</div>' +
+      '<div class="skeleton-line full" style="height:13px;"></div>' +
+      '<div class="skeleton-line medium" style="height:13px;"></div>' +
+      '<div class="bar-card-footer">' +
+        '<div class="skeleton-line" style="width:70px;height:11px;"></div>' +
+        '<div class="skeleton-line" style="width:70px;height:11px;"></div>' +
+      '</div>';
+    return skel;
+  }
+
+  // 创建单张贴吧卡片 DOM 元素
+  function createBarCardElement(bar) {
+    var wrapper = document.createElement('div');
+    wrapper.innerHTML =
+      '<a class="bar-card" href="community-tiebas.html?bar=' + encodeURIComponent(bar.id) + '" data-bar-id="' + escapeHtml(bar.id) + '">' +
+        '<div class="bar-card-header">' +
+          '<span class="bar-card-icon">' + escapeHtml(bar.icon) + '</span>' +
+          '<span class="bar-card-name">' + escapeHtml(bar.name) + '</span>' +
+        '</div>' +
+        '<p class="bar-card-desc">' + escapeHtml(bar.desc) + '</p>' +
+        '<div class="bar-card-footer">' +
+          '<span class="bar-card-stat"><strong>' + fmtNum(bar.members) + '</strong> members</span>' +
+          '<span class="bar-card-stat"><strong>' + fmtNum(bar.posts) + '</strong> posts</span>' +
+        '</div>' +
+      '</a>';
+    return wrapper.firstChild;
+  }
+
+  // 清理上一次的 IO 观察者和哨兵元素（切换 tab 时调用）
+  function cleanupBarGrid() {
+    if (barGridState.observer) {
+      barGridState.observer.disconnect();
+      barGridState.observer = null;
+    }
+    if (barGridState.sentinel && barGridState.sentinel.parentNode) {
+      barGridState.sentinel.parentNode.removeChild(barGridState.sentinel);
+    }
+    barGridState.sentinel = null;
+  }
+
+  // 渲染贴吧卡片网格：骨架屏 → 首批数据 → IntersectionObserver 无限滚动
   // tab: 'created' 我创建的 / 'following' 已关注的
   function renderBarCardGrid(container, tab) {
     if (!container) return;
-    var list = tab === 'created' ? MY_CREATED_BARS : MY_FOLLOWED_BARS;
-    var html = '';
-    for (var i = 0; i < list.length; i++) {
-      var bar = list[i];
-      html +=
-        '<a class="bar-card" href="community-list.html" data-bar-id="' + escapeHtml(bar.id) + '">' +
-          '<div class="bar-card-header">' +
-            '<span class="bar-card-icon">' + escapeHtml(bar.icon) + '</span>' +
-            '<span class="bar-card-name">' + escapeHtml(bar.name) + '</span>' +
-          '</div>' +
-          '<p class="bar-card-desc">' + escapeHtml(bar.desc) + '</p>' +
-          '<div class="bar-card-footer">' +
-            '<span class="bar-card-stat"><strong>' + fmtNum(bar.members) + '</strong> members</span>' +
-            '<span class="bar-card-stat"><strong>' + fmtNum(bar.posts) + '</strong> posts</span>' +
-          '</div>' +
-        '</a>';
-    }
-    container.innerHTML = html;
 
-    // 触发入场动画
-    var cards = container.querySelectorAll('.bar-card');
-    requestAnimationFrame(function () {
-      for (var ci = 0; ci < cards.length; ci++) {
-        (function (card, idx) {
-          setTimeout(function () { card.classList.add('is-entered'); }, idx * 50);
-        })(cards[ci], ci);
+    // 清理上一次状态（切换 tab 时触发）
+    cleanupBarGrid();
+    barGridState.currentTab = tab;
+    barGridState.visibleCount = 0;
+    barGridState.isLoading = false;
+
+    var list = tab === 'created' ? MY_CREATED_BARS : MY_FOLLOWED_BARS;
+
+    // 1. 显示骨架屏（数量与首批一致，最多 BAR_PAGE_SIZE 张）
+    container.innerHTML = '';
+    var skeletonCount = Math.min(BAR_PAGE_SIZE, list.length);
+    for (var i = 0; i < skeletonCount; i++) {
+      container.appendChild(createBarCardSkeleton());
+    }
+
+    // 2. 模拟网络延迟后渲染首批真实数据
+    setTimeout(function () {
+      // tab 已切换则放弃本次渲染
+      if (barGridState.currentTab !== tab) return;
+
+      container.innerHTML = '';
+      var end = Math.min(BAR_PAGE_SIZE, list.length);
+      barGridState.visibleCount = end;
+
+      for (var j = 0; j < end; j++) {
+        var cardEl = createBarCardElement(list[j]);
+        container.appendChild(cardEl);
+        // 交错入场动画
+        (function (el, idx) {
+          setTimeout(function () { el.classList.add('is-entered'); }, idx * 50);
+        })(cardEl, j);
       }
-    });
+
+      // 3. 还有更多数据 → 创建哨兵并启动 IntersectionObserver
+      if (barGridState.visibleCount < list.length) {
+        setupBarGridObserver(container, tab, list);
+      }
+    }, 400);
+  }
+
+  // 设置哨兵元素 + IntersectionObserver 监听
+  function setupBarGridObserver(container, tab, list) {
+    var sentinel = document.createElement('div');
+    sentinel.className = 'bar-grid-sentinel';
+    sentinel.innerHTML = '<div class="bar-grid-loader"><span class="scroll-loader-spinner"></span></div>';
+    container.appendChild(sentinel);
+    barGridState.sentinel = sentinel;
+
+    var observer = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting &&
+            barGridState.currentTab === tab &&
+            !barGridState.isLoading) {
+          loadMoreBarCards(container, tab, list);
+        }
+      }
+    }, { rootMargin: '100px', threshold: 0 });
+
+    observer.observe(sentinel);
+    barGridState.observer = observer;
+  }
+
+  // 加载下一批贴吧卡片（在哨兵元素前插入）
+  function loadMoreBarCards(container, tab, list) {
+    if (barGridState.currentTab !== tab) return;
+    barGridState.isLoading = true;
+
+    setTimeout(function () {
+      if (barGridState.currentTab !== tab) return;
+
+      var start = barGridState.visibleCount;
+      var end = Math.min(start + BAR_PAGE_SIZE, list.length);
+
+      for (var i = start; i < end; i++) {
+        var cardEl = createBarCardElement(list[i]);
+        container.insertBefore(cardEl, barGridState.sentinel);
+        (function (el, idx) {
+          setTimeout(function () { el.classList.add('is-entered'); }, idx * 50);
+        })(cardEl, i - start);
+      }
+
+      barGridState.visibleCount = end;
+      barGridState.isLoading = false;
+
+      // 全部加载完毕 → 断开观察者，显示结束标记
+      if (barGridState.visibleCount >= list.length) {
+        if (barGridState.observer) {
+          barGridState.observer.disconnect();
+          barGridState.observer = null;
+        }
+        if (barGridState.sentinel) {
+          var loader = barGridState.sentinel.querySelector('.bar-grid-loader');
+          if (loader) {
+            loader.innerHTML = '<span class="bar-grid-end">// End of feed</span>';
+          }
+        }
+      }
+    }, 400);
   }
 
   /* ═══════════════════════════════════════════════════════════════
@@ -637,7 +798,7 @@
         // 作者在线标识随机显示，避免固定数据造成的重复感
         var isOnline = Math.random() < 0.55;
         html +=
-          '<a class="thread-item ' + entranceClass + (isOnline ? ' is-author-online' : '') + '" href="community-detail.html?id=' + t.id + '" data-thread-id="' + t.id + '">' +
+          '<a class="thread-item ' + entranceClass + (isOnline ? ' is-author-online' : '') + '" href="community-detail.html?id=' + t.id + '&bar=' + encodeURIComponent(tagToBarId(t.tag || t.section)) + '" data-thread-id="' + t.id + '">' +
             '<div class="thread-avatar thread-avatar-lazy' + (isOnline ? ' is-online' : '') + '" data-avatar="' + t.avatar + '" data-author="' + t.author + '">' +
               '<img src="' + t.avatar + '" alt="' + t.author + '" loading="lazy" decoding="async">' +
               (isOnline ? '<span class="thread-avatar-online" aria-label="online"></span>' : '') +
@@ -664,7 +825,12 @@
         tpl.innerHTML = html;
         threadList.appendChild(tpl.content);
       } else {
+        /* 非追加模式：替换前记录滚动位置，替换后恢复，防止高度突变导致页面跳动 */
+        var savedScrollY = window.scrollY;
         threadList.innerHTML = html;
+        if (window.scrollY !== savedScrollY) {
+          window.scrollTo(0, savedScrollY);
+        }
       }
 
       wireLazyAvatars();
@@ -681,9 +847,14 @@
       requestAnimationFrame(function () {
         for (var ni = 0; ni < newItems.length; ni++) {
           (function (item, idx) {
-            setTimeout(function () {
+            /* 首批渲染时直接添加类，避免 setTimeout 延迟导致 opacity:0 卡片撑空列表高度 */
+            if (!append) {
               item.classList.add('is-entered');
-            }, idx * 40);
+            } else {
+              setTimeout(function () {
+                item.classList.add('is-entered');
+              }, idx * 40);
+            }
           })(newItems[ni], ni);
         }
       });
@@ -810,7 +981,7 @@
         }
       }
 
-      // ── 分类横幅（community-list.html）──
+      // ── 分类横幅 ──
       applySectionBanner(querySection);
 
       // ── 设置首 Tab 激活 ──
@@ -901,7 +1072,7 @@
           if (href === '#' || href === '') {
             e.preventDefault();
             var section = item.getAttribute('data-section');
-            window.location.href = 'community-list.html?section=' + encodeURIComponent(section);
+            window.location.href = 'community.html?section=' + encodeURIComponent(section);
           }
         };
         for (var ni = 0; ni < navItems.length; ni++) {
@@ -1237,7 +1408,7 @@
      通过轮询等待 GHRANK.mountChrome 就绪后再挂载，避免竞态导致 chrome 缺失 */
   function mountWhenReady() {
     if (global.GHRANK && typeof global.GHRANK.mountChrome === 'function') {
-      // auto-detect：mountChrome() 会根据 URL 自动识别 'community' 或 'community-list'
+      // auto-detect：mountChrome() 会根据 URL 自动识别 community 页面
       global.GHRANK.mountChrome(null, CommunityPage);
     } else {
       setTimeout(mountWhenReady, 50);
