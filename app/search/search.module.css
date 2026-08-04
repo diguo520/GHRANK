@@ -1,0 +1,29 @@
+/* 无结果状态图标脉冲 */
+@keyframes noResultsPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.7; }
+}
+
+/* 排序下拉菜单入场动画 */
+@keyframes sortDropdownIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 移动端响应式：搜索栏纵向布局 */
+@media (max-width: 768px) {
+  .searchHeroBar {
+    flex-wrap: wrap !important;
+    padding: 10px !important;
+  }
+  .searchHeroBar > input {
+    flex: 1 1 100% !important;
+    order: -1 !important;
+    padding: 8px 4px !important;
+  }
+  .searchHeroBar > button:last-child {
+    flex: 1 1 100% !important;
+    order: 1 !important;
+    padding: 12px !important;
+  }
+}
