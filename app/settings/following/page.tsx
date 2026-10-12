@@ -8,7 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SettingsShell from '../_components/SettingsShell';
 import { TextInput, panelStyle } from '../_components/SettingsForm';
-import { HeartIcon, SearchIcon } from '@/app/_components/icons';
+import { HeartIcon, SearchIcon } from '@/components/shared/icons';
 
 interface FollowedUser {
   id: string;

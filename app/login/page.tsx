@@ -15,7 +15,34 @@ export default function LoginPage() {
     >
       <div className="w-full">
         <LoginForm />
-        <div className="text-center mt-6">
+        {/* 注册引导 */}
+        <div className="text-center mt-5">
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '11px',
+              color: 'var(--text-muted)',
+            }}
+          >
+            No identity?{' '}
+          </span>
+          <Link
+            href="/register"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '11px',
+              letterSpacing: '1px',
+              color: 'var(--gold)',
+              textTransform: 'uppercase',
+              textDecoration: 'underline',
+              textUnderlineOffset: '3px',
+            }}
+          >
+            Create one
+          </Link>
+        </div>
+
+        <div className="text-center mt-4">
           <Link
             href="/"
             style={{

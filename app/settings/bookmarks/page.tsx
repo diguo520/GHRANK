@@ -7,9 +7,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import SettingsShell from '../_components/SettingsShell';
 import { TextInput, panelStyle } from '../_components/SettingsForm';
-import { BookmarkIcon, SearchIcon, ExternalLinkIcon, TrashIcon } from '@/app/_components/icons';
+import { BookmarkIcon, SearchIcon, ExternalLinkIcon, TrashIcon } from '@/components/shared/icons';
+import { Dropdown } from 'antd';
+import type { MenuProps } from 'antd';
 
-type BookmarkType = 'website' | 'prompt' | 'post' | 'news';
+// 仅保留社区帖子类型；website/prompt/news 等频道将来作为社区插件模块出现
+type BookmarkType = 'post';
 
 interface Bookmark {
   id: string;
@@ -21,26 +24,24 @@ interface Bookmark {
 }
 
 const initialBookmarks: Bookmark[] = [
-  { id: '1', title: 'OpenAI', url: '/go?url=openai.com', type: 'website', category: 'AI Tools', savedAt: '2 hours ago' },
-  { id: '2', title: 'Cinematic Portrait Generator', url: '/prompt/cinematic-portrait', type: 'prompt', category: 'Prompts', savedAt: '1 day ago' },
   { id: '3', title: 'React Fiber Architecture Deep Dive', url: '/community/post/react-fiber', type: 'post', category: 'Community', savedAt: '3 days ago' },
-  { id: '4', title: 'Hugging Face', url: '/go?url=huggingface.co', type: 'website', category: 'AI Tools', savedAt: '1 week ago' },
-  { id: '5', title: 'GPT-5.6 Sol Preview', url: '/news/gpt-5-6-sol', type: 'news', category: 'News', savedAt: '1 week ago' },
+  { id: '5', title: 'LLM Training Best Practices', url: '/community/post/llm-training', type: 'post', category: 'Community', savedAt: '5 days ago' },
+  { id: '6', title: 'RAG Pipeline Optimization', url: '/community/post/rag-pipeline', type: 'post', category: 'Community', savedAt: '1 week ago' },
 ];
 
 const typeLabel: Record<BookmarkType, string> = {
-  website: 'Website',
-  prompt: 'Prompt',
   post: 'Post',
-  news: 'News',
 };
 
 const typeColor: Record<BookmarkType, string> = {
-  website: 'var(--cyan)',
-  prompt: 'var(--purple)',
   post: 'var(--green)',
-  news: 'var(--pink)',
 };
+
+// 书签类型过滤选项：value 驱动 selectedKeys，label 驱动展示文案
+const FILTER_OPTIONS: { value: BookmarkType | 'all'; label: string }[] = [
+  { value: 'all', label: 'All Types' },
+  { value: 'post', label: 'Posts' },
+];
 
 function BookmarkRow({ item, onDelete }: { item: Bookmark; onDelete: (id: string) => void }) {
   return (
@@ -187,6 +188,14 @@ export default function BookmarksPage() {
     setBookmarks((prev) => prev.filter((b) => b.id !== id));
   };
 
+  // 构造类型过滤下拉菜单项（value → key 对齐 antd Menu 约定）
+  const filterItems: MenuProps['items'] = FILTER_OPTIONS.map((opt) => ({
+    key: opt.value,
+    label: opt.label,
+  }));
+  // 当前选中类型的展示文案（防御性回退到 filter 原值）
+  const selectedFilterLabel = FILTER_OPTIONS.find((opt) => opt.value === filter)?.label ?? filter;
+
   return (
     <SettingsShell
       title="Bookmarks"
@@ -223,29 +232,31 @@ export default function BookmarksPage() {
               />
             </div>
 
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value as BookmarkType | 'all')}
-              style={{
-                padding: '9px 28px 9px 12px',
-                background: 'var(--bg)',
-                border: '1px solid var(--border)',
-                borderRadius: '3px',
-                color: 'var(--text)',
-                fontFamily: 'var(--font-body)',
-                fontSize: '13px',
-                appearance: 'none',
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'right 10px center',
+            <Dropdown
+              trigger={['click']}
+              menu={{
+                items: filterItems,
+                selectable: true,
+                selectedKeys: [filter],
+                onClick: ({ key }) => setFilter(key as BookmarkType | 'all'),
               }}
             >
-              <option value="all">All Types</option>
-              <option value="website">Websites</option>
-              <option value="prompt">Prompts</option>
-              <option value="post">Posts</option>
-              <option value="news">News</option>
-            </select>
+              <button
+                type="button"
+                style={{
+                  padding: '9px 28px 9px 12px',
+                  background: 'var(--bg)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '3px',
+                  color: 'var(--text)',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                }}
+              >
+                {selectedFilterLabel} ▾
+              </button>
+            </Dropdown>
 
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-muted)' }}>
               {filtered.length} saved

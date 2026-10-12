@@ -82,8 +82,8 @@ export default function SearchPagination() {
             onMouseEnter={(e) => {
               if (!isActive && !isDisabled) {
                 e.currentTarget.style.color = 'var(--text)';
-                e.currentTarget.style.borderColor = 'rgba(245, 197, 24, 0.5)';
-                e.currentTarget.style.background = 'rgba(245, 197, 24, 0.04)';
+                e.currentTarget.style.borderColor = 'rgba(157, 140, 255, 0.5)';
+                e.currentTarget.style.background = 'rgba(157, 140, 255, 0.04)';
               }
             }}
             onMouseLeave={(e) => {

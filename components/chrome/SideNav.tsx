@@ -1,106 +1,52 @@
 /**
- * SideNav —— 右侧悬浮导航 + 弹出面板
- * 迁移自 core.js 的 SideNav 组件
+ * SideNav —— 右侧悬浮导航 + 弹出面板（v2.0 antd 迁移）
  *
- * 包含：通知(Alerts) / 消息(Messages) / 钱包(Wallet) / 笔记(Notes→/notes) / 发帖(New Post) / 设置(Settings→/settings) / 回到顶部
- * 面板：通知列表 / 消息列表 / 钱包余额+交易记录 / 发帖分类选择
- * 交互：滚动超过 120px 显示 / ESC 关闭面板 / 徽章脉冲 / 钱包数字滚动动画
+ * 迁移内容：
+ * - 弹出面板 → 由 SidePanel（antd Drawer）接管，自带遮罩与 ESC 关闭
+ * - 移除冗余的 gh-side-backdrop（Drawer 自带遮罩）
+ *
+ * 保留（核心 HUD 视觉，不迁移）：
+ * - 右侧悬浮按钮组（gh-side-nav）—— 项目独特的 HUD 设计
+ * - 滚动超过 120px 显示 / 徽章脉冲 / 钱包数字滚动动画
+ * - 内联 SVG 图标（B5 阶段统一替换为 lucide-react）
+ * - 通知项 / 消息项 / 交易项 / 分类项 的 HUD 卡片样式
+ *
+ * 设计决策：FloatButton.Group 的"点击展开"语义与本组件的"多按钮常驻侧边"
+ * 不匹配，强行替换会破坏徽章脉冲、滚动显隐等核心交互。
  */
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { App, Button, Tooltip } from 'antd';
 import { SidePanel } from './SidePanel';
-import { ALERTS, MESSAGES, WALLET, CATEGORIES } from '@/app/_data/sidenav-data';
-import type { AlertItem, MessageItem } from '@/app/_data/sidenav-data';
+import { ALERTS, WALLET } from '@/lib/data/sidenav-data';
+import type { AlertItem } from '@/lib/data/sidenav-data';
+import {
+  Bell as LucideBell,
+  Wallet as LucideWallet,
+  StickyNote as LucideNote,
+  SquarePen as LucidePost,
+  Settings as LucideGear,
+  ArrowUp as LucideTop,
+  MessageSquarePlus as LucideMockMsg,
+} from 'lucide-react';
+import { useMockFeed, type NewItemMarker } from '@/app/_components/MockFeedContext';
+import { isImageAvatar } from '@/lib/avatar';
 
-type PanelId = 'alert' | 'mail' | 'wallet' | 'post' | null;
+type PanelId = 'alert' | 'wallet' | null;
 
-/* ═══ SVG 图标 —— 内联 React 元素，避免 dangerouslySetInnerHTML ═══ */
+/* ═══ 图标 —— lucide-react 组件（B5 阶段统一替换） ═══ */
 
 const Icons = {
-  alert: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-    </svg>
-  ),
-  mail: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <path d="m3 7 9 6 9-6" />
-    </svg>
-  ),
-  wallet: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 7a2 2 0 0 1 2-2h12v4" />
-      <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H5a2 2 0 0 1-2-2z" />
-      <circle cx="17" cy="13" r="1.3" fill="currentColor" stroke="none" />
-    </svg>
-  ),
-  note: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 3h10l4 4v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
-      <path d="M15 3v4h4" />
-      <path d="M8 12h8M8 16h5" />
-    </svg>
-  ),
-  post: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z" />
-    </svg>
-  ),
-  gear: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-    </svg>
-  ),
-  top: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 19V5" />
-      <path d="m6 11 6-6 6 6" />
-    </svg>
-  ),
-
-  catHot: (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <path d="M8 1c1 2 3 3 3 6a3 3 0 0 1-6 0c0-1 .5-2 1-2.5C5 6 4 7 4 9a4 4 0 0 0 8 0c0-4-4-5-4-8z" />
-    </svg>
-  ),
-  catShow: (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <rect x="2" y="3" width="12" height="10" />
-      <path d="M5 6h6M5 9h4" />
-    </svg>
-  ),
-  catHelp: (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <circle cx="8" cy="8" r="5.5" />
-      <path d="M6.5 6.5a1.5 1.5 0 0 1 3 0c0 1-.5 1.3-1 1.6-.3.2-.5.4-.5.8v.6" />
-      <circle cx="8" cy="11.5" r="0.5" fill="currentColor" />
-    </svg>
-  ),
-  catTutorials: (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <path d="M2 3l4 5-4 5M8 13h6" />
-    </svg>
-  ),
-  catDevlogs: (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <polyline points="5 6 8 3 11 6" />
-      <polyline points="5 10 8 13 11 10" />
-      <path d="M8 3v10" />
-    </svg>
-  ),
-  catOfftopic: (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <path d="M4 3h8v10H4z" />
-      <path d="M6 6h4M6 9h4" />
-    </svg>
-  ),
+  alert: <LucideBell size={20} strokeWidth={1.8} />,
+  wallet: <LucideWallet size={20} strokeWidth={1.8} />,
+  note: <LucideNote size={20} strokeWidth={1.8} />,
+  post: <LucidePost size={20} strokeWidth={1.8} />,
+  gear: <LucideGear size={20} strokeWidth={1.8} />,
+  top: <LucideTop size={20} strokeWidth={1.8} />,
+  mock: <LucideMockMsg size={20} strokeWidth={1.8} />,
 };
 
 /* ═══ 导航项定义 ═══ */
@@ -109,38 +55,90 @@ interface NavItem {
   id: string;
   label: string;
   icon: React.ReactElement;
-  badge?: number;
-  href?: string;
+  /** 是否由 useMockFeed 动态提供 badge（否则用静态 badge 初始值） */
+  dynamicBadgeFrom?: 'alert';
+  /** 静态 badge 初始值（用于未挂 Provider 的兜底） */
+  badgeStatic?: number;
+  href?: string; // 有 href：点击直接跳转；无 href：打开 Drawer 面板
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'alert', label: 'Alerts', icon: Icons.alert, badge: 3 },
-  { id: 'mail', label: 'Messages', icon: Icons.mail, badge: 3 },
-  { id: 'wallet', label: 'Wallet', icon: Icons.wallet },
-  { id: 'note', label: 'Notes', icon: Icons.note, href: '/notes' },
-  { id: 'post', label: 'New Post', icon: Icons.post },
-  { id: 'gear', label: 'Settings', icon: Icons.gear, href: '/settings' },
+  { id: 'alert',  label: 'Alerts',   icon: Icons.alert,  dynamicBadgeFrom: 'alert', badgeStatic: 3 },
+  // —— 钱包：点击直接跳转 /wallet（充值/提现页面）
+  { id: 'wallet', label: 'Wallet',   icon: Icons.wallet, href: '/wallet' },
+  { id: 'note',   label: 'Notes',    icon: Icons.note,   href: '/notes' },
+  { id: 'post',   label: 'Post',    icon: Icons.post,   href: '/community/tiebas/explore' },
+  // —— 设置：跳转设置中心（X 模式重构后的 /settings）
+  { id: 'gear',   label: 'Settings', icon: Icons.gear,   href: '/settings' },
+  // —— 模拟推送（点一下推一条通知或站内信，长按跳菜单关闭自动推送）
+  { id: 'mock',   label: 'Simulate new message', icon: Icons.mock },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
    子组件 —— 通知项 / 消息项 / 交易项 / 分类项
    ═══════════════════════════════════════════════════════════════ */
 
-/** 通知事件项 —— 头像 + 用户 + 动作 + 目标/金额 + 未读指示 */
-function AlertRow({ alert }: { alert: AlertItem }) {
+/** 通知事件项 —— 用户头像 + 用户 + 动作 + 目标/金额 + 未读指示
+ *
+ *  Bug 修复：
+ *    - 用户头像原本直接 next/image 传入字母徽章字符串 / 不存在的 /images/demo/*.jpg
+ *      → new URL() 抛 "Invalid URL" + 404。现在用 isImageAvatar 双路判断。
+ *  Mock 推送增强：
+ *    - 传入 newMarkers，若 (alert.id in markers) 则显示新推送高亮（2.4s 自动消失）
+ */
+function AlertRow({
+  alert,
+  newMarkers,
+}: {
+  alert: AlertItem & { id?: string };
+  newMarkers: NewItemMarker[];
+}) {
   const isSystem = alert.type === 'system' || alert.avatar === 'LOGO';
   const userName = isSystem ? alert.user : `@${alert.user}`;
+  const useImgAvatar = !isSystem && isImageAvatar(alert.avatar);
+  const isNew = alert.id && newMarkers.some((m) => m.kind === 'alert' && m.id === alert.id);
 
   return (
-    <div className={`gh-evt${alert.read ? '' : ' is-unread'}`}>
-      {/* 系统通知用六边形 Logo，用户通知用头像 */}
+    <div className={`gh-evt${alert.read ? '' : ' is-unread'}${isNew ? ' is-new' : ''}`}>
+      {/* 系统通知：六边形 G 徽标；用户通知：字母徽章（或真实图片） */}
       {isSystem ? (
         <div className="gh-evt-avatar gh-evt-avatar-system">
           <div className="logo-hex">G</div>
         </div>
       ) : (
-        <div className="gh-evt-avatar">
-          <Image src={alert.avatar} alt="" width={32} height={32} className="h-full w-full object-cover" />
+        <div
+          className="gh-evt-avatar"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: useImgAvatar ? 'var(--surface-overlay)' : 'var(--gold-subtle)',
+          }}
+        >
+          {useImgAvatar ? (
+            <Image
+              src={alert.avatar}
+              alt=""
+              width={32}
+              height={32}
+              className="h-full w-full object-cover"
+              unoptimized
+            />
+          ) : (
+            <span
+              className="font-display"
+              style={{
+                color: 'var(--gold)',
+                fontWeight: 800,
+                fontSize: alert.avatar.length >= 3 ? 11 : 14,
+                lineHeight: 1,
+                letterSpacing: 0.2,
+                userSelect: 'none',
+              }}
+            >
+              {alert.avatar}
+            </span>
+          )}
         </div>
       )}
       <div className="gh-evt-main">
@@ -157,9 +155,15 @@ function AlertRow({ alert }: { alert: AlertItem }) {
           </div>
         )}
         {/* 带图片的系统消息缩略图 */}
-        {alert.image && (
+        {alert.image && isImageAvatar(alert.image) && (
           <div className="gh-evt-image" style={{ position: 'relative', width: '100%' }}>
-            <Image src={alert.image} alt={alert.imageAlt || ''} fill style={{ aspectRatio: '16 / 9', objectFit: 'cover' }} />
+            <Image
+              src={alert.image}
+              alt={alert.imageAlt || ''}
+              fill
+              unoptimized
+              style={{ aspectRatio: '16 / 9', objectFit: 'cover' }}
+            />
           </div>
         )}
       </div>
@@ -169,31 +173,19 @@ function AlertRow({ alert }: { alert: AlertItem }) {
   );
 }
 
-/** 消息项 —— 字母头像 + 用户 + 预览 + 未读指示 */
-function MessageRow({ msg }: { msg: MessageItem }) {
-  return (
-    <div className={`gh-msg${msg.read ? '' : ' is-unread'}`}>
-      <div className="gh-msg-avatar">{msg.avatar}</div>
-      <div className="gh-msg-main">
-        <div className="gh-msg-top">
-          <span className="gh-msg-user">@{msg.user}</span>
-          <span className="gh-msg-time">{msg.time}</span>
-        </div>
-        <div className="gh-msg-preview">{msg.preview}</div>
-      </div>
-      {!msg.read && <div className="gh-msg-dot" aria-label="unread" />}
-    </div>
-  );
-}
-
 /* ═══════════════════════════════════════════════════════════════
    SideNav 主组件
    ═══════════════════════════════════════════════════════════════ */
 export default function SideNav() {
+  const { message } = App.useApp();
+  const feed = useMockFeed();
+
   const [visible, setVisible] = useState(false);
   const [activePanel, setActivePanel] = useState<PanelId>(null);
-  const [badges, setBadges] = useState({ alert: 3, mail: 3 });
   const walletNumRef = useRef<HTMLSpanElement>(null);
+
+  // 「模拟新消息」按钮：是否启用自动 30s 推送；默认启用
+  const [autoPushEnabled, setAutoPushEnabled] = useState(true);
 
   // 滚动显示 —— 超过 120px 显示悬浮导航
   useEffect(() => {
@@ -206,14 +198,12 @@ export default function SideNav() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // ESC 关闭面板
+  // 自动推送开关同步到 Context
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setActivePanel(null);
-    }
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, []);
+    feed.setAutoPushInterval(autoPushEnabled ? 30_000 : 0);
+  }, [feed, autoPushEnabled]);
+
+  // ESC 关闭逻辑已由 antd Drawer 内置，无需手动监听
 
   // 钱包数字滚动动画 —— 打开钱包面板时触发
   useEffect(() => {
@@ -236,18 +226,38 @@ export default function SideNav() {
     requestAnimationFrame(tick);
   }, [activePanel]);
 
-  /** 打开/关闭面板，同时清除对应 badge */
-  const openPanel = useCallback((id: PanelId) => {
-    setActivePanel((cur) => (cur === id ? null : id));
-    if (id === 'alert' || id === 'mail') {
-      setBadges((b) => ({ ...b, [id]: 0 }));
-    }
-  }, []);
+  /** 打开/关闭面板，同时清除对应未读 */
+  const openPanel = useCallback(
+    (id: PanelId) => {
+      setActivePanel((cur) => (cur === id ? null : id));
+      if (id === 'alert') feed.markAllAlertsRead();
+    },
+    [feed],
+  );
+
+  /** 模拟推一条 —— 触发后弹出 Toast 说明本次推送内容 */
+  const triggerMockPush = useCallback(() => {
+    const { kind, summary } = feed.pushRandom();
+    message.success(
+      {
+        content: summary,
+        className: 'meta-hud-mono',
+        style: { marginBottom: 12, fontSize: 12 },
+      },
+      2.2,
+    );
+    // 同时如果开了对应面板 → 清除未读
+    if (kind === 'alert' && activePanel === 'alert') feed.markAllAlertsRead();
+  }, [feed, activePanel, message]);
 
   /** 回到顶部 */
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
+
+  // 通知列表（优先 MockFeed；没挂 Provider 则用静态 ALERTS）
+  const sideAlerts: (AlertItem & { id?: string })[] =
+    feed.alerts?.length ? feed.alerts : ALERTS;
 
   return (
     <>
@@ -259,65 +269,163 @@ export default function SideNav() {
         aria-label="Side navigation"
       >
         {NAV_ITEMS.map((item) => {
-          const badge = badges[item.id as keyof typeof badges];
-          const cls = `gh-side-nav-item${activePanel === item.id ? ' is-panel-open' : ''}`;
+          // 动态 badge：优先用 MockFeed，没有则兜底静态
+          let badge: number = 0;
+          if (item.dynamicBadgeFrom) {
+            const n =
+              item.dynamicBadgeFrom === 'alert'
+                ? feed.unreadAlertCount
+                : feed.unreadChatCount;
+            badge = Number.isFinite(n) ? n : item.badgeStatic ?? 0;
+          } else {
+            badge = item.badgeStatic ?? 0;
+          }
+
+          const cls = `gh-side-nav-item${activePanel === item.id ? ' is-panel-open' : ''}${
+            item.id === 'mock' ? ' gh-side-nav-item-mock' : ''
+          }`;
+
+          // —— 「模拟新消息」特殊按钮
+          if (item.id === 'mock') {
+            return (
+              <Tooltip
+                key={item.id}
+                title={
+                  autoPushEnabled
+                    ? 'Click: push a new alert/DM right now ·  Auto: every 30s ON'
+                    : 'Click: push a new alert/DM right now ·  Auto: OFF'
+                }
+                placement="left"
+              >
+                <Button
+                  type="text"
+                  className={cls}
+                  data-nav={item.id}
+                  aria-label={item.label}
+                  onClick={triggerMockPush}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    setAutoPushEnabled((v) => !v);
+                    message.info(
+                      autoPushEnabled
+                        ? 'Auto 30s push OFF'
+                        : 'Auto 30s push ON',
+                      1.8,
+                    );
+                  }}
+                  style={{
+                    padding: 0,
+                    color: '#9D8CFF',
+                  }}
+                >
+                  {item.icon}
+                  {autoPushEnabled ? (
+                    <span
+                      className="gh-side-nav-pulse"
+                      aria-label="auto-push-on"
+                    />
+                  ) : null}
+                </Button>
+              </Tooltip>
+            );
+          }
 
           // 带 href 的项渲染为链接（笔记→/notes，设置→/settings）
           if (item.href) {
             return (
-              <Link key={item.id} href={item.href} className={cls} data-nav={item.id} aria-label={item.label}>
+              <Link
+                key={item.id}
+                href={item.href}
+                className={cls}
+                data-nav={item.id}
+                aria-label={item.label}
+              >
                 {item.icon}
+                {badge ? (
+                  <span
+                    className={`gh-side-nav-badge${badge >= 3 ? ' is-pulse' : ''}`}
+                  >
+                    {badge}
+                  </span>
+                ) : null}
               </Link>
             );
           }
           return (
-            <button
+            <Button
               key={item.id}
-              type="button"
+              type="text"
               className={cls}
               data-nav={item.id}
               aria-label={item.label}
               onClick={() => openPanel(item.id as PanelId)}
+              style={{ padding: 0 }}
             >
               {item.icon}
               {/* 通知徽章（≥3 时脉冲） */}
               {badge ? (
-                <span className={`gh-side-nav-badge${badge >= 3 ? ' is-pulse' : ''}`}>{badge}</span>
+                <span
+                  className={`gh-side-nav-badge${badge >= 3 ? ' is-pulse' : ''}`}
+                >
+                  {badge}
+                </span>
               ) : null}
-            </button>
+            </Button>
           );
         })}
 
         {/* 分隔线 + 回到顶部 */}
         <div className="gh-side-nav-divider" />
-        <button
-          type="button"
+        <Button
+          type="text"
           className="gh-side-nav-item gh-side-nav-top"
           id="ghSideNavTop"
           aria-label="Back to top"
           onClick={scrollToTop}
+          style={{ padding: 0, width: 'auto', height: 'auto' }}
         >
           {Icons.top}
-        </button>
+        </Button>
       </div>
 
       {/* ── 弹出面板组 ── */}
       <div className="gh-side-panels" id="ghSidePanels">
-        {/* 通知面板 */}
-        <SidePanel isOpen={activePanel === 'alert'} title="Notifications" onClose={() => setActivePanel(null)} data-panel="alert" ariaLabel="Notifications">
-          {ALERTS.map((alert, i) => (
-            <AlertRow key={i} alert={alert} />
+        {/* 通知面板 —— 页脚加「查看全部通知」链接（→ /settings/notifications） */}
+        <SidePanel
+          isOpen={activePanel === 'alert'}
+          title="Notifications"
+          onClose={() => setActivePanel(null)}
+          data-panel="alert"
+          ariaLabel="Notifications"
+        >
+          {sideAlerts.map((alert, i) => (
+            <AlertRow
+              key={alert.id ?? i}
+              alert={alert}
+              newMarkers={feed.newMarkers}
+            />
           ))}
+          <Link
+            href="/settings/notifications"
+            className="meta-hud-mono"
+            style={{
+              display: 'block',
+              textAlign: 'center',
+              padding: '10px 14px',
+              margin: '10px -16px -16px',
+              color: 'var(--gold)',
+              background: 'rgba(157, 140, 255, 0.04)',
+              borderTop: '1px solid var(--border-subtle)',
+              textDecoration: 'none',
+              fontSize: 11,
+              letterSpacing: '0.04em',
+            }}
+          >
+            See all notifications →
+          </Link>
         </SidePanel>
 
-        {/* 消息面板 */}
-        <SidePanel isOpen={activePanel === 'mail'} title="Messages" onClose={() => setActivePanel(null)} data-panel="mail" ariaLabel="Messages">
-          {MESSAGES.map((msg, i) => (
-            <MessageRow key={i} msg={msg} />
-          ))}
-        </SidePanel>
-
-        {/* 钱包面板 */}
+        {/* 钱包面板 —— Deposit / Withdraw 跳转到 /wallet 对应 tab；页脚加「打开钱包」链接 */}
         <SidePanel isOpen={activePanel === 'wallet'} title="Wallet" onClose={() => setActivePanel(null)} data-panel="wallet" ariaLabel="Wallet">
           {/* 余额 */}
           <div className="gh-wallet-balance">
@@ -332,10 +440,48 @@ export default function SideNav() {
               {WALLET.pending} {WALLET.currency} pending
             </div>
           </div>
-          {/* 操作按钮 */}
+          {/* 操作按钮 —— 跳 /wallet 充值/提现 tab */}
           <div className="gh-wallet-actions">
-            <button className="gh-wallet-btn">Deposit</button>
-            <button className="gh-wallet-btn">Withdraw</button>
+            <Link
+              href="/wallet?tab=deposit"
+              style={{
+                display: 'block',
+                width: '100%',
+                textAlign: 'center',
+                padding: '6px 12px',
+                borderRadius: 3,
+                background: 'linear-gradient(180deg, rgba(212,175,55,0.95), rgba(168,140,38,0.95))',
+                color: '#1a1708',
+                fontWeight: 700,
+                fontSize: 12,
+                textDecoration: 'none',
+                border: '1px solid rgba(212,175,55,0.5)',
+                letterSpacing: '0.02em',
+              }}
+              className="meta-hud-mono"
+            >
+              Deposit
+            </Link>
+            <Link
+              href="/wallet?tab=withdraw"
+              style={{
+                display: 'block',
+                width: '100%',
+                textAlign: 'center',
+                padding: '6px 12px',
+                borderRadius: 3,
+                background: 'transparent',
+                color: 'var(--text)',
+                fontWeight: 600,
+                fontSize: 12,
+                textDecoration: 'none',
+                border: '1px solid var(--border)',
+                letterSpacing: '0.02em',
+              }}
+              className="meta-hud-mono"
+            >
+              Withdraw
+            </Link>
           </div>
           {/* 交易记录 */}
           <div className="gh-wallet-section-title">Recent Activity</div>
@@ -352,35 +498,27 @@ export default function SideNav() {
               </div>
             ))}
           </div>
+          <Link
+            href="/wallet"
+            className="meta-hud-mono"
+            style={{
+              display: 'block',
+              textAlign: 'center',
+              padding: '10px 14px',
+              margin: '10px -16px -16px',
+              color: 'var(--gold)',
+              background: 'rgba(157, 140, 255, 0.04)',
+              borderTop: '1px solid var(--border-subtle)',
+              textDecoration: 'none',
+              fontSize: 11,
+              letterSpacing: '0.04em',
+            }}
+          >
+            Open full wallet →
+          </Link>
         </SidePanel>
 
-        {/* 发帖分类面板 */}
-        <SidePanel isOpen={activePanel === 'post'} title="New Post — Choose Category" onClose={() => setActivePanel(null)} data-panel="post" ariaLabel="New Post — Choose Category">
-          {CATEGORIES.map((cat, i) => (
-            <Link
-              key={i}
-              href={`/community/new?cat=${encodeURIComponent(cat.name)}`}
-              className="gh-cat"
-            >
-              <span className="gh-cat-icon">
-                {/* 根据分类名选择对应图标 */}
-                {Icons[cat.icon as keyof typeof Icons] || Icons.catHot}
-              </span>
-              <span className="gh-cat-info">
-                <span className="gh-cat-name">{cat.name}</span>
-                <span className="gh-cat-desc">{cat.desc}</span>
-              </span>
-              <span className="gh-cat-count">{cat.count}</span>
-            </Link>
-          ))}
-        </SidePanel>
-
-        {/* 遮罩层 —— 点击关闭面板 */}
-        <div
-          className={`gh-side-backdrop${activePanel ? ' is-open' : ''}`}
-          id="ghSideBackdrop"
-          onClick={() => setActivePanel(null)}
-        />
+        {/* 遮罩层已由 antd Drawer 内置，无需单独渲染 */}
       </div>
     </>
   );

@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { HomeIcon, NewsIcon, TerminalIcon, SearchIcon } from './_components/icons';
+import { HomeIcon, NewsIcon, TerminalIcon, SearchIcon } from '@/components/shared/icons';
 import styles from './not-found.module.css';
 
 /* ═══ 动画时序常量（毫秒） ═══ */

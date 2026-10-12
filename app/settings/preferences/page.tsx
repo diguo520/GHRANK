@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import SettingsShell from '../_components/SettingsShell';
 import { FormRow, Select, Toggle, RadioGroup, SaveButton, panelStyle } from '../_components/SettingsForm';
-import { BellIcon, MailIcon, MessageIcon, TerminalIcon } from '@/app/_components/icons';
+import { BellIcon, MailIcon, MessageIcon, TerminalIcon } from '@/components/shared/icons';
 
 const panelSectionStyle = {
   ...panelStyle,

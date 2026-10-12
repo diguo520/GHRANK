@@ -16,6 +16,7 @@ import {
   TAG_STYLES,
   MODEL_TAG_STYLES,
 } from '../_data/search-data';
+import HoverBorderBeam from '@/components/shared/HoverBorderBeam';
 
 /* ═══ 高亮匹配文本：将查询词包裹在金色高亮 span 中 ═══ */
 function highlightText(text: string, query: string): ReactNode[] {
@@ -30,7 +31,7 @@ function highlightText(text: string, query: string): ReactNode[] {
           key={i}
           style={{
             color: 'var(--gold)',
-            background: 'rgba(245, 197, 24, 0.12)',
+            background: 'rgba(157, 140, 255, 0.12)',
             padding: '0 2px',
             borderRadius: '2px',
             fontWeight: 700,
@@ -92,7 +93,7 @@ function CardShell({
         style={
           {
             background:
-              'radial-gradient(240px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(245, 197, 24, 0.1), transparent 60%)',
+              'radial-gradient(240px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(157, 140, 255, 0.1), transparent 60%)',
             opacity: 0,
             transition: 'opacity 0.3s',
             zIndex: 0,
@@ -134,8 +135,8 @@ function RepoCard({ item, query }: { item: RepoResult; query: string }) {
             fontSize: '18px',
             fontWeight: 800,
             color: 'var(--gold)',
-            background: 'rgba(245, 197, 24, 0.08)',
-            border: '1px solid rgba(245, 197, 24, 0.35)',
+            background: 'rgba(157, 140, 255, 0.08)',
+            border: '1px solid rgba(157, 140, 255, 0.35)',
           }}
         >
           {item.name.charAt(0).toUpperCase()}
@@ -152,8 +153,8 @@ function RepoCard({ item, query }: { item: RepoResult; query: string }) {
               marginBottom: '6px',
               textTransform: 'uppercase',
               color: 'var(--gold)',
-              background: 'rgba(245, 197, 24, 0.08)',
-              border: '1px solid rgba(245, 197, 24, 0.35)',
+              background: 'rgba(157, 140, 255, 0.08)',
+              border: '1px solid rgba(157, 140, 255, 0.35)',
             }}
           >
             REPO
@@ -444,11 +445,23 @@ function Stat({ icon, value }: { icon: string; value: string }) {
 export default function SearchCard({ item, query }: { item: SearchResult; query: string }) {
   switch (item.type) {
     case 'repo':
-      return <RepoCard item={item} query={query} />;
+      return (
+        <HoverBorderBeam>
+          <RepoCard item={item} query={query} />
+        </HoverBorderBeam>
+      );
     case 'prompt':
-      return <PromptCard item={item} query={query} />;
+      return (
+        <HoverBorderBeam>
+          <PromptCard item={item} query={query} />
+        </HoverBorderBeam>
+      );
     case 'community':
-      return <CommunityCard item={item} query={query} />;
+      return (
+        <HoverBorderBeam>
+          <CommunityCard item={item} query={query} />
+        </HoverBorderBeam>
+      );
     default:
       return null;
   }

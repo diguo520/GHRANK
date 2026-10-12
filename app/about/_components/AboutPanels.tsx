@@ -23,7 +23,7 @@ import {
   ACHIEVEMENT_DEFS,
   type AchievementCategory,
   type AchievementRarity,
-} from '../../_data/achievements-data';
+} from '@/lib/data/achievements-data';
 
 /** 面板 01：About Us —— 使命、统计、团队 */
 export function AboutPanel() {

@@ -8,27 +8,38 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from 'antd';
 import { useCommunityToast } from './ToastContext';
-import { HeartIcon, BookmarkIcon, ShareIcon, ReplyIcon } from '../../../_components/icons';
+import { HeartIcon, BookmarkIcon, ShareIcon, ReplyIcon, ReportIcon } from '@/components/shared/icons';
+import ReportModal from './ReportModal';
+import { useIsLoggedIn } from '@/hooks/useIsLoggedIn';
 
 interface PostActionsProps {
   initialLikes: number;
   initialLiked: boolean;
   initialBookmarked: boolean;
+  /** 帖子标题（用于举报抽屉的摘要展示） */
+  postTitle?: string;
   /** Reply 按钮点击回调（聚焦回复编辑器） */
   onReply?: () => void;
+  /** Share 按钮点击回调（打开分享海报弹窗） */
+  onShare?: () => void;
 }
 
 export default function PostActions({
   initialLikes,
   initialLiked,
   initialBookmarked,
+  postTitle,
   onReply,
+  onShare,
 }: PostActionsProps) {
   const { showToast } = useCommunityToast();
+  const { loggedIn: isLoggedIn } = useIsLoggedIn();
   const [liked, setLiked] = useState(initialLiked);
   const [likes, setLikes] = useState(initialLikes);
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
+  const [reportOpen, setReportOpen] = useState(false);
 
   const handleLike = () => {
     const next = !liked;
@@ -44,7 +55,13 @@ export default function PostActions({
   };
 
   const handleShare = () => {
-    showToast('Link copied to clipboard');
+    // 旧：showToast('Link copied to clipboard');
+    // 新：若父层传入 onShare（打开海报弹窗），交给父层处理；否则兜底 toast（兼容调用方未接线）
+    if (onShare) {
+      onShare();
+    } else {
+      showToast('Link copied to clipboard');
+    }
   };
 
   const handleReply = () => {
@@ -52,26 +69,28 @@ export default function PostActions({
     onReply?.();
   };
 
-  // 通用按钮样式
-  const btnBase: React.CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '6px',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    fontWeight: 500,
-    background: 'transparent',
-    border: '1px solid var(--border)',
-    padding: '7px 14px',
-    cursor: 'pointer',
-    letterSpacing: '0.03em',
-    transition: 'border-color 0.18s, color 0.18s, background 0.18s',
+  // 举报：未登录提示登录，已登录打开举报抽屉
+  const handleReport = () => {
+    if (!isLoggedIn) {
+      showToast('Please sign in to report');
+      return;
+    }
+    setReportOpen(true);
   };
 
-  const activeStyle: React.CSSProperties = {
-    color: 'var(--gold)',
-    borderColor: 'rgba(245,197,24,0.35)',
-    background: 'rgba(245,197,24,0.08)',
+  // 提交举报：刷新前 mock，仅给用户反馈
+  const handleReportSubmit = (_reason: string, _detail: string) => {
+    showToast('Report submitted · thanks for keeping the community safe');
+  };
+
+  // 金色色值（保持原设计风格）
+  const GOLD = '#9D8CFF';
+
+  // 数字格式化：与社区统计一致，>=1000 用 K，>=100万 用 M
+  const fmtCount = (n: number): string => {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1).replace(/\.0$/, '') + 'M';
+    if (n >= 1_000) return (n / 1_000).toFixed(n % 1_000 === 0 ? 0 : 1).replace(/\.0$/, '') + 'K';
+    return String(n);
   };
 
   return (
@@ -79,101 +98,91 @@ export default function PostActions({
       className="post-actions flex items-center gap-2 flex-wrap pt-[22px] mt-6"
       style={{ borderTop: '1px solid var(--border)' }}
     >
-      {/* 点赞 */}
-      <button
+      {/* 点赞：图标 + K/M 格式化数字 */}
+      <Button
         onClick={handleLike}
-        className="post-action-btn"
-        style={{ ...btnBase, ...(liked ? activeStyle : { color: 'var(--text-dim)' }) }}
-        onMouseEnter={(e) => {
-          if (!liked) {
-            e.currentTarget.style.color = 'var(--gold)';
-            e.currentTarget.style.borderColor = 'rgba(245,197,24,0.35)';
-            e.currentTarget.style.background = 'rgba(245,197,24,0.04)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!liked) {
-            e.currentTarget.style.color = 'var(--text-dim)';
-            e.currentTarget.style.borderColor = 'var(--border)';
-            e.currentTarget.style.background = 'transparent';
-          }
-        }}
-      >
-        <HeartIcon size={14} filled={liked} />
-        <span className="action-count font-semibold" style={{ color: liked ? 'var(--gold)' : 'var(--text)' }}>
-          {likes}
-        </span>
-        Like
-      </button>
-
-      {/* 收藏 */}
-      <button
-        onClick={handleBookmark}
-        className="post-action-btn"
-        style={{ ...btnBase, ...(bookmarked ? activeStyle : { color: 'var(--text-dim)' }) }}
-        onMouseEnter={(e) => {
-          if (!bookmarked) {
-            e.currentTarget.style.color = 'var(--gold)';
-            e.currentTarget.style.borderColor = 'rgba(245,197,24,0.35)';
-            e.currentTarget.style.background = 'rgba(245,197,24,0.04)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!bookmarked) {
-            e.currentTarget.style.color = 'var(--text-dim)';
-            e.currentTarget.style.borderColor = 'var(--border)';
-            e.currentTarget.style.background = 'transparent';
-          }
-        }}
-      >
-        <BookmarkIcon size={14} filled={bookmarked} />
-        Bookmark
-      </button>
-
-      {/* 分享 */}
-      <button
-        onClick={handleShare}
-        className="post-action-btn"
-        style={{ ...btnBase, color: 'var(--text-dim)' }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.color = 'var(--gold)';
-          e.currentTarget.style.borderColor = 'rgba(245,197,24,0.35)';
-          e.currentTarget.style.background = 'rgba(245,197,24,0.04)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.color = 'var(--text-dim)';
-          e.currentTarget.style.borderColor = 'var(--border)';
-          e.currentTarget.style.background = 'transparent';
-        }}
-      >
-        <ShareIcon size={14} />
-        Share
-      </button>
-
-      {/* 回复（金色主按钮，靠右） */}
-      <button
-        onClick={handleReply}
-        className="post-action-btn action-reply"
+        size="small"
+        variant={liked ? 'filled' : 'outlined'}
         style={{
-          ...btnBase,
-          marginLeft: 'auto',
-          color: 'var(--bg)',
-          background: 'var(--gold)',
-          borderColor: 'var(--gold)',
-          boxShadow: '0 0 12px rgba(245,197,24,0.2)',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '12px',
+          fontWeight: 500,
+          letterSpacing: '0.03em',
+          padding: '7px 12px',
+          color: liked ? GOLD : undefined,
+          borderColor: liked ? GOLD : undefined,
+          ...(liked && { background: 'rgba(157,140,255,0.08)' }),
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = '#ffe066';
-          e.currentTarget.style.boxShadow = '0 0 20px rgba(245,197,24,0.35)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = 'var(--gold)';
-          e.currentTarget.style.boxShadow = '0 0 12px rgba(245,197,24,0.2)';
-        }}
+        icon={<HeartIcon size={14} filled={liked} />}
       >
-        <ReplyIcon size={14} />
-        Reply
-      </button>
+        <span style={{ color: liked ? GOLD : undefined, fontWeight: 600, marginLeft: 4 }}>
+          {fmtCount(likes)}
+        </span>
+      </Button>
+
+      {/* 收藏：仅图标 */}
+      <Button
+        onClick={handleBookmark}
+        size="small"
+        variant={bookmarked ? 'filled' : 'outlined'}
+        aria-label="Bookmark"
+        style={{
+          padding: '7px 10px',
+          color: bookmarked ? GOLD : undefined,
+          borderColor: bookmarked ? GOLD : undefined,
+          ...(bookmarked && { background: 'rgba(157,140,255,0.08)' }),
+        }}
+        icon={<BookmarkIcon size={14} filled={bookmarked} />}
+      />
+
+      {/* 分享：仅图标 */}
+      <Button
+        onClick={handleShare}
+        size="small"
+        variant="outlined"
+        aria-label="Share"
+        style={{ padding: '7px 10px' }}
+        icon={<ShareIcon size={14} />}
+      />
+
+      {/* 举报：仅图标，靠右 */}
+      <Button
+        onClick={handleReport}
+        size="small"
+        variant="outlined"
+        aria-label="Report this post"
+        style={{
+          marginLeft: 'auto',
+          padding: '7px 10px',
+          color: 'var(--text-dim)',
+        }}
+        icon={<ReportIcon size={14} />}
+      />
+
+      {/* 回复：仅图标，靠右 */}
+      <Button
+        onClick={handleReply}
+        size="small"
+        type="primary"
+        aria-label="Reply"
+        style={{
+          padding: '7px 10px',
+          background: GOLD,
+          borderColor: GOLD,
+          color: 'var(--bg)',
+          boxShadow: '0 0 12px rgba(157,140,255,0.2)',
+        }}
+        icon={<ReplyIcon size={14} />}
+      />
+
+      {/* 举报弹窗 */}
+      <ReportModal
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        targetType="post"
+        targetSummary={postTitle ?? 'This post'}
+        onSubmit={handleReportSubmit}
+      />
     </div>
   );
 }

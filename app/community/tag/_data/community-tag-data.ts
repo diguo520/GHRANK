@@ -9,6 +9,7 @@
 
 import {
   AUTHOR_POOL,
+  POST_TAGS,
   buildRepliers,
   parseTimeAgoToMinutes,
   type Thread,
@@ -29,8 +30,11 @@ export const TAG_TABS = [
 /** 每页加载的帖子数（与原始 PAGE_SIZE 一致） */
 export const TAG_PAGE_SIZE = 6;
 
-/** 合成帖子起始 ID（与原始 nextThreadId = 5000 对齐） */
+/* 合成帖子起始 ID（与原始 nextThreadId = 5000 对齐）
+   使用高 16 位记录标签偏移，避免不同标签池 ID 重复 */
 const BASE_THREAD_ID = 5000;
+const TAG_ID_SPACING = 10000; // 每个标签独占 10000 个 ID 空间（充足的安全边际）
+const EXTRA_ID_OFFSET = 1000000; // 客户端随机生成的帖子从这里开始，远离初始池区间
 
 /** 帖子标题池，按标签分类（用于生成该标签下的合成帖子） */
 const TAG_TITLE_POOL: Record<string, string[]> = {
@@ -168,7 +172,21 @@ function minutesToTimeAgo(mins: number): string {
    3. 帖子合成
    ═══════════════════════════════════════════════════════════ */
 
-let nextThreadId = BASE_THREAD_ID;
+/**
+ * 标签名 → ID 偏移量（稳定映射，基于标签出现顺序分配）
+ * 保证每个标签拥有独立的 ID 空间，不会互相冲突
+ */
+const tagIdOffsetMap = new Map<string, number>();
+let nextTagOffset = 0;
+
+function getTagIdOffset(tag: string): number {
+  if (!tagIdOffsetMap.has(tag)) {
+    tagIdOffsetMap.set(tag, nextTagOffset++);
+  }
+  return tagIdOffsetMap.get(tag)!;
+}
+
+let nextExtraId = EXTRA_ID_OFFSET; // 客户端额外帖子的递增计数器
 
 /**
  * 确定性合成一条属于某标签的帖子
@@ -176,8 +194,9 @@ let nextThreadId = BASE_THREAD_ID;
  * @param index 序号（种子偏移，保证池内各帖不同）
  */
 function synthesizeTagThread(tag: string, index: number): Thread {
-  nextThreadId += 1;
-  const id = nextThreadId;
+  // 每个标签独占一个 ID 区间，避免不同标签池冲突
+  const tagBaseId = BASE_THREAD_ID + getTagIdOffset(tag) * TAG_ID_SPACING;
+  const id = tagBaseId + index; // 初始池用 index 直接做 ID，保证唯一
   const rand = makeRng(tagSeed(tag) + index * 7 + id);
 
   const titlePool = TAG_TITLE_POOL[tag] || FALLBACK_TITLES;
@@ -208,11 +227,18 @@ function synthesizeTagThread(tag: string, index: number): Thread {
   };
 }
 
+/** 判断该标签是否在帖子使用的标签子集中（用于验证筛选效果） */
+export function isTagInPostPool(tag: string): boolean {
+  return POST_TAGS.includes(tag);
+}
+
 /**
  * 构建某标签的初始帖子池（确定性，42 条）
+ * 若该标签不在 POST_TAGS 子集中，返回空数组以模拟"无帖子"筛选效果
  */
 export function buildTagPool(tag: string, count = 42): Thread[] {
-  nextThreadId = BASE_THREAD_ID; // 重置 ID 起点，保证可复现
+  /* 筛选效果验证：仅 POST_TAGS 内的标签才有帖子 */
+  if (!isTagInPostPool(tag)) return [];
   const pool: Thread[] = [];
   for (let i = 0; i < count; i++) pool.push(synthesizeTagThread(tag, i));
   return pool;
@@ -220,13 +246,15 @@ export function buildTagPool(tag: string, count = 42): Thread[] {
 
 /**
  * 客户端合成更多标签帖子（仅用于无限滚动补充，使用 Math.random）
+ * 若该标签不在 POST_TAGS 子集中，返回空数组
  */
 export function generateMoreTagThreads(tag: string, count: number): Thread[] {
+  /* 筛选效果验证：仅 POST_TAGS 内的标签才有帖子 */
+  if (!isTagInPostPool(tag)) return [];
   const pool: Thread[] = [];
   const titlePool = TAG_TITLE_POOL[tag] || FALLBACK_TITLES;
   for (let i = 0; i < count; i++) {
-    nextThreadId += 1;
-    const id = nextThreadId;
+    const id = nextExtraId++; // 使用全局递增 ID，确保跨标签唯一
     const author = AUTHOR_POOL[Math.floor(Math.random() * AUTHOR_POOL.length)];
     const title = titlePool[Math.floor(Math.random() * titlePool.length)];
     const section = SECTIONS[Math.floor(Math.random() * SECTIONS.length)];

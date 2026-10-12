@@ -142,13 +142,18 @@ const VOTE_TITLES: string[] = [
   'Vote: Should we add a weekly ranking thread?',
 ];
 
-/** 提问帖标题池（保证 Question Tab 有内容） */
-const QUESTION_TITLES: string[] = [
-  'Question: How do you handle agent state persistence?',
-  'Question: What is the best embedding model for code search?',
-  'Question: Is QLoRA enough for domain adaptation?',
-  'Question: How do you version vector indexes?',
-  'Question: Best practices for multi-agent error recovery?',
+/** 提问帖标题池（保证 Question Tab 有内容）—— 每条标题对应积分奖励值 */
+const QUESTION_TITLE_POOL: Array<{ title: string; points: number }> = [
+  { title: 'How do you handle agent state persistence across restarts?', points: 50 },
+  { title: 'What is the best embedding model for multilingual code search?', points: 80 },
+  { title: 'Is QLoRA enough for domain adaptation or should I use full finetune?', points: 120 },
+  { title: 'How do you version and rollback vector indexes in production?', points: 200 },
+  { title: 'Best patterns for multi-agent error recovery and retry logic?', points: 150 },
+  { title: 'How to structure prompts for reliable structured JSON output?', points: 60 },
+  { title: 'Which RAG chunking strategy works best for API documentation?', points: 90 },
+  { title: 'How to detect and mitigate prompt injection in tool-calling agents?', points: 300 },
+  { title: 'What GPU memory budget for 70B QLoRA inference on consumer cards?', points: 180 },
+  { title: 'Best practices for rate-limiting LLM calls in multi-agent flows?', points: 75 },
 ];
 
 /** 帖子分区（随机分配） */
@@ -213,25 +218,46 @@ function minutesToTimeAgo(mins: number): string {
 
 let nextThreadId = BASE_THREAD_ID;
 
-/** 候选标题池工厂：Vote / Question 帖子按概率混入，保证对应 Tab 有内容 */
+/** 候选标题池工厂：Vote / Question 帖子按概率混入，保证对应 Tab 有内容
+ *  返回值包含 threadType 与 questionPoints，用于 Tab 精确筛选与列表展示
+ */
 function rollThreadKind(rand: () => number, bar: TiebaCatalogItem): {
   title: string;
   tag: string;
   section: string;
+  threadType: 'normal' | 'vote' | 'question';
+  questionPoints?: number;
 } {
   const roll = rand();
-  // 12% 投票帖 + 12% 提问帖（与原始合成逻辑一致）
-  if (roll < 0.12) {
-    return { title: pickOne(rand, VOTE_TITLES), tag: 'Vote', section: 'Questions' };
+  // 15% 投票帖
+  if (roll < 0.15) {
+    return {
+      title: pickOne(rand, VOTE_TITLES),
+      tag: 'Vote',
+      section: 'Questions',
+      threadType: 'vote',
+    };
   }
-  if (roll < 0.24) {
-    // 提问帖：tag 仍取自贴吧 tags（与原始逻辑一致，tag 在 roll 之前已设定）
-    return { title: pickOne(rand, QUESTION_TITLES), tag: pickOne(rand, bar.tags), section: 'Questions' };
+  // 15% 提问帖（带积分奖励）
+  if (roll < 0.30) {
+    const q = pickOne(rand, QUESTION_TITLE_POOL);
+    return {
+      title: q.title,
+      tag: 'Question',
+      section: 'Questions',
+      threadType: 'question',
+      questionPoints: q.points,
+    };
   }
   // 常规帖：从贴吧 tags 中取一个，再从对应标题池取标题
   const tag = pickOne(rand, bar.tags);
   const titlePool = TAG_TITLE_POOL[tag] || FALLBACK_TITLES;
-  return { title: pickOne(rand, titlePool), tag, section: pickOne(rand, SECTIONS) };
+  return {
+    title: pickOne(rand, titlePool),
+    tag,
+    section: pickOne(rand, SECTIONS),
+    threadType: 'normal',
+  };
 }
 
 /**
@@ -245,7 +271,7 @@ function synthesizeBarThread(bar: TiebaCatalogItem, index: number): Thread {
   // 种子由 barId + 帖子 id 组合，保证跨渲染一致
   const rand = makeRng(barSeed(bar.id) + index * 7 + id);
 
-  const { title, tag, section } = rollThreadKind(rand, bar);
+  const { title, tag, section, threadType, questionPoints } = rollThreadKind(rand, bar);
   const author = pickOne(rand, AUTHOR_POOL);
   const replies = randInt(rand, 2, 120);
   const views = randInt(rand, 200, 6000);
@@ -264,10 +290,13 @@ function synthesizeBarThread(bar: TiebaCatalogItem, index: number): Thread {
     timeAgo: minutesToTimeAgo(minsAgo),
     isHot: likes > 80 || replies > 80,
     isNew: minsAgo < 60 * 24,
+    hasPoll: threadType === 'vote',
     likes,
     liked: false,
     isOnline: rand() < 0.55,
     repliers: buildRepliers(replies, id),
+    threadType,
+    questionPoints,
   };
 }
 
@@ -295,20 +324,34 @@ export function generateMoreBarThreads(bar: TiebaCatalogItem, count: number): Th
     const tag = bar.tags[Math.floor(Math.random() * bar.tags.length)];
     const titlePool = TAG_TITLE_POOL[tag] || FALLBACK_TITLES;
     const author = AUTHOR_POOL[Math.floor(Math.random() * AUTHOR_POOL.length)];
-    // 客户端补充帖同样混入 Vote / Question
+
+    // 客户端补充帖同样混入 Vote / Question（与服务端一致的 15% / 15% 比例）
     const roll = Math.random();
     let title: string;
     let section: string;
-    if (roll < 0.12) {
+    let threadType: 'normal' | 'vote' | 'question' = 'normal';
+    let questionPoints: number | undefined;
+    let finalTag: string = tag;
+    let hasPoll = false;
+
+    if (roll < 0.15) {
       title = VOTE_TITLES[Math.floor(Math.random() * VOTE_TITLES.length)];
       section = 'Questions';
-    } else if (roll < 0.24) {
-      title = QUESTION_TITLES[Math.floor(Math.random() * QUESTION_TITLES.length)];
+      finalTag = 'Vote';
+      threadType = 'vote';
+      hasPoll = true;
+    } else if (roll < 0.30) {
+      const q = QUESTION_TITLE_POOL[Math.floor(Math.random() * QUESTION_TITLE_POOL.length)];
+      title = q.title;
       section = 'Questions';
+      finalTag = 'Question';
+      threadType = 'question';
+      questionPoints = q.points;
     } else {
       title = titlePool[Math.floor(Math.random() * titlePool.length)];
       section = SECTIONS[Math.floor(Math.random() * SECTIONS.length)];
     }
+
     const replies = Math.floor(Math.random() * 119) + 2;
     const views = Math.floor(Math.random() * 5800) + 200;
     const minsAgo = Math.floor(Math.random() * 2875) + 5;
@@ -319,16 +362,19 @@ export function generateMoreBarThreads(bar: TiebaCatalogItem, count: number): Th
       author: author.name,
       avatar: author.avatar,
       section,
-      tag: roll < 0.12 ? 'Vote' : tag,
+      tag: finalTag,
       replies,
       views,
       timeAgo: minutesToTimeAgo(minsAgo),
       isHot: likes > 80 || replies > 80,
       isNew: minsAgo < 60 * 24,
+      hasPoll,
       likes,
       liked: false,
       isOnline: Math.random() < 0.55,
       repliers: buildRepliers(replies, id),
+      threadType,
+      questionPoints,
     });
   }
   return pool;
@@ -338,17 +384,20 @@ export function generateMoreBarThreads(bar: TiebaCatalogItem, count: number): Th
    4. 过滤与排序
    ═══════════════════════════════════════════════════════════ */
 
-/** 判断标题是否为投票帖 */
+/** 判断投票帖：优先使用 threadType 精确匹配，兜底兼容旧数据（tag/标题） */
 function isVoteThread(t: Thread): boolean {
+  if (t.threadType === 'vote') return true;
   const lower = (t.title || '').toLowerCase();
   return lower.startsWith('vote:') || lower.includes('[vote]') || t.tag === 'Vote';
 }
 
-/** 判断标题是否为提问帖（排除投票帖） */
+/** 判断提问帖（排除投票帖）：优先使用 threadType 精确匹配，兜底兼容旧数据 */
 function isQuestionThread(t: Thread): boolean {
+  if (isVoteThread(t)) return false;
+  if (t.threadType === 'question') return true;
   const title = t.title || '';
   const lower = title.toLowerCase();
-  return !isVoteThread(t) && (title.endsWith('?') || lower.startsWith('question:'));
+  return title.endsWith('?') || lower.startsWith('question:');
 }
 
 /** 按时间升序排序（最新在前） */

@@ -6,6 +6,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { App, Button } from 'antd';
+import { Check as LucideCheck, Copy as LucideCopy, ChevronUp as LucideChevronUp, ChevronDown as LucideChevronDown } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════
    Props
@@ -171,6 +173,9 @@ export default function CodeBlock({ code, lang = 'text', collapseThreshold = 15 
     return lines.map((line) => tokenizeLine(line, rules));
   }, [lines, lang]);
 
+  // 全站统一 Toast：antd App.useApp().message（需在 <App> 组件内使用，layout.tsx 已配置）
+  const { message } = App.useApp();
+
   const [copied, setCopied] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -178,7 +183,7 @@ export default function CodeBlock({ code, lang = 'text', collapseThreshold = 15 
   const collapsed = collapsible && !expanded;
   const maxHeight = collapsed ? collapseThreshold * LINE_HEIGHT + CODE_PADDING * 2 : undefined;
 
-  /** 复制到剪贴板 */
+  /** 复制到剪贴板：按钮只留勾，提示走全站统一 antd message */
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(code);
@@ -194,6 +199,7 @@ export default function CodeBlock({ code, lang = 'text', collapseThreshold = 15 
       document.body.removeChild(ta);
     }
     setCopied(true);
+    message.success('Copied to clipboard', 2.2);
     window.setTimeout(() => setCopied(false), 1500);
   };
 
@@ -223,38 +229,40 @@ export default function CodeBlock({ code, lang = 'text', collapseThreshold = 15 
         </span>
         {/* Copy 按钮 —— 紧贴行数文字右侧（行数已 ml-auto 占据剩余空间），
             避免 absolute 定位与 .tooltip-trigger 的 position:relative 冲突 */}
-        <button
-          type="button"
+        <Button
+          type="text"
           onClick={handleCopy}
           data-tooltip="Copy code"
           className="tooltip-trigger flex shrink-0 items-center gap-1 opacity-0 transition-opacity duration-150 focus-visible:opacity-100 group-hover:opacity-100"
           style={{
             padding: '4px 6px',
+            height: 'auto',
             background: copied ? 'rgba(63,185,80,0.1)' : 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: '4px',
-            cursor: 'pointer',
             opacity: copied ? 1 : undefined,
             color: copied ? '#3FB950' : '#8b949e',
           }}
         >
           {copied ? (
-            <>
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 8.5 6.5 12 13 4.5" />
-              </svg>
-              <span className="font-mono" style={{ fontSize: '10px', fontWeight: 600 }}>Copied!</span>
-            </>
+            // 复制成功只保留勾图标，不再显示 Copied 文字；
+            // 文字提示统一走 antd message.toast
+            <LucideCheck size={12} strokeWidth={2} />
           ) : (
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="5.5" y="5.5" width="8" height="8" rx="1.5" />
-              <path d="M10.5 5.5v-2a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" />
-            </svg>
+            <LucideCopy size={12} strokeWidth={1.5} />
           )}
-        </button>
+        </Button>
       </div>
 
-      {/* ── 代码区域（可折叠） ── */}
+      {/* ── 代码区域（可折叠）
+           注意：代码截断渐隐 和 折叠箭头 是两个独立视觉单元，
+           避免把箭头条带盖在代码上方造成"双重渐隐 + 分界线"
+           ┌──────────────────────┐
+           │ 代码内容（maxHeight 截断）│
+           │ ── 柔化截断线的渐隐层 ── │  ← 只在代码高度内柔化，不超界
+           └──────────────────────┘
+           [ 箭头条带（独立行，自带渐变+blur，与底部无缝衔接）] ← 不盖代码
+      */}
       <div className="relative">
         <div
           className="overflow-hidden transition-[max-height] duration-300"
@@ -288,55 +296,82 @@ export default function CodeBlock({ code, lang = 'text', collapseThreshold = 15 
             </code>
           </pre>
         </div>
-        {/* 折叠时的模糊透明遮罩 —— backdrop-filter 模糊下方代码，而非纯黑盖住 */}
-        {collapsed && (
+
+        {/* 截断线柔化遮罩：只放在代码容器高度内，
+           高度 60px，纯 alpha 渐变，不使用 backdrop-filter，
+           作用：柔化 maxHeight 截断产生的硬切边 */}
+        {collapsible && !expanded && (
           <div
             className="pointer-events-none absolute inset-x-0 bottom-0"
             style={{
-              height: '80px',
-              background: 'rgba(13,17,23,0.4)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              maskImage: 'linear-gradient(to bottom, transparent, black 35%)',
-              WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 35%)',
+              height: '60px',
+              background:
+                'linear-gradient(to bottom, rgba(13,17,23,0) 0%, rgba(13,17,23,0.55) 60%, rgba(13,17,23,0.78) 100%)',
             }}
           />
         )}
       </div>
 
-      {/* ── 折叠/展开按钮：HUD 风格圆形图标按钮 ── */}
-      {collapsible && (
+      {/* ── 折叠/展开按钮区（代码容器外部，独立一行，不再盖代码）
+           —— 折叠态（未展开）：自带半透明渐变背景 + backdrop-filter，
+              让箭头行与上方代码柔化遮罩之间做无缝融合，不再有"两层"感
+           —— 展开态：透明背景，仅显示收起箭头 */}
+      {collapsible && !expanded ? (
         <div
-          className="relative flex justify-center"
-          style={{ borderTop: '1px solid #21262d', padding: '8px 0' }}
+          className="relative flex items-end justify-center"
+          style={{
+            /* 箭头行自己的高度，独立于代码区域，不再额外盖在代码上 */
+            height: '32px',
+            paddingBottom: '6px',
+            background:
+              'linear-gradient(to bottom, rgba(13,17,23,0.78) 0%, rgba(13,17,23,0.92) 50%, rgba(13,17,23,1) 100%)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+          }}
         >
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            data-tooltip={expanded ? 'Show less' : `Show more (${lines.length} lines)`}
-            className="tooltip-trigger group/toggle flex items-center justify-center border border-[rgba(245,197,24,0.3)] text-[#E3B341] shadow-[0_0_12px_rgba(245,197,24,0.08)] transition-all duration-150 hover:border-[var(--gold,#f5c518)] hover:text-[var(--gold-hover,#ffd847)] hover:shadow-[0_0_16px_rgba(245,197,24,0.25)]"
+            data-tooltip={`Show more (${lines.length} lines)`}
+            className="tooltip-trigger group/toggle flex items-center justify-center text-[#8b949e] transition-colors duration-150 hover:text-[var(--gold,#9D8CFF)]"
             style={{
-              width: '34px',
-              height: '34px',
-              borderRadius: '50%',
-              background: 'rgba(245,197,24,0.06)',
+              width: '20px',
+              height: '16px',
+              border: 'none',
               cursor: 'pointer',
+              padding: 0,
+              borderRadius: 0,
+              background: 'transparent',
             }}
           >
-            {expanded ? (
-              /* chevron-up */
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m6 15 6-6 6 6" />
-              </svg>
-            ) : (
-              /* chevron-down */
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            )}
+            <LucideChevronDown size={14} strokeWidth={2.5} />
           </button>
         </div>
-      )}
+      ) : null}
+
+      {collapsible && expanded ? (
+        <div
+          className="relative flex justify-center"
+          style={{ padding: '6px 0' }}
+        >
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            data-tooltip="Show less"
+            className="tooltip-trigger group/toggle flex items-center justify-center text-[#8b949e] transition-colors duration-150 hover:text-[var(--gold,#9D8CFF)]"
+            style={{
+              width: '20px',
+              height: '16px',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+            }}
+          >
+            <LucideChevronUp size={14} strokeWidth={2.5} />
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

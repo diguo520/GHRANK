@@ -1,8 +1,10 @@
-﻿'use client';
+'use client';
 
 import { CSSProperties, useEffect, useMemo, useRef, useState, ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Input, type InputRef } from 'antd';
+import { SearchIcon } from '@/components/shared/icons';
 import { SEARCH_DATA } from '@/lib/config';
 
 /** 搜索数据项类型 */
@@ -13,10 +15,10 @@ interface SearchOverlayProps {
   onClose: () => void;
 }
 
-/* ── 标签配色映射 —— 替代原始 CSS 类，按 tagClass 索引 ── */
+/* ── 标签配色映射 —— 替代原始 CSS 类，按 tagClass 索引 —— 已更新为 LobeHub 紫色主题 */
 const TAG_STYLE_MAP: Record<string, CSSProperties> = {
   'tag-frontend': { background: 'rgba(57, 210, 192, 0.12)', color: 'var(--cyan)', borderColor: 'rgba(57, 210, 192, 0.3)' },
-  'tag-backend': { background: 'rgba(245, 197, 24, 0.12)', color: 'var(--gold)', borderColor: 'rgba(245, 197, 24, 0.3)' },
+  'tag-backend': { background: 'rgba(157, 140, 255, 0.12)', color: 'var(--gold)', borderColor: 'rgba(157, 140, 255, 0.3)' },
   'tag-ai': { background: 'rgba(163, 113, 247, 0.12)', color: 'var(--purple)', borderColor: 'rgba(163, 113, 247, 0.3)' },
   'tag-devops': { background: 'rgba(247, 120, 186, 0.12)', color: 'var(--pink)', borderColor: 'rgba(247, 120, 186, 0.3)' },
   'tag-games': { background: 'rgba(232, 93, 4, 0.12)', color: 'var(--orange)', borderColor: 'rgba(232, 93, 4, 0.3)' },
@@ -73,7 +75,9 @@ function SearchResultItem({
       style={{
         padding: 'var(--sp-3) var(--sp-4)',
         borderBottom: '1px solid var(--border-subtle)',
-        background: isActive ? 'rgba(245, 197, 24, 0.08)' : 'transparent',
+        // 选中：左侧紫色竖条 + 半透明紫色背景，替代原来的白线效果
+        borderLeft: isActive ? '2px solid var(--gold)' : '2px solid transparent',
+        background: isActive ? 'rgba(157, 140, 255, 0.06)' : 'transparent',
         textDecoration: 'none',
         color: 'inherit',
       }}
@@ -85,7 +89,7 @@ function SearchResultItem({
           width: '36px',
           height: '36px',
           background: 'var(--gold-subtle)',
-          border: '1px solid rgba(245, 197, 24, 0.3)',
+          border: '1px solid rgba(157, 140, 255, 0.3)',
           color: 'var(--gold)',
           fontFamily: 'var(--font-display)',
           fontSize: '15px',
@@ -152,7 +156,7 @@ function SearchResultItem({
 export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState('');
   const [activeIdx, setActiveIdx] = useState(-1);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<InputRef>(null);
   const router = useRouter();
 
   /* 过滤搜索结果 —— 按名称、描述、标签匹配 */
@@ -203,9 +207,17 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setActiveIdx((i) => Math.max(i - 1, -1));
-      } else if (e.key === 'Enter' && activeIdx >= 0 && results[activeIdx]) {
-        e.preventDefault();
-        router.push(results[activeIdx].url);
+      } else if (e.key === 'Enter') {
+        // 用 ↑↓ 选中了结果 → 跳转选中项
+        // 光标在输入框未选中 → 跳转搜索页
+        if (activeIdx >= 0 && results[activeIdx]) {
+          e.preventDefault();
+          router.push(results[activeIdx].url);
+        } else {
+          e.preventDefault();
+          router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+          onClose();
+        }
       }
     }
 
@@ -257,18 +269,19 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
           <span className="text-xl flex-shrink-0" style={{ color: 'var(--text-dim)' }}>
             {'\u{1F50D}\uFE0E'}
           </span>
-          <input
-            type="text"
+          <Input
             ref={inputRef}
             placeholder="Search repos, categories, languages..."
             autoComplete="off"
-            spellCheck="false"
-            className="flex-1 bg-transparent border-none outline-hidden min-w-0"
+            spellCheck={false}
+            variant="borderless"
+            className="flex-1 min-w-0"
             style={{
               color: 'var(--text)',
               fontFamily: 'var(--font-body)',
               fontSize: '18px',
               fontWeight: 500,
+              background: 'transparent',
             }}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -299,9 +312,7 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
               className="flex flex-col items-center justify-center text-center gap-2"
               style={{ padding: 'var(--sp-7) var(--sp-4)' }}
             >
-              <div className="text-[32px]" style={{ color: 'var(--text-muted)', opacity: 0.6 }}>
-                {'\u23F3'}
-              </div>
+              <SearchIcon size={32} style={{ color: 'var(--text-muted)', opacity: 0.5 }} />
               <div style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, color: 'var(--text-dim)' }}>
                 No results found
               </div>
@@ -349,7 +360,7 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
             <kbd style={kbdStyle}>{'\u2191'}{'\u2193'}</kbd> Navigate
           </span>
           <span className="inline-flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-muted)' }}>
-            <kbd style={kbdStyle}>{'\u21B5'}</kbd> Open
+            <kbd style={kbdStyle}>{'\u21B5'}</kbd> Search
           </span>
           <span className="inline-flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-muted)' }}>
             <kbd style={kbdStyle}>ESC</kbd> Close

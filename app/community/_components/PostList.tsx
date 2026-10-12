@@ -1,6 +1,6 @@
 /**
  * PostList —— 社区中栏主组件
- * 包含：Hero（打字机动画）+ 公告区 + Tabs 切换 + 帖子列表（骨架屏+IO+分块加载）
+ * 包含：Tabs 切换 + 帖子列表（骨架屏+IO+分块加载）
  * 迁移自 community.html 的 .community-content 与 community.js 的 CommunityPage 组件
  *
  * 数据加载：useChunkedData（骨架屏逐批替换 + 无限滚动分块）
@@ -10,17 +10,14 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import Link from 'next/link';
+import { Tabs, App, Divider } from 'antd';
 import { useChunkedData } from '@/hooks/useChunkedData';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { SkeletonAvatar, SkeletonLine } from '@/components/skeleton/Skeleton';
-import TextTypeHero from './TextTypeHero';
 import ThreadItem from './ThreadItem';
 import {
   BASE_THREADS,
   COMMUNITY_TABS,
-  ANNOUNCEMENTS,
-  HERO_TEXTS,
   PAGE_SIZE,
   filterAndSortThreads,
   generateMoreThreads,
@@ -41,8 +38,7 @@ function PostSkeleton() {
         gridTemplateColumns: '44px 1fr auto',
         gap: '16px',
         padding: '18px 22px',
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
+        background: 'transparent',
       }}
     >
       <SkeletonAvatar size={44} shape="round" />
@@ -51,84 +47,6 @@ function PostSkeleton() {
         <SkeletonLine width="75%" height="11px" />
       </div>
       <SkeletonAvatar size={22} shape="round" />
-    </div>
-  );
-}
-
-/* ── 公告区 ── */
-function AnnouncementList() {
-  return (
-    <div
-      className="community-announcements mb-6"
-      style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '20px 24px' }}
-    >
-      <div className="flex items-center justify-between mb-3.5">
-        <div
-          className="font-display text-sm font-bold uppercase"
-          style={{ color: 'var(--text)', letterSpacing: '0.04em' }}
-        >
-          Community Announcements
-        </div>
-        <div
-          className="inline-flex items-center gap-1.5 font-mono text-[9px] font-semibold uppercase"
-          style={{ color: 'var(--green)', letterSpacing: '0.1em' }}
-        >
-          <span
-            className="inline-block w-1.5 h-1.5 rounded-full"
-            style={{ background: 'var(--green)', boxShadow: '0 0 8px rgba(63, 185, 80, 0.5)', animation: 'live-pulse 1.6s ease-in-out infinite' }}
-          />
-          Live
-        </div>
-      </div>
-      <div className="flex flex-col gap-2">
-        {ANNOUNCEMENTS.map((a, i) => {
-          const tagColor =
-            a.tagType === 'update' ? 'var(--cyan)' : a.tagType === 'event' ? 'var(--purple)' : 'var(--gold)';
-          const tagBg =
-            a.tagType === 'update'
-              ? 'rgba(57, 210, 192, 0.08)'
-              : a.tagType === 'event'
-                ? 'rgba(163, 113, 247, 0.08)'
-                : 'rgba(245, 197, 24, 0.08)';
-          const tagBorder =
-            a.tagType === 'update'
-              ? 'rgba(57, 210, 192, 0.35)'
-              : a.tagType === 'event'
-                ? 'rgba(163, 113, 247, 0.35)'
-                : 'rgba(245, 197, 24, 0.35)';
-          return (
-            <Link
-              key={i}
-              href="/community/detail"
-              className="flex items-center gap-3.5 p-3 no-underline transition-all"
-              style={{ background: 'var(--bg)', border: '1px solid var(--border-subtle)' }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(245, 197, 24, 0.35)';
-                e.currentTarget.style.transform = 'translateX(2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                e.currentTarget.style.transform = '';
-              }}
-            >
-              <span
-                className="font-mono text-[9px] font-semibold uppercase px-2 py-0.5 flex-shrink-0"
-                style={{ color: tagColor, background: tagBg, border: `1px solid ${tagBorder}`, letterSpacing: '0.08em' }}
-              >
-                {a.tag}
-              </span>
-              <div className="flex-1 min-w-0">
-                <div
-                  className="font-body text-[13px] overflow-hidden text-ellipsis whitespace-nowrap"
-                  style={{ color: 'var(--text)', lineHeight: 1.5 }}
-                >
-                  {a.text}
-                </div>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
     </div>
   );
 }
@@ -211,10 +129,15 @@ function ThreadListInner({ tab, onLike }: { tab: string; onLike: (author: string
   const skeletons = Array.from({ length: skeletonCount }, (_, i) => i);
 
   return (
-    <div className="thread-list flex flex-col gap-2.5">
-      {/* 已加载的真实帖子 */}
-      {visibleItems.map((item) => (
-        <ThreadItem key={`thread-${item.id}`} thread={item} onLike={onLike} />
+    <div className="thread-list flex flex-col">
+      {/* 已加载的真实帖子，使用 Divider 分割线分隔 */}
+      {visibleItems.map((item, index) => (
+        <div key={`thread-${item.id}`}>
+          <ThreadItem thread={item} onLike={onLike} />
+          {index < visibleItems.length - 1 && (
+            <Divider style={{ margin: 0, borderColor: 'var(--border-subtle)' }} />
+          )}
+        </div>
       ))}
 
       {/* 骨架屏占位 */}
@@ -249,121 +172,33 @@ function ThreadListInner({ tab, onLike }: { tab: string; onLike: (author: string
 /* ── PostList 主组件 ── */
 export default function PostList() {
   const [currentTab, setCurrentTab] = useState('All');
-  // Toast 状态：点赞反馈提示
-  const [toastMsg, setToastMsg] = useState('');
-  const [toastVisible, setToastVisible] = useState(false);
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // antd message 实例（必须在 <App> 内部使用）
+  const { message } = App.useApp();
 
-  // 点赞回调：显示 Toast
+  // 点赞回调：显示 antd message
   const handleLike = useCallback((author: string) => {
-    setToastMsg(`Liked ${author}'s post`);
-    setToastVisible(true);
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    toastTimerRef.current = setTimeout(() => setToastVisible(false), 2200);
-  }, []);
+    message.success(`Liked ${author}'s post`, 2.2);
+  }, [message]);
 
-  useEffect(() => {
-    return () => {
-      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    };
-  }, []);
+  // antd Tabs items 配置
+  const tabItems = useMemo(() => COMMUNITY_TABS.map((tab) => ({
+    key: tab.key,
+    label: tab.label,
+  })), []);
 
   return (
     <main className="community-content min-w-0">
-      {/* Hero */}
-      <div
-        className="community-hero relative overflow-hidden mb-6"
-        style={{
-          background: 'linear-gradient(135deg, rgba(245, 197, 24, 0.04) 0%, transparent 60%), var(--surface)',
-          border: '1px solid var(--border)',
-          padding: '32px 36px',
-        }}
-      >
-        {/* 四角金色装饰 */}
-        <span className="absolute top-[-1px] left-[-1px] w-[18px] h-[18px]" style={{ borderTop: '2px solid var(--gold)', borderLeft: '2px solid var(--gold)' }} />
-        <span className="absolute bottom-[-1px] right-[-1px] w-[18px] h-[18px]" style={{ borderBottom: '2px solid var(--gold)', borderRight: '2px solid var(--gold)' }} />
-        <div>
-          <div
-            className="community-hero-eyebrow font-mono text-[11px] font-semibold uppercase mb-2.5"
-            style={{ color: 'var(--gold)', letterSpacing: '0.16em' }}
-          >
-            // GHRANK COMMUNITY
-          </div>
-          <TextTypeHero
-            texts={HERO_TEXTS}
-            typingSpeed={80}
-            pauseDuration={2200}
-            deletingSpeed={45}
-            variableSpeed={{ min: 50, max: 130 }}
-            cursorCharacter="_"
-            loop
-          />
-          <p
-            className="community-hero-sub font-body text-[15px] leading-relaxed"
-            style={{ color: 'var(--text-dim)', maxWidth: '640px' }}
-          >
-            Discuss open source intelligence, share your projects, ask questions, and collaborate with thousands of developers worldwide.
-          </p>
-        </div>
-      </div>
-
-      {/* 公告区 */}
-      <AnnouncementList />
-
-      {/* Tabs */}
-      <div
-        className="community-tabs flex items-center gap-1 mb-5 flex-wrap"
-        style={{ borderBottom: '1px solid var(--border)' }}
-      >
-        {COMMUNITY_TABS.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setCurrentTab(tab.key)}
-            className="font-mono text-[11px] font-semibold uppercase py-2.5 px-4 cursor-pointer transition-colors"
-            style={{
-              color: currentTab === tab.key ? 'var(--gold)' : 'var(--text-dim)',
-              background: 'transparent',
-              border: 'none',
-              borderBottom: `2px solid ${currentTab === tab.key ? 'var(--gold)' : 'transparent'}`,
-              letterSpacing: '0.08em',
-              marginBottom: '-1px',
-            }}
-            onMouseEnter={(e) => {
-              if (currentTab !== tab.key) e.currentTarget.style.color = 'var(--text)';
-            }}
-            onMouseLeave={(e) => {
-              if (currentTab !== tab.key) e.currentTarget.style.color = 'var(--text-dim)';
-            }}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      {/* antd Tabs */}
+      <Tabs
+        activeKey={currentTab}
+        onChange={setCurrentTab}
+        items={tabItems}
+        className="community-tabs mb-5"
+        style={{ marginBottom: '20px' }}
+      />
 
       {/* 帖子列表（key 切换 tab 时重新挂载，触发骨架屏流程） */}
       <ThreadListInner key={currentTab} tab={currentTab} onLike={handleLike} />
-
-      {/* Toast 提示（点赞反馈） */}
-      <div
-        className="fixed left-1/2 flex items-center justify-center pointer-events-none"
-        style={{
-          bottom: '32px',
-          transform: toastVisible ? 'translateX(-50%) translateY(0)' : 'translateX(-50%) translateY(20px)',
-          background: 'var(--surface)',
-          border: '1px solid rgba(245, 197, 24, 0.35)',
-          padding: '12px 24px',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '12px',
-          color: 'var(--gold)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(245, 197, 24, 0.15)',
-          zIndex: 10000,
-          opacity: toastVisible ? 1 : 0,
-          transition: 'opacity 0.3s, transform 0.3s',
-          letterSpacing: '0.04em',
-        }}
-      >
-        {toastMsg}
-      </div>
     </main>
   );
 }

@@ -1,13 +1,21 @@
 /**
- * SearchClient —— 搜索结果页交互主组件
- * 管理：搜索输入、类型筛选（Repos/Prompts/Community）、排序、结果渲染
- * 迁移自 search.js 的 SearchPage 组件
- * 保留：实时搜索、高亮匹配、类型过滤、排序下拉、分页、相关搜索
+ * SearchClient —— 搜索结果页交互主组件（v2.0 antd 迁移）
+ *
+ * 迁移内容：
+ * - 搜索输入框 + 按钮 → antd Input.Search
+ * - 清除按钮 → antd Input.Search 的 allowClear
+ *
+ * 保留：
+ * - 英雄区装饰（金色细线、网格底纹、徽章、标题）
+ * - 类型筛选 Chips / 排序下拉 / 分页 / 相关搜索
+ * - 实时搜索、高亮匹配、类型过滤逻辑
  */
 'use client';
 
-import { useState, useMemo, useRef, CSSProperties } from 'react';
+import { useState, useMemo, CSSProperties } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Input } from 'antd';
+import { SearchIcon } from '@/components/shared/icons';
 import {
   SEARCH_ALL_DATA,
   FILTER_CHIPS,
@@ -29,10 +37,8 @@ export default function SearchClient() {
   const initialQuery = searchParams.get('q') || 'react';
 
   const [inputValue, setInputValue] = useState(initialQuery);
-  const [currentType, setCurrentType] = useState<SearchType>('repos');
+  const [currentType, setCurrentType] = useState<SearchType>('community');
   const [sortIdx, setSortIdx] = useState(0);
-  const [inputFocused, setInputFocused] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   // ── 过滤 + 排序：根据类型、查询词、排序选项计算结果列表 ──
   const results = useMemo(() => {
@@ -55,16 +61,9 @@ export default function SearchClient() {
     // 排序
     const sorted = [...filtered];
     if (sortIdx === 1) {
-      // Stars 降序
-      sorted.sort((a, b) => {
-        const sa = 'stars' in a ? parseStars(a.stars) : 0;
-        const sb = 'stars' in b ? parseStars(b.stars) : 0;
-        return sb - sa;
-      });
-    } else if (sortIdx === 2) {
       // Recently Updated：时间越小越新
       sorted.sort((a, b) => parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time));
-    } else if (sortIdx === 3) {
+    } else if (sortIdx === 2) {
       // Name A-Z
       sorted.sort((a, b) => a.name.localeCompare(b.name));
     }
@@ -73,12 +72,6 @@ export default function SearchClient() {
 
   const queryDisplay = inputValue.trim() || '*';
   const hasResults = results.length > 0;
-
-  // ── 清除搜索 ──
-  const handleClear = () => {
-    setInputValue('');
-    inputRef.current?.focus();
-  };
 
   // ── 点击相关搜索标签 ──
   const handleRelatedClick = (tag: string) => {
@@ -94,7 +87,7 @@ export default function SearchClient() {
         style={{
           padding: '64px 32px 40px',
           background:
-            'radial-gradient(ellipse at 50% 0%, rgba(245,197,24,0.08) 0%, transparent 60%), linear-gradient(180deg, var(--bg) 0%, transparent 100%)',
+            'radial-gradient(ellipse at 50% 0%, rgba(157,140,255,0.08) 0%, transparent 60%), linear-gradient(180deg, var(--bg) 0%, transparent 100%)',
           borderBottom: '1px solid var(--border-subtle)',
         }}
       >
@@ -108,7 +101,7 @@ export default function SearchClient() {
           className="pointer-events-none absolute inset-0"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(245,197,24,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(245,197,24,0.03) 1px, transparent 1px)',
+              'linear-gradient(rgba(157,140,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(157,140,255,0.03) 1px, transparent 1px)',
             backgroundSize: '40px 40px',
             opacity: 0.5,
           }}
@@ -125,8 +118,8 @@ export default function SearchClient() {
               color: 'var(--gold)',
               letterSpacing: '0.18em',
               padding: '6px 18px',
-              border: '1px solid rgba(245,197,24,0.35)',
-              background: 'rgba(245,197,24,0.04)',
+              border: '1px solid rgba(157,140,255,0.35)',
+              background: 'rgba(157,140,255,0.04)',
               marginBottom: '20px',
             }}
           >
@@ -146,111 +139,30 @@ export default function SearchClient() {
             className="mx-auto font-body"
             style={{ fontSize: '16px', color: 'var(--text-dim)', maxWidth: '560px', marginBottom: '32px' }}
           >
-            Search across repositories, prompts, news, and community resources
+            Search across community posts, threads, and discussions
           </p>
 
-          {/* 搜索栏 */}
-          <div className="mx-auto" style={{ maxWidth: '760px', position: 'relative' }}>
-            <div
-              className={`${styles.searchHeroBar} flex items-center`}
-              style={
-                {
-                  gap: '8px',
-                  background: 'var(--surface)',
-                  border: '1px solid',
-                  borderColor: inputFocused ? 'rgba(245,197,24,0.35)' : 'var(--border)',
-                  padding: '6px 6px 6px 18px',
-                  transition: 'border-color 0.2s, box-shadow 0.2s',
-                  boxShadow: inputFocused ? '0 0 0 3px rgba(245,197,24,0.1), 0 0 24px rgba(245,197,24,0.08)' : 'none',
-                  position: 'relative',
-                } as CSSProperties
-              }
-            >
-              {/* 四角装饰 */}
-              <div className="pointer-events-none absolute top-[-1px] left-[-1px] h-[10px] w-[10px]" style={{ borderTop: '2px solid var(--gold)', borderLeft: '2px solid var(--gold)' }} />
-              <div className="pointer-events-none absolute bottom-[-1px] right-[-1px] h-[10px] w-[10px]" style={{ borderBottom: '2px solid var(--gold)', borderRight: '2px solid var(--gold)' }} />
+          {/* 搜索栏 —— antd Input.Search */}
+          <div className="mx-auto relative" style={{ maxWidth: '760px' }}>
+            {/* 四角装饰（保留 HUD 风格） */}
+            {/* 对角装饰：定位在容器内部，避免被圆角裁剪 */}
+            <div className="pointer-events-none absolute top-0 left-0 h-[10px] w-[10px] z-10" style={{ borderTop: '2px solid var(--gold)', borderLeft: '2px solid var(--gold)' }} />
+            <div className="pointer-events-none absolute bottom-0 right-0 h-[10px] w-[10px] z-10" style={{ borderBottom: '2px solid var(--gold)', borderRight: '2px solid var(--gold)' }} />
 
-              <span style={{ fontSize: '18px', color: 'var(--text-dim)', flexShrink: 0 }}>🔍︎</span>
-              <input
-                ref={inputRef}
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
-                placeholder="Type to search repos, prompts, categories..."
-                autoComplete="off"
-                spellCheck={false}
-                style={{
-                  flex: 1,
-                  minWidth: 0,
-                  background: 'transparent',
-                  border: 'none',
-                  outline: 'none',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '16px',
-                  fontWeight: 500,
-                  color: 'var(--text)',
-                  padding: '10px 4px',
-                }}
-              />
-              {inputValue && (
-                <button
-                  onClick={handleClear}
-                  title="Clear search"
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'transparent',
-                    border: '1px solid var(--border)',
-                    color: 'var(--text-dim)',
-                    fontSize: '18px',
-                    lineHeight: 1,
-                    flexShrink: 0,
-                    transition: 'color 0.18s, border-color 0.18s',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = 'var(--orange)';
-                    e.currentTarget.style.borderColor = 'rgba(232,93,4,0.5)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = 'var(--text-dim)';
-                    e.currentTarget.style.borderColor = 'var(--border)';
-                  }}
-                >
-                  &times;
-                </button>
-              )}
-              <button
-                className="font-display"
-                style={{
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  letterSpacing: '0.12em',
-                  color: 'var(--bg)',
-                  background: 'var(--gold)',
-                  border: '1px solid var(--gold)',
-                  padding: '10px 24px',
-                  flexShrink: 0,
-                  transition: 'background 0.18s, box-shadow 0.18s, transform 0.12s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#ffd028';
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(245,197,24,0.4)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'var(--gold)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-                onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.97)')}
-                onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-              >
-                SEARCH
-              </button>
-            </div>
+            <Input.Search
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onSearch={(value) => setInputValue(value)}
+              placeholder="Type to search community posts, threads..."
+              enterButton="SEARCH"
+              size="large"
+              allowClear
+              autoComplete="off"
+              spellCheck={false}
+              style={{
+                background: 'var(--surface)',
+              }}
+            />
           </div>
         </div>
       </section>
@@ -273,9 +185,9 @@ export default function SearchClient() {
                   fontSize: '12px',
                   fontWeight: 600,
                   color: isActive ? 'var(--gold)' : 'var(--text-dim)',
-                  background: isActive ? 'rgba(245,197,24,0.06)' : 'var(--surface)',
+                  background: isActive ? 'rgba(157,140,255,0.06)' : 'var(--surface)',
                   border: '1px solid',
-                  borderColor: isActive ? 'rgba(245,197,24,0.35)' : 'var(--border)',
+                  borderColor: isActive ? 'rgba(157,140,255,0.35)' : 'var(--border)',
                   padding: '7px 14px',
                   letterSpacing: '0.04em',
                   transition: 'color 0.18s, border-color 0.18s, background 0.18s',
@@ -288,12 +200,12 @@ export default function SearchClient() {
                     height: '6px',
                     borderRadius: '50%',
                     background: isActive ? 'var(--gold)' : 'var(--text-muted)',
-                    boxShadow: isActive ? '0 0 8px rgba(245,197,24,0.6)' : 'none',
+                    boxShadow: isActive ? '0 0 8px rgba(157,140,255,0.6)' : 'none',
                     transition: 'background 0.18s, box-shadow 0.18s',
                   }}
                 />
                 {chip.label}
-                <span style={{ color: isActive ? 'rgba(245,197,24,0.5)' : 'var(--text-muted)', fontWeight: 500 }}>
+                <span style={{ color: isActive ? 'rgba(157,140,255,0.5)' : 'var(--text-muted)', fontWeight: 500 }}>
                   {chip.count}
                 </span>
               </button>
@@ -354,8 +266,8 @@ export default function SearchClient() {
         </div>
       ) : (
         <div className="mx-auto text-center" style={{ maxWidth: '1280px', padding: '80px 32px' }}>
-          <div style={{ fontSize: '56px', color: 'var(--gold)', opacity: 0.4, marginBottom: '20px', animation: `${styles.noResultsPulse} 2s ease-in-out infinite` }}>
-            ⏳
+          <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center', animation: `${styles.noResultsPulse} 2s ease-in-out infinite` }}>
+            <SearchIcon size={48} style={{ color: 'var(--text-muted)', opacity: 0.4 }} />
           </div>
           <div className="font-display font-extrabold" style={{ fontSize: '24px', color: 'var(--text)', letterSpacing: '0.04em', marginBottom: '10px' }}>
             NO RESULTS FOUND
@@ -407,8 +319,8 @@ export default function SearchClient() {
               onClick={() => handleRelatedClick(tag)}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = 'var(--gold)';
-                e.currentTarget.style.borderColor = 'rgba(245,197,24,0.35)';
-                e.currentTarget.style.background = 'rgba(245,197,24,0.05)';
+                e.currentTarget.style.borderColor = 'rgba(157,140,255,0.35)';
+                e.currentTarget.style.background = 'rgba(157,140,255,0.05)';
                 e.currentTarget.style.transform = 'translateY(-1px)';
               }}
               onMouseLeave={(e) => {

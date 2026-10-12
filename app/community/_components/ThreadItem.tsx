@@ -10,11 +10,12 @@
 
 import { useState, useEffect, type MouseEvent } from 'react';
 import Link from 'next/link';
-import { HeartIcon } from '../../_components/icons';
-import OnlineBadge from '../../_components/OnlineBadge';
-import UserLevelBadge from '../../_components/UserLevelBadge';
-import { useIsLoggedIn } from '../../_hooks/useIsLoggedIn';
-import { tagToBarId, fmtNum, type Thread } from '../_data/community-data';
+import { Button } from 'antd';
+import { HeartIcon, HotIcon, NewIcon, PollIcon, QuestionIcon, CoinsIcon } from '@/components/shared/icons';
+import OnlineBadge from '@/components/shared/OnlineBadge';
+import UserLevelBadge from '@/components/shared/UserLevelBadge';
+import { formatPostTime } from '@/lib/time-format';
+import { tagToBarId, type Thread } from '../_data/community-data';
 
 /** 回复者头像堆叠（GitHub 风格） */
 function ReplierStack({ thread }: { thread: Thread }) {
@@ -79,8 +80,8 @@ export default function ThreadItem({
   // 点赞局部状态（不影响父组件数据）
   const [liked, setLiked] = useState(thread.liked);
   const [likes, setLikes] = useState(thread.likes);
-  // 当前用户登录状态：决定是否显示头像在线标识
-  const { loggedIn: isLoggedIn } = useIsLoggedIn();
+  // 在线标识基于帖子作者的在线状态，而非当前登录用户
+
 
   // 同步外部 thread 变化（切换 tab 重新挂载时重置）
   useEffect(() => {
@@ -112,19 +113,16 @@ export default function ThreadItem({
         gridTemplateColumns: '44px 1fr auto',
         gap: '16px',
         padding: '18px 22px',
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
+        background: 'transparent',
         color: 'inherit',
-        transition: 'border-color 0.2s, transform 0.2s, box-shadow 0.2s',
+        transition: 'transform 0.2s, box-shadow 0.2s',
         animation: 'cardFadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = 'rgba(245, 197, 24, 0.35)';
         e.currentTarget.style.transform = 'translateY(-1px)';
-        e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(245, 197, 24, 0.35)';
+        e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = 'var(--border)';
         e.currentTarget.style.transform = '';
         e.currentTarget.style.boxShadow = '';
       }}
@@ -136,18 +134,96 @@ export default function ThreadItem({
           width: '44px',
           height: '44px',
           background: 'var(--bg)',
-          border: `1px solid ${isLoggedIn ? 'var(--green)' : 'var(--border)'}`,
+          border: `1px solid var(--border)`,
           color: 'var(--gold)',
         }}
       >
         {thread.avatar}
-        {isLoggedIn && <OnlineBadge size={12} />}
       </div>
 
       {/* 帖子主体 */}
       <div className="thread-body min-w-0">
+        {/* 元信息：作者 + 成就 + 发帖时间 + 状态徽章（位于标题上方） */}
         <div
-          className="thread-title flex items-center gap-2 flex-wrap mb-1.5"
+          className="thread-meta flex items-center gap-2 flex-wrap font-mono text-[11px] mb-1.5"
+          style={{ color: 'var(--text-dim)' }}
+        >
+          <span className="thread-author font-semibold text-text">@{thread.author}</span>
+          {thread.isOnline && <OnlineBadge size={8} inline />}
+          <UserLevelBadge name={thread.author} />
+          <span style={{ color: 'var(--text-muted)' }}>{formatPostTime(thread.timeAgo)}</span>
+          {thread.isHot && (
+            <HotIcon
+              title="HOT"
+              size={12}
+              className="thread-hot-icon flex-shrink-0"
+              style={{ color: 'var(--orange)' }}
+            />
+          )}
+          {thread.isNew && (
+            <NewIcon
+              title="NEW"
+              size={12}
+              className="thread-new-icon flex-shrink-0"
+              style={{ color: 'var(--cyan)' }}
+            />
+          )}
+          {thread.hasPoll && (
+            <PollIcon
+              title="Poll thread"
+              size={12}
+              className="thread-poll-icon flex-shrink-0"
+              style={{
+                color: 'var(--gold)',
+                background: 'rgba(157, 140, 255, 0.1)',
+                border: '1px solid rgba(157, 140, 255, 0.35)',
+                borderRadius: '3px',
+                padding: '1.5px',
+                boxSizing: 'border-box',
+              }}
+            />
+          )}
+          {/* 提问帖：显示 Question 图标 + 积分徽章（展示该问题悬赏多少积分） */}
+          {thread.threadType === 'question' && (
+            <>
+              <QuestionIcon
+                title="Question thread"
+                size={12}
+                className="thread-question-icon flex-shrink-0"
+                style={{
+                  color: '#f59e0b',
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  border: '1px solid rgba(245, 158, 11, 0.35)',
+                  borderRadius: '3px',
+                  padding: '1.5px',
+                  boxSizing: 'border-box',
+                }}
+              />
+              {typeof thread.questionPoints === 'number' && (
+                <span
+                  className="inline-flex items-center gap-1 flex-shrink-0 font-mono text-[10px] font-semibold"
+                  style={{
+                    color: 'var(--bg)',
+                    background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                    border: '1px solid #d97706',
+                    borderRadius: '10px',
+                    padding: '1.5px 7px',
+                    lineHeight: 1,
+                    letterSpacing: '0.02em',
+                    boxShadow: '0 0 8px rgba(251, 191, 36, 0.4)',
+                  }}
+                  title={`Bounty: ${thread.questionPoints} points`}
+                >
+                  <CoinsIcon size={10} style={{ color: 'var(--bg)' }} />
+                  {thread.questionPoints}
+                </span>
+              )}
+            </>
+          )}
+        </div>
+        {/* 帖子标题 + 点赞 */}
+        <div
+          className="thread-title flex items-center gap-2 flex-wrap"
           style={{
             fontFamily: 'var(--font-display)',
             fontSize: '15px',
@@ -158,53 +234,25 @@ export default function ThreadItem({
           }}
         >
           <span>{thread.title}</span>
-          {thread.isHot && (
-            <span
-              className="thread-hot-badge font-mono text-[9px] font-bold px-1.5 py-0.5 uppercase flex-shrink-0"
-              style={{
-                color: 'var(--orange)',
-                background: 'rgba(232, 93, 4, 0.1)',
-                border: '1px solid rgba(232, 93, 4, 0.5)',
-                letterSpacing: '0.08em',
-              }}
-            >
-              HOT
-            </span>
-          )}
-          {thread.isNew && (
-            <span
-              className="thread-new-badge font-mono text-[9px] font-bold px-1.5 py-0.5 uppercase flex-shrink-0"
-              style={{
-                color: 'var(--cyan)',
-                background: 'rgba(57, 210, 192, 0.1)',
-                border: '1px solid rgba(57, 210, 192, 0.5)',
-                letterSpacing: '0.08em',
-              }}
-            >
-              NEW
-            </span>
-          )}
           {/* 点赞按钮：interactiveLike 为 false 时退化为只读统计（贴吧列表页） */}
           {interactiveLike ? (
-            <button
+            <Button
+              type="text"
+              size="small"
               onClick={handleLike}
               title={liked ? 'Liked' : 'Like'}
-              className={`thread-like inline-flex items-center gap-1 font-mono text-[11px] ml-1 ${liked ? 'is-liked' : ''}`}
+              className={`thread-like ${liked ? 'is-liked' : ''}`}
               style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
                 color: liked ? 'var(--pink)' : 'var(--text-muted)',
-                cursor: 'pointer',
-                transition: 'color 0.15s',
-              }}
-              onMouseEnter={(e) => {
-                if (!liked) e.currentTarget.style.color = 'var(--pink)';
-              }}
-              onMouseLeave={(e) => {
-                if (!liked) e.currentTarget.style.color = 'var(--text-muted)';
+                padding: '0 4px',
+                height: 'auto',
               }}
             >
               <HeartIcon size={12} filled={liked} style={{ opacity: liked ? 1 : 0.6 }} />
               <span className="thread-like-count font-semibold">{likes}</span>
-            </button>
+            </Button>
           ) : (
             <span
               className="thread-like inline-flex items-center gap-1 font-mono text-[11px] ml-1"
@@ -220,36 +268,11 @@ export default function ThreadItem({
             </span>
           )}
         </div>
-        {/* 元信息 */}
-        <div
-          className="thread-meta flex items-center gap-2.5 flex-wrap font-mono text-[11px]"
-          style={{ color: 'var(--text-dim)' }}
-        >
-          <span className="thread-author font-semibold text-text">@{thread.author}</span>
-          <UserLevelBadge name={thread.author} />
-          <span
-            className="thread-bar-tag font-mono text-[9px] font-semibold px-1.5 py-0.5 uppercase"
-            style={{
-              color: 'var(--purple)',
-              background: 'rgba(163, 113, 247, 0.08)',
-              border: '1px solid rgba(163, 113, 247, 0.25)',
-              letterSpacing: '0.06em',
-            }}
-          >
-            {thread.tag}
-          </span>
-          <span style={{ color: 'var(--text-muted)' }}>
-            {fmtNum(thread.views)} views · {thread.timeAgo}
-          </span>
-        </div>
       </div>
 
       {/* 右侧统计：回复者头像堆叠 */}
       <div className="thread-stats flex flex-col items-end justify-center gap-1.5 flex-shrink-0">
         <ReplierStack thread={thread} />
-        <span className="font-mono text-[10px]" style={{ color: 'var(--text-muted)' }}>
-          {thread.replies} replies
-        </span>
       </div>
     </Link>
   );

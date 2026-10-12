@@ -8,8 +8,8 @@
 'use client';
 
 import { useImperativeHandle, useRef, useState, type Ref } from 'react';
+import { Button } from 'antd';
 import { useCommunityToast } from './ToastContext';
-import TiptapEditor, { type TiptapEditorHandle } from '@/components/shared/TiptapEditor';
 
 const MAX_CHARS = 500;
 
@@ -25,13 +25,13 @@ interface ReplyEditorProps {
 export default function ReplyEditor({ ref }: ReplyEditorProps) {
   const { showToast } = useCommunityToast();
   const [text, setText] = useState('');
-  const tiptapRef = useRef<TiptapEditorHandle>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
   useImperativeHandle(ref, () => ({
-    /** 外部调用：聚焦到编辑器 */
+    /** 外部调用：聚焦到编辑器并滚动到可视区域 */
     focus: () => {
-      tiptapRef.current?.focus();
+      textareaRef.current?.focus();
       sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     },
   }));
@@ -42,7 +42,7 @@ export default function ReplyEditor({ ref }: ReplyEditorProps) {
       return;
     }
     showToast('Reply posted successfully');
-    tiptapRef.current?.clearContent();
+    if (textareaRef.current) textareaRef.current.value = '';
     setText('');
   };
 
@@ -78,20 +78,31 @@ export default function ReplyEditor({ ref }: ReplyEditorProps) {
           </span>
           <div
             className="compose-avatar flex items-center justify-center w-7 h-7 rounded-full overflow-hidden flex-shrink-0"
-            style={{ background: 'var(--surface)', border: '1px solid rgba(245,197,24,0.35)' }}
+            style={{ background: 'var(--surface)', border: '1px solid rgba(157,140,255,0.35)' }}
           >
             <span className="font-display text-xs font-bold" style={{ color: 'var(--gold)' }}>U</span>
           </div>
         </div>
 
-        {/* 富文本输入区（minimal 工具栏） */}
-        <TiptapEditor
-          ref={tiptapRef}
-          toolbar="minimal"
-          maxChars={MAX_CHARS}
-          minHeight={120}
+        {/* 纯文本回复输入区（替代原 tiptap 富文本） */}
+        <textarea
+          ref={textareaRef}
+          value={text}
+          maxLength={MAX_CHARS}
           placeholder="Write a reply..."
-          onChange={(_html, plainText) => setText(plainText)}
+          onChange={(e) => setText(e.target.value.slice(0, MAX_CHARS))}
+          className="w-full resize-y"
+          style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '14px',
+            lineHeight: 1.65,
+            color: 'var(--text)',
+            background: 'transparent',
+            border: 'none',
+            outline: 'none',
+            minHeight: '120px',
+            padding: '16px 18px',
+          }}
         />
 
         {/* 底栏：字符计数 + 提交按钮 */}
@@ -99,34 +110,26 @@ export default function ReplyEditor({ ref }: ReplyEditorProps) {
           <span className="compose-char-counter font-mono text-[11px]" style={{ color: 'var(--text-dim)' }}>
             {text.length}/{MAX_CHARS}
           </span>
-          <button
+          <Button
             onClick={handleSubmit}
             className="compose-submit"
+            type="primary"
             style={{
               fontFamily: 'var(--font-display)',
               fontSize: '11px',
               fontWeight: 700,
-              color: 'var(--bg)',
-              background: 'var(--gold)',
-              border: 'none',
               padding: '8px 24px',
+              height: 'auto',
               textTransform: 'uppercase',
               letterSpacing: '0.08em',
-              cursor: 'pointer',
-              boxShadow: '0 0 12px rgba(245,197,24,0.2)',
-              transition: 'background 0.2s, box-shadow 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#ffe066';
-              e.currentTarget.style.boxShadow = '0 0 20px rgba(245,197,24,0.35)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'var(--gold)';
-              e.currentTarget.style.boxShadow = '0 0 12px rgba(245,197,24,0.2)';
+              background: 'var(--gold)',
+              borderColor: 'var(--gold)',
+              color: 'var(--bg)',
+              boxShadow: '0 0 12px rgba(157,140,255,0.2)',
             }}
           >
             Post Reply
-          </button>
+          </Button>
         </div>
       </div>
     </section>

@@ -7,24 +7,24 @@
  */
 'use client';
 
-import { useRef } from 'react';
 import Link from 'next/link';
 import PostDetail from './PostDetail';
 import ReplyList from './ReplyList';
-import ReplyEditor, { type ReplyEditorHandle } from './ReplyEditor';
 import { TIEBA_CATALOG } from '../../_data/community-data';
-import { POST_DETAIL } from '../_data/community-detail-data';
+import { type PostDetail as PostDetailData } from '../_data/community-detail-data';
 
 interface CommunityDetailMainProps {
   /** 贴吧 ID，用于面包屑导航链接 */
   barId: string;
+  /** 帖子详情数据（由服务端组件加密后传入） */
+  postDetail: PostDetailData;
+  /** 帖子 ID（动态路由传入；当前使用静态数据，预留用于后续按 id 取数） */
+  postId?: string;
 }
 
-export default function CommunityDetailMain({ barId }: CommunityDetailMainProps) {
+export default function CommunityDetailMain({ barId, postDetail }: CommunityDetailMainProps) {
   // 查找贴吧信息用于面包屑
   const bar = TIEBA_CATALOG.find((b) => b.id === barId) || TIEBA_CATALOG[0];
-  // 回复编辑器句柄：供 PostDetail 的 Reply 按钮聚焦
-  const replyEditorRef = useRef<ReplyEditorHandle>(null);
 
   return (
     <main className="community-content min-w-0">
@@ -62,18 +62,15 @@ export default function CommunityDetailMain({ barId }: CommunityDetailMainProps)
           className="crumb-current overflow-hidden text-ellipsis whitespace-nowrap"
           style={{ color: 'var(--text)', maxWidth: '320px' }}
         >
-          {POST_DETAIL.title}
+          {postDetail.title}
         </span>
       </nav>
 
       {/* 帖子详情卡片 */}
-      <PostDetail onReplyFocus={() => replyEditorRef.current?.focus()} />
+      <PostDetail post={postDetail} />
 
       {/* 回复列表（骨架屏 + IO 无限滚动 + 排序） */}
       <ReplyList />
-
-      {/* 回复编辑器 */}
-      <ReplyEditor ref={replyEditorRef} />
     </main>
   );
 }

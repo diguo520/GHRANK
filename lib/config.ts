@@ -1,6 +1,5 @@
 /**
- * 页面配置表 —— 全站统一数据源
- * 迁移自 core.js 的 PAGE_CONFIG
+ * 椤甸潰閰嶇疆琛?鈥斺€?鍏ㄧ珯缁熶竴鏁版嵁婧愶紙GHRANK 绀惧尯鐙珛椤圭洰锛? * 绮剧畝锛氱Щ闄?GitHub 鎺掕姒滃鑸€佹悳绱㈡暟鎹笌 Ticker 鏁版嵁锛屼繚鐣欑ぞ鍖?鐢ㄦ埛鐩稿叧閰嶇疆
  */
 
 export interface TickerItem {
@@ -16,93 +15,121 @@ export interface PageConfig {
   footerLinks: string[];
 }
 
+/* 鈺愨晲鈺?缁熶竴鍏辩敤閰嶇疆锛堢ぞ鍖?+ 鐢ㄦ埛鍏ㄥ眬涓€濂楋級 鈺愨晲鈺?*/
+const COMMUNITY_TICKER: TickerItem[] = [
+  { text: 'Hot: Best Answer Allocation Released <span>UPDATE</span>', href: '/community/detail?id=3036' },
+  { text: 'Tieba Leaderboard Live <span>HOT</span>', href: '/community/tiebas' },
+  { text: 'Weekend Hackathon - Join Now <span>EVENT</span>', href: '/community/tag?tag=hackathon' },
+  { text: 'Q&A Thread: React 19 Migration <span>20+ replies</span>', href: '/community/detail?id=3040' },
+  { text: 'Creators Reward Pool Live <span>$10,000</span>', href: '/wallet' },
+  { text: 'New Prompt Tags Added <span>NEW</span>', href: '/community/tiebas/explore' },
+];
+
+const COMMUNITY_FOOTER_TEXT = 'GHRANK Community 鈥?Discuss, share, and earn rewards.';
+
 export const PAGE_CONFIG: Record<string, PageConfig> = {
   index: {
-    tickerLabel: 'LIVE FEED',
-    tickerItems: [
-      { text: 'facebook/react <span>230K&#9733;</span>', href: '/community/detail' },
-      { text: 'torvalds/linux <span>182K&#9733;</span>', href: '/community/detail' },
-      { text: 'langchain-ai/langchain <span>96.7K&#9733;</span>', href: '/community/detail' },
-      { text: 'rust-lang/rust <span>99.8K&#9733;</span>', href: '/community/detail' },
-      { text: 'godotengine/godot <span>95.3K&#9733;</span>', href: '/community/detail' },
-      { text: 'nextjs/next.js <span>128K&#9733;</span>', href: '/community/detail' },
-      { text: 'docker/engine <span>69.4K&#9733;</span>', href: '/community/detail' },
-      { text: 'vuejs/core <span>48.2K&#9733;</span>', href: '/community/detail' },
-      { text: 'openai/whisper <span>72.8K&#9733;</span>', href: '/community/detail' },
-      { text: 'denoland/deno <span>98.2K&#9733;</span>', href: '/community/detail' },
-      { text: 'shadcn-ui/ui <span>81.4K&#9733;</span>', href: '/community/detail' },
-      { text: 'tiangolo/fastapi <span>82.1K&#9733;</span>', href: '/community/detail' },
-    ],
-    searchPlaceholder: 'Search repos...',
-    footerText: 'Data sourced from GitHub API \u2014 Ranked by multi-factor scoring with time-decay weighting',
-    footerLinks: ['About Us', 'Sponsors', 'Changelog', 'Terms'],
+    tickerLabel: 'COMMUNITY FEED',
+    tickerItems: COMMUNITY_TICKER,
+    searchPlaceholder: 'Search communities, posts, users...',
+    footerText: COMMUNITY_FOOTER_TEXT,
+    footerLinks: ['About', 'Rules', 'FAQ', 'Terms'],
   },
-  news: {
-    tickerLabel: 'NEWS FEED',
-    tickerItems: [
-      { text: 'GPT-5 Official Release <span>BREAKING</span>', href: '/news' },
-      { text: 'Anthropic Claude 4 Launch <span>NEW</span>', href: '/news' },
-      { text: 'Meta LLama 4 Open Source <span>HOT</span>', href: '/news' },
-      { text: 'Google Gemini Ultra 2 <span>UPDATE</span>', href: '/news' },
-      { text: 'OpenAI DevDay 2026 <span>EVENT</span>', href: '/news' },
-      { text: 'Mistral Large 3 Released <span>NEW</span>', href: '/news' },
-      { text: 'xAI Grok 3 Update <span>LIVE</span>', href: '/news' },
-      { text: 'Stability AI SD 4.0 <span>BREAKING</span>', href: '/news' },
-    ],
-    searchPlaceholder: 'Search news...',
-    footerText: 'GHRANK Intelligence Feed \u2014 Aggregated from 2,400+ AI sources worldwide',
-    footerLinks: ['About Us', 'Sponsors', 'Changelog', 'Terms'],
+  community: {
+    tickerLabel: 'COMMUNITY FEED',
+    tickerItems: COMMUNITY_TICKER,
+    searchPlaceholder: 'Search posts, tiebas, or users...',
+    footerText: COMMUNITY_FOOTER_TEXT,
+    footerLinks: ['About', 'Rules', 'FAQ', 'Terms'],
   },
-  prompt: {
-    tickerLabel: 'PROMPT FEED',
-    tickerItems: [
-      { text: 'Cinematic Portrait Generator <span>SOLD</span>', href: '/prompt-detail' },
-      { text: 'Code Review Assistant v3 <span>+47 uses</span>', href: '/prompt-detail' },
-      { text: 'Midjourney Style Transfer <span>HOT</span>', href: '/prompt-detail' },
-      { text: 'SEO Blog Writer Pro <span>+128 uses</span>', href: '/prompt-detail' },
-      { text: 'UI/UX Design Critic <span>NEW</span>', href: '/prompt-detail' },
-      { text: 'Data Analysis Copilot <span>+89 uses</span>', href: '/prompt-detail' },
-      { text: 'Stable Diffusion Negative <span>SOLD</span>', href: '/prompt-detail' },
-      { text: 'API Documentation Gen <span>+34 uses</span>', href: '/prompt-detail' },
-    ],
-    searchPlaceholder: 'Search prompts...',
-    footerText: 'Prompt Marketplace \u2014 Trade intelligence. Powered by GHRANK.',
-    footerLinks: ['About Us', 'Sponsors', 'Changelog', 'Terms'],
+  profile: {
+    tickerLabel: 'PROFILE',
+    tickerItems: COMMUNITY_TICKER,
+    searchPlaceholder: 'Search community...',
+    footerText: COMMUNITY_FOOTER_TEXT,
+    footerLinks: ['About', 'Rules', 'FAQ', 'Terms'],
+  },
+  settings: {
+    tickerLabel: 'SETTINGS',
+    tickerItems: COMMUNITY_TICKER,
+    searchPlaceholder: 'Search settings...',
+    footerText: COMMUNITY_FOOTER_TEXT,
+    footerLinks: ['About', 'Rules', 'FAQ', 'Terms'],
+  },
+  search: {
+    tickerLabel: 'SEARCH',
+    tickerItems: COMMUNITY_TICKER,
+    searchPlaceholder: 'Search posts, users, tiebas...',
+    footerText: COMMUNITY_FOOTER_TEXT,
+    footerLinks: ['About', 'Rules', 'FAQ', 'Terms'],
+  },
+  messages: {
+    tickerLabel: 'MESSAGES',
+    tickerItems: COMMUNITY_TICKER,
+    searchPlaceholder: 'Search conversations...',
+    footerText: COMMUNITY_FOOTER_TEXT,
+    footerLinks: ['About', 'Rules', 'FAQ', 'Terms'],
+  },
+  notifications: {
+    tickerLabel: 'NOTIFICATIONS',
+    tickerItems: COMMUNITY_TICKER,
+    searchPlaceholder: 'Search notifications...',
+    footerText: COMMUNITY_FOOTER_TEXT,
+    footerLinks: ['About', 'Rules', 'FAQ', 'Terms'],
+  },
+  wallet: {
+    tickerLabel: 'WALLET',
+    tickerItems: COMMUNITY_TICKER,
+    searchPlaceholder: 'Search transactions...',
+    footerText: COMMUNITY_FOOTER_TEXT,
+    footerLinks: ['About', 'Rules', 'FAQ', 'Terms'],
+  },
+  login: {
+    tickerLabel: 'WELCOME',
+    tickerItems: COMMUNITY_TICKER,
+    searchPlaceholder: 'Search...',
+    footerText: COMMUNITY_FOOTER_TEXT,
+    footerLinks: ['About', 'Rules', 'FAQ', 'Terms'],
+  },
+  register: {
+    tickerLabel: 'SIGN UP',
+    tickerItems: COMMUNITY_TICKER,
+    searchPlaceholder: 'Search...',
+    footerText: COMMUNITY_FOOTER_TEXT,
+    footerLinks: ['About', 'Rules', 'FAQ', 'Terms'],
+  },
+  about: {
+    tickerLabel: 'ABOUT',
+    tickerItems: COMMUNITY_TICKER,
+    searchPlaceholder: 'Search this site...',
+    footerText: COMMUNITY_FOOTER_TEXT,
+    footerLinks: ['About', 'Rules', 'FAQ', 'Terms'],
   },
 };
 
-/** 导航链接 —— Next.js 路由格式 */
+/** 瀵艰埅閾炬帴 鈥斺€?绮剧畝锛氬彧淇濈暀绀惧尯/鐢ㄦ埛鐩稿叧椤甸潰
+ *  HOME 鈫?璺崇ぞ鍖?銆?COMMUNITY锛堢ぞ鍖猴級 銆?EXPLORE锛堣创鍚?鏂板笘鍏ュ彛锛夈€?SEARCH 銆?WALLET
+ */
 export const NAV_LINKS = [
   { href: '/', page: 'index', label: 'HOME' },
-  { href: '/news', page: 'news', label: 'NEWS' },
-  { href: '/skills', page: 'skills', label: 'SKILLS' },
-  { href: '/prompt', page: 'prompt', label: 'PROMPT' },
-  { href: '/website', page: 'website', label: 'WEBSITE' },
-  { href: '#', page: 'study', label: 'STUDY' },
   { href: '/community', page: 'community', label: 'COMMUNITY' },
 ];
 
-/** 搜索数据 */
+/** 鎼滅储鏁版嵁锛堢ぞ鍖虹増锛氭贩鍚堢ぞ鍖哄笘瀛?+ 鐢ㄦ埛 + 璐村惂锛?*/
 export const SEARCH_DATA = [
-  { name: 'facebook/react', desc: 'The library for web and native user interfaces.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '230K', url: '/community/detail' },
-  { name: 'torvalds/linux', desc: 'Linux kernel source tree. The core of the Linux operating system.', tag: 'Backend', tagClass: 'tag-backend', stars: '182K', url: '/community/detail' },
-  { name: 'vuejs/core', desc: 'The Progressive JavaScript Framework for building web UIs.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '48.2K', url: '/community/detail' },
-  { name: 'openai/whisper', desc: 'Robust Speech Recognition via Large-Scale Weak Supervision.', tag: 'AI/ML', tagClass: 'tag-ai', stars: '72.8K', url: '/community/detail' },
-  { name: 'docker/engine', desc: 'Docker Engine — open source containerization technology.', tag: 'DevOps', tagClass: 'tag-devops', stars: '69.4K', url: '/community/detail' },
-  { name: 'godotengine/godot', desc: 'Godot Engine — Multi-platform 2D and 3D game engine.', tag: 'Games', tagClass: 'tag-games', stars: '95.3K', url: '/community/detail' },
-  { name: 'tiangolo/fastapi', desc: 'FastAPI framework, high performance, easy to learn, fast to code.', tag: 'Backend', tagClass: 'tag-backend', stars: '82.1K', url: '/community/detail' },
-  { name: 'langchain-ai/langchain', desc: 'Build context-aware reasoning applications with LLMs.', tag: 'AI/ML', tagClass: 'tag-ai', stars: '96.7K', url: '/community/detail' },
-  { name: 'shadcn-ui/ui', desc: 'Beautifully designed components built with Radix UI and Tailwind CSS.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '81.4K', url: '/community/detail' },
-  { name: 'rust-lang/rust', desc: 'Empowering everyone to build reliable and efficient software.', tag: 'Backend', tagClass: 'tag-backend', stars: '99.8K', url: '/community/detail' },
-  { name: 'vercel/next.js', desc: 'The React Framework for the Web. Full-stack web applications.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '128K', url: '/community/detail' },
-  { name: 'denoland/deno', desc: 'A modern runtime for JavaScript and TypeScript. Secure by default.', tag: 'Backend', tagClass: 'tag-backend', stars: '98.2K', url: '/community/detail' },
-  { name: 'kubernetes/kubernetes', desc: 'Production-Grade Container Scheduling and Management.', tag: 'DevOps', tagClass: 'tag-devops', stars: '112K', url: '/community/detail' },
-  { name: 'huggingface/transformers', desc: 'State-of-the-art ML for PyTorch, TensorFlow, and JAX.', tag: 'AI/ML', tagClass: 'tag-ai', stars: '134K', url: '/community/detail' },
-  { name: 'tailwindlabs/tailwindcss', desc: 'A utility-first CSS framework for rapid UI development.', tag: 'Frontend', tagClass: 'tag-frontend', stars: '82.4K', url: '/community/detail' },
-  { name: 'flutter/flutter', desc: "Google's UI toolkit for building natively compiled applications.", tag: 'Mobile', tagClass: 'tag-mobile', stars: '164K', url: '/community/detail' },
+  { name: 'React 19 Migration FAQ', desc: 'Comprehensive Q&A for upgrading to React 19 with known issues.', tag: 'Discussion', tagClass: 'tag-frontend', stars: '128', url: '/community/detail?id=3036' },
+  { name: 'Open Source Collaboration Guide', desc: 'How to contribute to projects, write good PRs, and review code.', tag: 'Guide', tagClass: 'tag-backend', stars: '96', url: '/community/detail?id=3040' },
+  { name: 'Next.js 16 Turbopack Tips', desc: 'Performance tuning for large Next.js projects with Turbopack.', tag: 'Tech', tagClass: 'tag-frontend', stars: '82', url: '/community/detail' },
+  { name: 'CSS Tips: Glassmorphism Deep Dive', desc: 'Implementing glassmorphism effects with backdrop-filter safely.', tag: 'Design', tagClass: 'tag-frontend', stars: '65', url: '/community/detail' },
+  { name: 'Prompt Engineering Basics', desc: 'Beginner-friendly patterns for writing reliable LLM prompts.', tag: 'AI', tagClass: 'tag-ai', stars: '210', url: '/community/detail' },
+  { name: 'Frontend Tieba', desc: 'All things React, Vue, Svelte, CSS, and beyond.', tag: 'Tieba', tagClass: 'tag-frontend', stars: '3.2K', url: '/community/tiebas' },
+  { name: 'Backend & DevOps Tieba', desc: 'Rust/Go/Node/Python microservices, K8s, CI/CD.', tag: 'Tieba', tagClass: 'tag-devops', stars: '1.8K', url: '/community/tiebas' },
+  { name: 'AI & ML Tieba', desc: 'LLMs, agents, RAG, fine-tuning, and ML engineering.', tag: 'Tieba', tagClass: 'tag-ai', stars: '4.1K', url: '/community/tiebas' },
+  { name: 'alexshader (Top Contributor)', desc: 'Expert in React, TypeScript, and performance optimization.', tag: 'User', tagClass: 'tag-backend', stars: '5.2K', url: '/profile' },
+  { name: 'nova_dev (Moderator)', desc: 'Community moderator, full-stack engineer, DevOps lead.', tag: 'User', tagClass: 'tag-devops', stars: '3.8K', url: '/profile' },
 ];
 
-/** 获取页面配置 */
+/** 鑾峰彇椤甸潰閰嶇疆 */
 export function getConfig(page: string): PageConfig {
   return PAGE_CONFIG[page] || PAGE_CONFIG['index'];
 }

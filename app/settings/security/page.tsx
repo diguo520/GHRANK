@@ -4,9 +4,10 @@
 'use client';
 
 import { useState } from 'react';
+import { Checkbox } from 'antd';
 import SettingsShell from '../_components/SettingsShell';
 import { FormRow, TextInput, SaveButton, panelStyle, Toggle } from '../_components/SettingsForm';
-import { KeyIcon, ShieldIcon, GlobeIcon, TrashIcon, LockClosedIcon } from '@/app/_components/icons';
+import { KeyIcon, ShieldIcon, GlobeIcon, TrashIcon, LockClosedIcon } from '@/components/shared/icons';
 
 const panelSectionStyle = {
   ...panelStyle,
@@ -82,8 +83,8 @@ export default function SecurityPage() {
             <div
               style={{
                 padding: '14px',
-                background: 'rgba(245, 197, 24, 0.04)',
-                border: '1px dashed rgba(245, 197, 24, 0.3)',
+                background: 'rgba(157, 140, 255, 0.04)',
+                border: '1px dashed rgba(157, 140, 255, 0.3)',
                 borderRadius: '3px',
                 margin: '12px 0',
               }}
@@ -165,11 +166,9 @@ export default function SecurityPage() {
               cursor: 'pointer',
             }}
           >
-            <input
-              type="checkbox"
+            <Checkbox
               checked={showPassword}
               onChange={(e) => setShowPassword(e.target.checked)}
-              style={{ accentColor: 'var(--gold)' }}
             />
             Show passwords
           </label>

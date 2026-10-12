@@ -5,7 +5,8 @@
  */
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
+import { App } from 'antd';
 import Link from 'next/link';
 import { HEX_CLIP_PATH } from '@/lib/constants';
 import {
@@ -14,11 +15,14 @@ import {
   ACHIEVEMENT_DEFS,
   USER_ACHIEVEMENT_PROGRESS,
   RARITY_META,
-} from '../../_data/achievements-data';
+} from '@/lib/data/achievements-data';
+import { USER_PROFILE } from '../_data/profile-data';
 import {
   EditIcon, ShareIcon, SettingsIcon, TrophyIcon,
   CalendarIcon, MailIcon, UserIcon,
-} from '../../_components/icons';
+} from '@/components/shared/icons';
+import { useShareCardModal } from '@/components/shared/ShareCardModal';
+import { useIsLoggedIn } from '@/hooks/useIsLoggedIn';
 
 /* ── 等级概览卡片 ── */
 function LevelOverview() {
@@ -37,8 +41,8 @@ function LevelOverview() {
       <span
         className="absolute top-[-1px] left-[-1px] w-2.5 h-2.5"
         style={{
-          borderTop: '1px solid rgba(245,197,24,0.5)',
-          borderLeft: '1px solid rgba(245,197,24,0.5)',
+          borderTop: '1px solid rgba(157,140,255,0.5)',
+          borderLeft: '1px solid rgba(157,140,255,0.5)',
         }}
       />
       <div className="flex items-center gap-3 mb-3">
@@ -158,14 +162,15 @@ function QuickAction({
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2.5 w-full px-3 py-2.5 transition-all"
+      data-tooltip={label}
+      className="tooltip-trigger flex items-center gap-2.5 w-full px-3 py-2.5 transition-all"
       style={{
         background: 'var(--bg)',
         border: '1px solid var(--border-subtle)',
         cursor: 'pointer',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = 'rgba(245,197,24,0.35)';
+        e.currentTarget.style.borderColor = 'rgba(157,140,255,0.35)';
         e.currentTarget.style.transform = 'translateX(2px)';
       }}
       onMouseLeave={(e) => {
@@ -199,13 +204,28 @@ function InfoRow({ icon: Icon, label, value }: { icon: typeof CalendarIcon; labe
 }
 
 export default function ProfileSidebar() {
-  const [toast, setToast] = useState('');
+  const { message } = App.useApp();
+  const { open: openShare } = useShareCardModal();
+  const { userAvatar } = useIsLoggedIn();
   const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(''), 2000);
-  }, []);
+    message.success(msg, 2.2);
+  }, [message]);
 
   const stats = USER_ACHIEVEMENT_STATS;
+
+  const handleShare = useCallback(() => {
+    openShare({
+      type: 'profile',
+      data: {
+        displayName: USER_PROFILE.displayName,
+        username: USER_PROFILE.username,
+        avatar: userAvatar,
+        bio: USER_PROFILE.bio,
+        location: USER_PROFILE.location,
+        stats: USER_PROFILE.stats,
+      },
+    });
+  }, [openShare, userAvatar]);
 
   return (
     <aside
@@ -238,7 +258,7 @@ export default function ProfileSidebar() {
           Quick Actions
         </div>
         <QuickAction icon={EditIcon} label="Edit Profile" onClick={() => showToast('Edit Profile — coming soon')} />
-        <QuickAction icon={ShareIcon} label="Share Profile" onClick={() => showToast('Profile link copied')} />
+        <QuickAction icon={ShareIcon} label="Share Profile" onClick={handleShare} />
         <Link href="/settings" className="block">
           <QuickAction icon={SettingsIcon} label="Settings" onClick={() => {}} />
         </Link>
@@ -284,27 +304,6 @@ export default function ProfileSidebar() {
         </div>
       </section>
 
-      {/* Toast */}
-      {toast && (
-        <div
-          className="fixed left-1/2 flex items-center justify-center pointer-events-none"
-          style={{
-            bottom: '32px',
-            transform: 'translateX(-50%)',
-            background: 'var(--surface)',
-            border: '1px solid rgba(245,197,24,0.35)',
-            padding: '12px 24px',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '12px',
-            color: 'var(--gold)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 24px rgba(245,197,24,0.15)',
-            zIndex: 10000,
-            letterSpacing: '0.04em',
-          }}
-        >
-          {toast}
-        </div>
-      )}
     </aside>
   );
 }

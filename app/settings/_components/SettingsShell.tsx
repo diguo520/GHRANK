@@ -1,12 +1,10 @@
 /**
- * SettingsShell —— 设置页两栏布局外壳
+ * SettingsShell —— 设置页内容区头部
  *
- * 左侧：页面具体内容
- * 右侧：sticky 设置菜单（SettingsSidebar）
- * 风格与 5318 资源社区账户页保持一致
+ * lobehub 风格：仅渲染页面标题 + 副标题 + children
+ * 左侧导航由 SettingsLayoutShell 统一渲染，子页面无需再包含 sidebar
  */
 import type { ReactNode } from 'react';
-import SettingsSidebar from './SettingsSidebar';
 
 interface SettingsShellProps {
   title: string;
@@ -16,12 +14,12 @@ interface SettingsShellProps {
 
 export default function SettingsShell({ title, subtitle, children }: SettingsShellProps) {
   return (
-    <main className="main-content" style={{ maxWidth: '1200px', margin: '0 auto', padding: '28px 24px 64px' }}>
+    <div>
       <header style={{ marginBottom: '24px' }}>
         <h1
           style={{
             fontFamily: 'var(--font-display)',
-            fontSize: '26px',
+            fontSize: '24px',
             fontWeight: 800,
             color: 'var(--text)',
             letterSpacing: '-0.01em',
@@ -34,11 +32,7 @@ export default function SettingsShell({ title, subtitle, children }: SettingsShe
           {subtitle}
         </p>
       </header>
-
-      <div style={{ display: 'grid', gap: '24px', gridTemplateColumns: '1fr 280px', alignItems: 'start' }}>
-        <div>{children}</div>
-        <SettingsSidebar />
-      </div>
-    </main>
+      {children}
+    </div>
   );
 }

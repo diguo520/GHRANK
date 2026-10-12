@@ -5,6 +5,8 @@
  */
 
 import CornerDecor from './CornerDecor';
+/* ✅ 全站统一 shimmerBg，禁止本地重复定义 */
+import { shimmerBg } from '@/components/skeleton/Skeleton';
 
 interface PlaceholderPageProps {
   /** 页面标题 */
@@ -71,7 +73,7 @@ export default function PlaceholderPage({
             letterSpacing: '3px',
             textTransform: 'uppercase',
             color: 'var(--gold)',
-            textShadow: '0 0 12px rgba(245, 197, 24, 0.4)',
+            textShadow: '0 0 12px rgba(157, 140, 255, 0.4)',
             marginBottom: 'var(--sp-4)',
           }}
         >
@@ -93,18 +95,14 @@ export default function PlaceholderPage({
           {subtitle}
         </p>
 
-        {/* 骨架屏占位区 —— 模拟内容正在加载 */}
+        {/* 骨架屏占位区 —— 模拟内容正在加载（全站统一 shimmerBg） */}
         <div className="flex flex-col gap-3" style={{ marginTop: 'var(--sp-5)' }}>
           {[0, 1, 2].map((i) => (
             <div
               key={i}
               style={{
+                ...shimmerBg,
                 height: '14px',
-                borderRadius: '3px',
-                background:
-                  'linear-gradient(90deg, var(--surface-overlay) 25%, var(--border-subtle) 50%, var(--surface-overlay) 75%)',
-                backgroundSize: '200% 100%',
-                animation: 'shimmer 1.5s infinite',
                 width: `${[100, 85, 60][i]}%`,
                 margin: '0 auto',
               }}
@@ -129,7 +127,7 @@ export default function PlaceholderPage({
               background: 'linear-gradient(90deg, var(--gold), var(--gold-hover))',
               width: '0%',
               animation: 'loading-fill 2s ease-in-out infinite',
-              boxShadow: '0 0 8px rgba(245, 197, 24, 0.5)',
+              boxShadow: '0 0 8px rgba(157, 140, 255, 0.5)',
             }}
           />
         </div>

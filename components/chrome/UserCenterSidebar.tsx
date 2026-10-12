@@ -1,12 +1,17 @@
-﻿'use client';
+'use client';
 
 import { cloneElement, CSSProperties, ReactElement, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { useIsLoggedIn } from '@/app/_hooks/useIsLoggedIn';
-import { useAppEvent } from '@/app/_context/AppEventContext';
+import { useIsLoggedIn } from '@/hooks/useIsLoggedIn';
+import { useAppEvent } from '@/components/providers/AppEventContext';
 import { safeStorage } from '@/lib/safeStorage';
 import { STORAGE_KEYS } from '@/lib/constants';
+import { isImageAvatar } from '@/lib/avatar';
+import {
+  User as LucideUser,
+  Settings as LucideSettings,
+  Bell as LucideBell,
+} from 'lucide-react';
 
 /* ═══ 静态数据 —— 定义在组件外部避免每次渲染重建 ═══ */
 
@@ -22,41 +27,7 @@ const ACCOUNT_NAV: NavEntry[] = [
   {
     label: 'Profile',
     href: '/profile',
-    icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <circle cx="8" cy="5" r="3" />
-        <path d="M2 14c0-3 3-5 6-5s6 2 6 5" />
-      </svg>
-    ),
-  },
-  {
-    label: 'My Prompts',
-    href: '/my-prompts',
-    icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <path d="M3 2h7l3 3v9H3V2z" />
-        <path d="M10 2v3h3" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Purchases',
-    href: '/purchases',
-    icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <path d="M8 1l2 5h5l-4 3 1.5 5L8 11l-4.5 3L5 9 1 6h5z" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Billing',
-    href: '/billing',
-    icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <rect x="2" y="4" width="12" height="9" rx="1" />
-        <path d="M2 7h12" />
-      </svg>
-    ),
+    icon: <LucideUser size={16} strokeWidth={1.4} />,
   },
 ];
 
@@ -65,31 +36,12 @@ const PREFERENCES_NAV: NavEntry[] = [
   {
     label: 'Settings',
     href: '/settings',
-    icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <circle cx="8" cy="8" r="2.5" />
-        <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.5 1.5M11.5 11.5L13 13M3 13l1.5-1.5M11.5 4.5L13 3" />
-      </svg>
-    ),
+    icon: <LucideSettings size={16} strokeWidth={1.4} />,
   },
   {
     label: 'Notifications',
-    href: '/notifications',
-    icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <path d="M8 2C5 2 3 4 3 7c0 2 1 3 1 4M8 2c3 0 5 2 5 5 0 2-1 3-1 4M6 11h4M7 13h2" />
-      </svg>
-    ),
-  },
-  {
-    label: 'History',
-    href: '/history',
-    icon: (
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <circle cx="8" cy="8" r="6" />
-        <path d="M8 4v4l3 2" />
-      </svg>
-    ),
+    href: '/settings/notifications',
+    icon: <LucideBell size={16} strokeWidth={1.4} />,
   },
 ];
 
@@ -207,6 +159,8 @@ function StatItem({ value, label }: { value: string; label: string }) {
 export default function UserCenterSidebar() {
   const { userAvatar } = useIsLoggedIn();
   const { sidebarOpen, closeSidebar } = useAppEvent();
+  // 头像是否为真实图片：否则按字母徽章渲染
+  const avatarIsImg = isImageAvatar(userAvatar);
 
   useEffect(() => {
     /** ESC 关闭抽屉 */
@@ -282,9 +236,40 @@ export default function UserCenterSidebar() {
           <div className="flex items-center gap-3 mt-3">
             <div
               className="rounded-full overflow-hidden flex-shrink-0"
-              style={{ width: '56px', height: '56px', border: '2px solid var(--gold)' }}
+              style={{
+                width: '56px',
+                height: '56px',
+                border: '2px solid var(--gold)',
+                // 字母徽章：金色底；图片：透明由 Image 填充
+                background: avatarIsImg ? 'var(--surface-overlay)' : 'var(--gold-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
-              <Image src={userAvatar} alt="" width={56} height={56} className="w-full h-full object-cover" />
+              {avatarIsImg ? (
+                // 原生 img 避免 next/image 在抽屉浮层中的布局问题
+                <img
+                  src={userAvatar}
+                  alt=""
+                  referrerPolicy="no-referrer"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                />
+              ) : (
+                <span
+                  className="font-display"
+                  style={{
+                    color: 'var(--gold)',
+                    fontWeight: 800,
+                    fontSize: userAvatar.length >= 3 ? 20 : 26,
+                    letterSpacing: '0.02em',
+                    lineHeight: 1,
+                    userSelect: 'none',
+                  }}
+                >
+                  {userAvatar}
+                </span>
+              )}
             </div>
             <div>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: '18px', fontWeight: 700, color: 'var(--text)' }}>

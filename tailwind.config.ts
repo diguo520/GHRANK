@@ -13,12 +13,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // 品牌与强调色
+        // 品牌与强调色 —— 已更新为 LobeHub 紫色主题
         gold: {
-          DEFAULT: '#f5c518',
-          hover: '#ffd847',
-          subtle: 'rgba(245, 197, 24, 0.15)',
-          star: '#E3B341',
+          DEFAULT: '#9D8CFF',
+          hover: '#B8A8FF',
+          subtle: 'rgba(157, 140, 255, 0.15)',
+          star: '#B8A8FF',
         },
         cyan: { DEFAULT: '#39D2C0' },
         green: { DEFAULT: '#3FB950' },

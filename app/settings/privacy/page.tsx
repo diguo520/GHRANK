@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import SettingsShell from '../_components/SettingsShell';
 import { FormRow, Select, Toggle, SaveButton, panelStyle } from '../_components/SettingsForm';
-import { ShieldIcon, EyeIcon, UserIcon, UsersIcon } from '@/app/_components/icons';
+import { ShieldIcon, EyeIcon, UserIcon, UsersIcon } from '@/components/shared/icons';
 
 const panelSectionStyle = {
   ...panelStyle,
@@ -136,8 +136,8 @@ export default function PrivacyPage() {
               type="button"
               style={{
                 padding: '8px 16px',
-                background: 'rgba(245, 197, 24, 0.08)',
-                border: '1px solid rgba(245, 197, 24, 0.25)',
+                background: 'rgba(157, 140, 255, 0.08)',
+                border: '1px solid rgba(157, 140, 255, 0.25)',
                 borderRadius: '3px',
                 color: 'var(--gold)',
                 fontFamily: 'var(--font-mono)',

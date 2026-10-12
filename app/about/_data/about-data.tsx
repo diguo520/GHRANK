@@ -4,7 +4,7 @@
  */
 
 import { ReactNode } from 'react';
-import { ListIcon, TerminalIcon, SearchIcon } from '../../_components/icons';
+import { ListIcon, TerminalIcon, SearchIcon } from '@/components/shared/icons';
 
 /** 有效面板标识，用于 hash 校验与键盘切换边界判断 */
 export const VALID_PANELS = ['about', 'sponsors', 'changelog', 'achievements', 'terms'] as const;
@@ -88,12 +88,12 @@ export interface StyleConfig {
   border: string;
 }
 
-/** 赞助商等级 → 配色映射 */
+/** 赞助商等级 → 配色映射 —— 已更新为 LobeHub 紫色主题 */
 export const TIER_STYLES: Record<string, StyleConfig> = {
   Platinum: {
     color: 'var(--gold)',
-    bg: 'rgba(245, 197, 24, 0.1)',
-    border: 'rgba(245, 197, 24, 0.3)',
+    bg: 'rgba(157, 140, 255, 0.1)',
+    border: 'rgba(157, 140, 255, 0.3)',
   },
   Gold: {
     color: 'var(--orange)',

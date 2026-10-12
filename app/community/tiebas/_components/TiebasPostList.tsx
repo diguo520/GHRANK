@@ -13,12 +13,17 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
+import { Tabs, Divider, Button } from 'antd';
 import { useChunkedData } from '@/hooks/useChunkedData';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { SkeletonAvatar, SkeletonLine } from '@/components/skeleton/Skeleton';
 import { HEX_CLIP_PATH } from '@/lib/constants';
+import { fmtNum } from '../../_data/community-data';
 import ThreadItem from '../../_components/ThreadItem';
 import { type Thread, type TiebaCatalogItem } from '../../_data/community-data';
+import { UsersIcon, FileTextIcon, PlusIcon } from '@/components/shared/icons';
+import { useIsLoggedIn } from '@/hooks/useIsLoggedIn';
+import { safeStorage } from '@/lib/safeStorage';
 import {
   TIEBA_TABS,
   TIEBA_PAGE_SIZE,
@@ -41,8 +46,7 @@ function PostSkeleton() {
         gridTemplateColumns: '44px 1fr auto',
         gap: '16px',
         padding: '18px 22px',
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
+        background: 'transparent',
       }}
     >
       <SkeletonAvatar size={44} shape="round" />
@@ -141,15 +145,19 @@ function ThreadListInner({
   const skeletons = Array.from({ length: skeletonCount }, (_, i) => i);
 
   return (
-    <div className="thread-list flex flex-col gap-2.5">
-      {/* 已加载的真实帖子（贴吧页点赞为只读统计） */}
-      {visibleItems.map((item) => (
-        <ThreadItem
-          key={`thread-${item.id}`}
-          thread={item}
-          barId={bar.id}
-          interactiveLike={false}
-        />
+    <div className="thread-list flex flex-col">
+      {/* 已加载的真实帖子（贴吧页点赞为只读统计），使用 Divider 分割线分隔 */}
+      {visibleItems.map((item, index) => (
+        <div key={`thread-${item.id}`}>
+          <ThreadItem
+            thread={item}
+            barId={bar.id}
+            interactiveLike={false}
+          />
+          {index < visibleItems.length - 1 && (
+            <Divider style={{ margin: 0, borderColor: 'var(--border-subtle)' }} />
+          )}
+        </div>
       ))}
 
       {/* 骨架屏占位 */}
@@ -188,112 +196,223 @@ interface TiebasPostListProps {
 
 export default function TiebasPostList({ bar }: TiebasPostListProps) {
   const [currentTab, setCurrentTab] = useState('All');
+  // 加入状态（客户端挂载后从 localStorage 读取，避免 hydration mismatch）
+  const [joined, setJoined] = useState(false);
+  const { loggedIn } = useIsLoggedIn();
+  // Toast 状态：加入贴吧反馈提示
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 显示 Toast（固定在视口底部，2.2s 后自动隐藏）
+  const showToast = useCallback((msg: string) => {
+    setToastMsg(msg);
+    setToastVisible(true);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setToastVisible(false), 2200);
+  }, []);
+
+  useEffect(() => {
+    setJoined(safeStorage.get(`ghrank_joined_bar_${bar.id}`) === '1');
+  }, [bar.id]);
+
+  // 清理 Toast 定时器
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
+  /** 加入贴吧：检查登录 -> 标记 localStorage -> 切换按钮状态 */
+  const handleJoin = useCallback(() => {
+    if (!loggedIn) {
+      showToast('Please log in to join this tieba');
+      return;
+    }
+    safeStorage.set(`ghrank_joined_bar_${bar.id}`, '1');
+    setJoined(true);
+    showToast(`Joined ${bar.name}`);
+  }, [loggedIn, bar.id, bar.name, showToast]);
+
+  // 已加入且已登录时显示"New Post"，否则显示"Join Tieba"
+  const showNewPost = joined && loggedIn;
+
+  // antd Tabs items 配置
+  const tabItems = useMemo(() => TIEBA_TABS.map((tab) => ({
+    key: tab.key,
+    label: tab.label,
+  })), []);
 
   return (
     <main className="community-content min-w-0">
-      {/* 面包屑 */}
-      <nav
-        className="section-breadcrumb flex items-center gap-2 flex-wrap font-mono text-[11px] mb-5"
-        style={{ color: 'var(--text-dim)', letterSpacing: '0.04em' }}
-      >
-        <Link href="/community" className="no-underline transition-colors" style={{ color: 'var(--text-dim)' }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--gold)')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-dim)')}
-        >
-          Community
-        </Link>
-        <span style={{ color: 'var(--text-muted)', opacity: 0.6 }}>›</span>
-        <Link href="/community" className="no-underline transition-colors" style={{ color: 'var(--text-dim)' }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--gold)')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-dim)')}
-        >
-          My Tiebas
-        </Link>
-        <span style={{ color: 'var(--text-muted)', opacity: 0.6 }}>›</span>
-        <span style={{ color: 'var(--text)' }}>{bar.name}</span>
-      </nav>
-
-      {/* Tieba Hero */}
+      {/* Tieba Hero：图片横幅背景 + 图标、标题、描述、统计（成员/帖子）、按钮 */}
       <div
         className="community-hero tieba-hero relative overflow-hidden mb-6"
         style={{
-          background: 'linear-gradient(135deg, rgba(245, 197, 24, 0.04) 0%, transparent 60%), var(--surface)',
+          // 有横幅图片时用图片背景，否则用渐变占位
+          backgroundImage: bar.banner ? `url(${bar.banner})` : undefined,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           border: '1px solid var(--border)',
-          padding: '32px 36px',
+          borderRadius: 12,
+          padding: 0,
         }}
       >
-        <span className="absolute top-[-1px] left-[-1px] w-[18px] h-[18px]" style={{ borderTop: '2px solid var(--gold)', borderLeft: '2px solid var(--gold)' }} />
-        <span className="absolute bottom-[-1px] right-[-1px] w-[18px] h-[18px]" style={{ borderBottom: '2px solid var(--gold)', borderRight: '2px solid var(--gold)' }} />
-        <div className="tieba-hero-row flex items-center gap-5">
-          {/* 六边形图标 */}
-          <span
-            className="tieba-hero-icon flex items-center justify-center font-display text-2xl font-extrabold flex-shrink-0"
-            style={{
-              width: '64px',
-              height: '64px',
-              background: 'var(--gold-subtle)',
-              color: 'var(--gold)',
-              clipPath: HEX_CLIP_PATH,
-              boxShadow: '0 0 24px rgba(245, 197, 24, 0.25)',
-            }}
-          >
-            {bar.icon}
-          </span>
-          <div>
-            <div
-              className="community-hero-eyebrow font-mono text-[11px] font-semibold uppercase mb-2.5"
-              style={{ color: 'var(--gold)', letterSpacing: '0.16em' }}
+        {/* 渐变遮罩：左侧深色不透明（保证文字可读）→ 右侧完全透明（完整展示横幅图片） */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: bar.banner
+              ? 'linear-gradient(90deg, rgba(15,15,16,0.99) 20%, rgba(15,15,16,0.89) 70%, rgba(15,15,16,0.79) 80%, rgba(15,15,16,0.69) 90%, rgba(15,15,16,0.59) 100%)'
+              : 'linear-gradient(135deg, rgba(157, 140, 255, 0.04) 0%, transparent 60%), var(--surface)',
+          }}
+        />
+        {/* 顶部细微高光条，增强横幅层次感 */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px"
+          style={{ background: 'linear-gradient(90deg, transparent, rgba(157,140,255,0.25), transparent)' }}
+        />
+        <span className="absolute top-0 left-0 w-[18px] h-[18px] z-10" style={{ borderTop: '2px solid var(--gold)', borderLeft: '2px solid var(--gold)', borderTopLeftRadius: 12 }} />
+        <span className="absolute bottom-0 right-0 w-[18px] h-[18px] z-10" style={{ borderBottom: '2px solid var(--gold)', borderRight: '2px solid var(--gold)', borderBottomRightRadius: 12 }} />
+        <div className="tieba-hero-wrapper relative z-[1] flex flex-col gap-5 md:flex-row md:items-start md:justify-between" style={{ padding: '28px 32px' }}>
+          {/* 左：图标 + 标题 + 描述 + 统计 */}
+          <div className="tieba-hero-main flex items-start gap-5 min-w-0">
+            {/* 六边形图标 */}
+            <span
+              className="tieba-hero-icon flex items-center justify-center font-display text-2xl font-extrabold flex-shrink-0"
+              style={{
+                width: '64px',
+                height: '64px',
+                background: 'var(--gold-subtle)',
+                color: 'var(--gold)',
+                clipPath: HEX_CLIP_PATH,
+                boxShadow: '0 0 24px rgba(157, 140, 255, 0.25)',
+              }}
             >
-              // TIEBA
+              {bar.icon}
+            </span>
+            <div className="min-w-0">
+              <div
+                className="community-hero-eyebrow font-mono text-[11px] font-semibold uppercase mb-2.5"
+                style={{ color: 'var(--gold)', letterSpacing: '0.16em' }}
+              >
+                // TIEBA
+              </div>
+              <h1
+                className="community-hero-title font-display font-extrabold mb-2"
+                style={{ fontSize: '32px', color: 'var(--text)', lineHeight: 1.1, letterSpacing: '0.01em' }}
+              >
+                {bar.name}
+              </h1>
+              <p
+                className="community-hero-sub font-body text-[14px] leading-relaxed mb-4"
+                style={{ color: 'var(--text-dim)', maxWidth: '640px' }}
+              >
+                {bar.desc}
+              </p>
+              {/* 统计：成员数 + 帖子数 */}
+              <div className="tieba-hero-stats flex items-center gap-5 flex-wrap">
+                <span
+                  className="inline-flex items-center gap-1.5 font-mono text-[11px]"
+                  style={{ color: 'var(--text-dim)', letterSpacing: '0.04em' }}
+                >
+                  <UsersIcon size={14} style={{ color: 'var(--gold)' }} />
+                  <span style={{ color: 'var(--text)', fontWeight: 700 }}>{fmtNum(bar.members)}</span>
+                  <span style={{ opacity: 0.65 }}>members</span>
+                </span>
+                <span
+                  className="inline-flex items-center gap-1.5 font-mono text-[11px]"
+                  style={{ color: 'var(--text-dim)', letterSpacing: '0.04em' }}
+                >
+                  <FileTextIcon size={14} style={{ color: 'var(--gold)' }} />
+                  <span style={{ color: 'var(--text)', fontWeight: 700 }}>{fmtNum(bar.posts)}</span>
+                  <span style={{ opacity: 0.65 }}>posts</span>
+                </span>
+              </div>
             </div>
-            <h1
-              className="community-hero-title font-display font-extrabold mb-2.5"
-              style={{ fontSize: '36px', color: 'var(--text)', lineHeight: 1.1, letterSpacing: '0.01em' }}
-            >
-              {bar.name}
-            </h1>
-            <p
-              className="community-hero-sub font-body text-[15px] leading-relaxed"
-              style={{ color: 'var(--text-dim)', maxWidth: '640px' }}
-            >
-              {bar.desc}
-            </p>
+          </div>
+
+          {/* 右：按钮（Join Tieba / New Post） */}
+          <div className="tieba-hero-actions flex flex-col gap-2 flex-shrink-0">
+            {!showNewPost ? (
+              <Button
+                onClick={handleJoin}
+                size="large"
+                type="primary"
+                icon={<PlusIcon size={14} />}
+                className="btn-hud-lg"
+                style={{
+                  height: 'auto',
+                  padding: '10px 20px',
+                  background: 'var(--gold)',
+                  borderColor: 'var(--gold)',
+                  color: 'var(--bg)',
+                  boxShadow: '0 0 16px rgba(157,140,255,0.25)',
+                  minWidth: '160px',
+                }}
+              >
+                Join Tieba
+              </Button>
+            ) : (
+              <Link
+                href={`/community/new?tieba=${encodeURIComponent(bar.name)}`}
+                className="flex items-center justify-center gap-2 no-underline btn-hud-lg"
+                style={{
+                  color: 'var(--bg)',
+                  background: 'var(--gold)',
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  boxShadow: '0 0 16px rgba(157,140,255,0.25)',
+                  transition: 'background 0.2s, box-shadow 0.2s',
+                  minWidth: '160px',
+                  fontWeight: 600,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#ffe066';
+                  e.currentTarget.style.boxShadow = '0 0 24px rgba(157,140,255,0.25), 0 0 48px rgba(157,140,255,0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'var(--gold)';
+                  e.currentTarget.style.boxShadow = '0 0 16px rgba(157,140,255,0.25)';
+                }}
+              >
+                <PlusIcon size={14} />
+                New Post
+              </Link>
+            )}
           </div>
         </div>
+
+        {/* Toast 提示：加入成功 / 需登录 */}
+        {toastVisible && (
+          <div
+            className="absolute left-1/2 z-10 font-mono text-[12px]"
+            style={{
+              bottom: '16px',
+              transform: 'translateX(-50%)',
+              background: 'var(--surface)',
+              color: 'var(--text)',
+              border: '1px solid var(--border)',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+              animation: 'cardFadeIn 0.25s ease-out',
+            }}
+          >
+            {toastMsg}
+          </div>
+        )}
       </div>
 
-      {/* Tabs */}
-      <div
-        className="community-tabs flex items-center gap-1 mb-5 flex-wrap"
-        style={{ borderBottom: '1px solid var(--border)' }}
-      >
-        {TIEBA_TABS.map((tab) => {
-          const isActive = currentTab === tab.key;
-          return (
-            <button
-              key={tab.key}
-              onClick={() => setCurrentTab(tab.key)}
-              className="font-mono text-[11px] font-semibold uppercase py-2.5 px-4 cursor-pointer transition-colors"
-              style={{
-                color: isActive ? 'var(--gold)' : 'var(--text-dim)',
-                background: 'transparent',
-                border: 'none',
-                borderBottom: `2px solid ${isActive ? 'var(--gold)' : 'transparent'}`,
-                letterSpacing: '0.08em',
-                marginBottom: '-1px',
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) e.currentTarget.style.color = 'var(--text)';
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) e.currentTarget.style.color = 'var(--text-dim)';
-              }}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      {/* antd Tabs */}
+      <Tabs
+        activeKey={currentTab}
+        onChange={setCurrentTab}
+        items={tabItems}
+        className="community-tabs"
+        style={{ marginBottom: '20px' }}
+      />
 
       {/* 帖子列表（key 切换 tab 时重新挂载，触发骨架屏流程） */}
       <ThreadListInner key={currentTab} bar={bar} tab={currentTab} />

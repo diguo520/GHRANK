@@ -10,18 +10,36 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { USER_PROFILE } from '../profile/_data/profile-data';
 import SettingsShell from './_components/SettingsShell';
-import { FormRow, TextInput, TextArea, RichEditor, SaveButton, panelStyle } from './_components/SettingsForm';
-import { EditIcon } from '@/app/_components/icons';
+import { FormRow, TextInput, TextArea, RichEditor, SaveButton, panelStyle, DateField } from './_components/SettingsForm';
+import { EditIcon } from '@/components/shared/icons';
+import AvatarUploader from '@/components/shared/AvatarUploader';
+import { useAppEvent } from '@/components/providers/AppEventContext';
+import { safeStorage } from '@/lib/safeStorage';
+import { STORAGE_KEYS } from '@/lib/constants';
+import { isImageAvatar } from '@/lib/avatar';
+import { useIsLoggedIn } from '@/hooks/useIsLoggedIn';
 
 /* ═══════════════════════════════════════════════════════════════
    Avatar profile card
    ═══════════════════════════════════════════════════════════════ */
 
 function AvatarCard() {
+  // 头像统一走 useIsLoggedIn：从 localStorage 读取，
+  // 与顶部导航栏 / 个人中心页保持同一数据源，上传后全站同步。
+  const { userAvatar: avatarUrl } = useIsLoggedIn();
+  const useImg = isImageAvatar(avatarUrl);
+  const { notifyAuthChange } = useAppEvent();
+
+  /** 上传成功回调：持久化到 localStorage，并通知全站重新读取头像 */
+  const handleUploaded = (url: string) => {
+    safeStorage.set(STORAGE_KEYS.USER_AVATAR, url);
+    // 触发 authVersion 变化，让 useIsLoggedIn 立即重新读取头像
+    notifyAuthChange();
+  };
+
   return (
     <div
       style={{
@@ -31,32 +49,51 @@ function AvatarCard() {
         marginBottom: '20px',
       }}
     >
-      <div style={{ position: 'relative', width: '96px', height: '96px', margin: '0 auto 14px' }}>
-        <Image
-          src={USER_PROFILE.avatar}
-          alt={USER_PROFILE.displayName}
-          fill
-          style={{ objectFit: 'cover', borderRadius: '50%' }}
-          sizes="96px"
-        />
-        <span
-          style={{
-            position: 'absolute',
-            bottom: '2px',
-            right: '2px',
-            width: '18px',
-            height: '18px',
-            borderRadius: '50%',
-            background: 'var(--green)',
-            border: '3px solid var(--surface)',
-          }}
-          title="Online"
-        />
+      {/* 圆形头像：外层统一管理尺寸、边框、溢出裁切，
+           内部根据 avatar 类型切换 图片渲染 / 字母徽章渲染。 */}
+      <div
+        style={{
+          position: 'relative',
+          width: 96,
+          height: 96,
+          margin: '0 auto 14px',
+          borderRadius: '50%',
+          overflow: 'hidden',
+          border: '2px solid var(--border)',
+          background: useImg ? 'var(--surface-overlay)' : 'var(--gold-subtle)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {useImg ? (
+          // 原生 img 避免 next/image 布局问题
+          <img
+            src={avatarUrl}
+            alt={`${USER_PROFILE.displayName} avatar`}
+            referrerPolicy="no-referrer"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+          />
+        ) : (
+          <span
+            className="font-display"
+            style={{
+              color: 'var(--gold)',
+              fontWeight: 800,
+              fontSize: avatarUrl.length >= 3 ? 28 : 38,
+              lineHeight: 1,
+              letterSpacing: '0.02em',
+              userSelect: 'none',
+            }}
+          >
+            {avatarUrl}
+          </span>
+        )}
       </div>
       <h2
+        className="font-display"
         style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: '20px',
+          fontSize: 20,
           fontWeight: 700,
           color: 'var(--text)',
           margin: '0 0 4px',
@@ -65,37 +102,16 @@ function AvatarCard() {
         {USER_PROFILE.displayName}
       </h2>
       <div
+        className="meta-hud-mono"
         style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '11px',
           color: 'var(--text-muted)',
-          marginBottom: '14px',
+          marginBottom: 14,
         }}
       >
         @{USER_PROFILE.username}
       </div>
-      <Link
-        href="/profile"
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '6px',
-          padding: '7px 14px',
-          background: 'rgba(245, 197, 24, 0.08)',
-          border: '1px solid rgba(245, 197, 24, 0.25)',
-          borderRadius: '3px',
-          color: 'var(--gold)',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '11px',
-          fontWeight: 600,
-          textDecoration: 'none',
-          textTransform: 'uppercase',
-          letterSpacing: '0.04em',
-        }}
-      >
-        <EditIcon size={14} />
-        Edit Avatar
-      </Link>
+      {/* 头像上传与裁剪：替换原有的 Edit Avatar 链接 */}
+      <AvatarUploader onUploaded={handleUploaded} username={USER_PROFILE.username} />
     </div>
   );
 }
@@ -162,7 +178,7 @@ export default function SettingsPage() {
           </FormRow>
 
           <FormRow label="Birth Date:" hint="Once set, your birth date cannot be changed by yourself. Contact an admin if needed.">
-            <TextInput value={birthDate} onChange={setBirthDate} type="date" />
+            <DateField value={birthDate} onChange={setBirthDate} />
           </FormRow>
 
           <FormRow label="Custom Title:" hint="If set, this replaces the title shown beneath your name on posts.">

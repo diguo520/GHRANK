@@ -1,22 +1,37 @@
 /**
- * SettingsForm —— 设置页通用表单控件
+ * SettingsForm —— 设置页通用表单控件（v2.0 antd 迁移）
  *
- * 统一封装：表单行、文本输入、文本域、下拉框、开关、单选卡片、富文本占位
- * 风格延续 GHRANK 暗色 HUD + 金色强调
+ * 迁移内容：
+ * - TextInput → antd Input
+ * - TextArea → antd Input.TextArea
+ * - Select → antd Select
+ * - Toggle → antd Switch
+ * - RadioGroup → antd Radio.Group
+ * - SaveButton → antd Button
+ *
+ * 保持兼容：
+ * - 所有导出组件的 props 签名不变（value/onChange 等回调保持原样）
+ * - FormRow / RichEditor / panelStyle / sectionTitleStyle 保持不变
+ * - 调用方代码无需修改
+ *
+ * 注意：RadioGroup 的 options 结构与 antd Radio.Group 不同，
+ * 这里通过适配层转换，保持原 options: {value,label,hint}[] 签名
  */
 'use client';
 
-import type { ReactNode, CSSProperties, InputHTMLAttributes, TextareaHTMLAttributes, SelectHTMLAttributes } from 'react';
-import TiptapEditor from '@/components/shared/TiptapEditor';
+import type { ReactNode, CSSProperties } from 'react';
+import { useState } from 'react';
+import { Input, Select as AntSelect, Switch, Radio, Button, DatePicker, App } from 'antd';
+import dayjs from 'dayjs';
 
 /* ═══════════════════════════════════════════════════════════════
-   样式常量
+   样式常量（保持不变，调用方直接引用）
    ═══════════════════════════════════════════════════════════════ */
 
 export const panelStyle: CSSProperties = {
-  background: 'var(--surface)',
-  border: '1px solid var(--border-subtle)',
-  borderRadius: '4px',
+  background: 'transparent',
+  borderRadius: 8,
+  padding: '24px',
 };
 
 export const sectionTitleStyle: CSSProperties = {
@@ -29,7 +44,7 @@ export const sectionTitleStyle: CSSProperties = {
 };
 
 /* ═══════════════════════════════════════════════════════════════
-   表单行
+   表单行（保持不变 —— 布局组件，无需迁移）
    ═══════════════════════════════════════════════════════════════ */
 
 interface FormRowProps {
@@ -86,144 +101,115 @@ export function FormRow({ label, children, hint, action }: FormRowProps) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   文本输入框
+   文本输入框 —— antd Input 适配层
+   保持原 props: { value, onChange: (value: string) => void, ...rest }
    ═══════════════════════════════════════════════════════════════ */
 
-interface TextInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+interface TextInputProps {
   value: string;
   onChange: (value: string) => void;
+  placeholder?: string;
+  style?: CSSProperties;
+  [key: string]: unknown;
 }
 
-export function TextInput({ value, onChange, ...rest }: TextInputProps) {
+// 表单控件统一最大宽度（根据常见字段数据容量：邮箱/网址/用户名等）
+const FIELD_MAX_WIDTH = '520px';
+
+export function TextInput({ value, onChange, style, ...rest }: TextInputProps) {
   return (
-    <input
-      {...rest}
+    <Input
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      style={{
-        flex: 1,
-        minWidth: '200px',
-        padding: '9px 12px',
-        background: 'var(--bg)',
-        border: '1px solid var(--border)',
-        borderRadius: '3px',
-        color: 'var(--text)',
-        fontFamily: 'var(--font-body)',
-        fontSize: '13px',
-        outline: 'none',
-        ...rest.style,
-      }}
-      onFocus={(e) => {
-        e.currentTarget.style.borderColor = 'var(--gold)';
-        e.currentTarget.style.boxShadow = '0 0 0 2px rgba(245, 197, 24, 0.1)';
-      }}
-      onBlur={(e) => {
-        e.currentTarget.style.borderColor = 'var(--border)';
-        e.currentTarget.style.boxShadow = 'none';
-      }}
+      style={{ flex: 1, maxWidth: FIELD_MAX_WIDTH, minWidth: '200px', ...style }}
+      {...rest}
     />
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   文本域
+   日期选择器 —— antd DatePicker 适配层
+   props: { value: string (YYYY-MM-DD), onChange: (value: string) => void }
    ═══════════════════════════════════════════════════════════════ */
 
-interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> {
+interface DateFieldProps {
   value: string;
   onChange: (value: string) => void;
+  style?: CSSProperties;
 }
 
-export function TextArea({ value, onChange, rows = 4, ...rest }: TextAreaProps) {
+export function DateField({ value, onChange, style }: DateFieldProps) {
   return (
-    <textarea
-      {...rest}
-      value={value}
-      rows={rows}
-      onChange={(e) => onChange(e.target.value)}
-      style={{
-        width: '100%',
-        padding: '10px 12px',
-        background: 'var(--bg)',
-        border: '1px solid var(--border)',
-        borderRadius: '3px',
-        color: 'var(--text)',
-        fontFamily: 'var(--font-body)',
-        fontSize: '13px',
-        lineHeight: 1.5,
-        resize: 'vertical',
-        outline: 'none',
-        ...rest.style,
-      }}
-      onFocus={(e) => {
-        e.currentTarget.style.borderColor = 'var(--gold)';
-        e.currentTarget.style.boxShadow = '0 0 0 2px rgba(245, 197, 24, 0.1)';
-      }}
-      onBlur={(e) => {
-        e.currentTarget.style.borderColor = 'var(--border)';
-        e.currentTarget.style.boxShadow = 'none';
-      }}
+    <DatePicker
+      value={value ? dayjs(value) : null}
+      onChange={(date) => onChange(date ? date.format('YYYY-MM-DD') : '')}
+      style={{ flex: 1, maxWidth: FIELD_MAX_WIDTH, minWidth: '200px', ...style }}
     />
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   下拉框
+   文本域 —— antd Input.TextArea 适配层
+   保持原 props: { value, onChange: (value: string) => void, rows, ...rest }
    ═══════════════════════════════════════════════════════════════ */
 
-interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
+interface TextAreaProps {
+  value: string;
+  onChange: (value: string) => void;
+  rows?: number;
+  placeholder?: string;
+  style?: CSSProperties;
+  [key: string]: unknown;
+}
+
+export function TextArea({ value, onChange, rows = 4, style, ...rest }: TextAreaProps) {
+  return (
+    <Input.TextArea
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      autoSize={{ minRows: rows, maxRows: rows * 2 }}
+      style={{ width: '100%', maxWidth: FIELD_MAX_WIDTH, ...style }}
+      {...rest}
+    />
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   下拉框 —— antd Select 适配层
+   保持原 props: { value, onChange: (value: string) => void, options: {value,label}[] }
+   ═══════════════════════════════════════════════════════════════ */
+
+interface SelectProps {
   value: string;
   onChange: (value: string) => void;
   options: { value: string; label: string }[];
+  style?: CSSProperties;
+  [key: string]: unknown;
 }
 
-export function Select({ value, onChange, options, ...rest }: SelectProps) {
+export function Select({ value, onChange, options, style, ...rest }: SelectProps) {
   return (
-    <select
-      {...rest}
+    <AntSelect
       value={value}
-      onChange={(e) => onChange(e.target.value)}
-      style={{
-        flex: 1,
-        minWidth: '180px',
-        padding: '9px 28px 9px 12px',
-        background: 'var(--bg)',
-        border: '1px solid var(--border)',
-        borderRadius: '3px',
-        color: 'var(--text)',
-        fontFamily: 'var(--font-body)',
-        fontSize: '13px',
-        outline: 'none',
-        appearance: 'none',
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'right 10px center',
-        ...rest.style,
-      }}
-      onFocus={(e) => {
-        e.currentTarget.style.borderColor = 'var(--gold)';
-      }}
-      onBlur={(e) => {
-        e.currentTarget.style.borderColor = 'var(--border)';
-      }}
-    >
-      {options.map((opt) => (
-        <option key={opt.value} value={opt.value} style={{ background: 'var(--surface)', color: 'var(--text)' }}>
-          {opt.label}
-        </option>
-      ))}
-    </select>
+      onChange={onChange}
+      options={options}
+      style={{ flex: 1, maxWidth: FIELD_MAX_WIDTH, minWidth: '180px', ...style }}
+      {...rest}
+    />
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   开关复选框
+   开关 —— antd Switch 适配层
+   保持原 props: { checked, onChange: (checked: boolean) => void, label }
+   注意：label 在 antd Switch 中需要外层包裹，这里用 span 包装
    ═══════════════════════════════════════════════════════════════ */
 
-interface ToggleProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type'> {
+interface ToggleProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   label: string;
+  [key: string]: unknown;
 }
 
 export function Toggle({ checked, onChange, label, ...rest }: ToggleProps) {
@@ -239,43 +225,17 @@ export function Toggle({ checked, onChange, label, ...rest }: ToggleProps) {
         color: 'var(--text)',
       }}
     >
-      <span
-        style={{
-          position: 'relative',
-          width: '36px',
-          height: '20px',
-          borderRadius: '10px',
-          background: checked ? 'var(--gold)' : 'var(--border)',
-          transition: 'background 0.2s',
-        }}
-      >
-        <input
-          {...rest}
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-          style={{ position: 'absolute', opacity: 0, width: '100%', height: '100%', cursor: 'pointer' }}
-        />
-        <span
-          style={{
-            position: 'absolute',
-            top: '2px',
-            left: checked ? '18px' : '2px',
-            width: '16px',
-            height: '16px',
-            borderRadius: '50%',
-            background: '#fff',
-            transition: 'left 0.2s',
-          }}
-        />
-      </span>
+      <Switch checked={checked} onChange={onChange} size="small" {...rest} />
       {label}
     </label>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   单选卡片组
+   单选卡片组 —— antd Radio.Group 适配层
+   保持原 props: { value, onChange: (value: string) => void, options: {value,label,hint?}[], name }
+   注意：原组件使用卡片样式，antd Radio.Button 默认为按钮样式
+        这里保留卡片视觉，用 Radio.Group + 自定义渲染
    ═══════════════════════════════════════════════════════════════ */
 
 interface RadioGroupProps {
@@ -287,53 +247,52 @@ interface RadioGroupProps {
 
 export function RadioGroup({ value, onChange, options, name }: RadioGroupProps) {
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+    <Radio.Group
+      name={name}
+      value={value}
+      onChange={(e) => onChange(e.target.value as string)}
+      style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}
+    >
       {options.map((opt) => (
-        <label
+        <Radio
           key={opt.value}
+          value={opt.value}
           style={{
             flex: '1 1 140px',
             minWidth: '120px',
             padding: '12px',
             borderRadius: '4px',
             border: `1px solid ${value === opt.value ? 'var(--gold)' : 'var(--border)'}`,
-            background: value === opt.value ? 'rgba(245, 197, 24, 0.06)' : 'var(--bg)',
-            cursor: 'pointer',
-            transition: 'all 0.15s',
+            background: value === opt.value ? 'rgba(157, 140, 255, 0.06)' : 'var(--bg)',
+            alignItems: 'flex-start',
           }}
         >
-          <input
-            type="radio"
-            name={name}
-            value={opt.value}
-            checked={value === opt.value}
-            onChange={() => onChange(opt.value)}
-            style={{ position: 'absolute', opacity: 0 }}
-          />
-          <div
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '13px',
-              fontWeight: 600,
-              color: value === opt.value ? 'var(--gold)' : 'var(--text)',
-              marginBottom: '2px',
-            }}
-          >
-            {opt.label}
-          </div>
-          {opt.hint && (
-            <div style={{ fontFamily: 'var(--font-body)', fontSize: '11px', color: 'var(--text-muted)' }}>
-              {opt.hint}
+          <div>
+            <div
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '13px',
+                fontWeight: 600,
+                color: value === opt.value ? 'var(--gold)' : 'var(--text)',
+                marginBottom: '2px',
+              }}
+            >
+              {opt.label}
             </div>
-          )}
-        </label>
+            {opt.hint && (
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: '11px', color: 'var(--text-muted)' }}>
+                {opt.hint}
+              </div>
+            )}
+          </div>
+        </Radio>
       ))}
-    </div>
+    </Radio.Group>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   富文本编辑器（tiptap 实现，替代早期的装饰性假工具栏）
+   多行文本编辑器（纯文本 textarea 替代原 tiptap 富文本）
    ═══════════════════════════════════════════════════════════════ */
 
 interface RichEditorProps {
@@ -341,7 +300,7 @@ interface RichEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   rows?: number;
-  /** 最大字符数（按纯文本统计），不传则不限制 */
+  /** 最大字符数，不传则不限制 */
   maxChars?: number;
 }
 
@@ -354,20 +313,36 @@ export function RichEditor({ value, onChange, placeholder, rows = 6, maxChars }:
         overflow: 'hidden',
       }}
     >
-      <TiptapEditor
+      <textarea
         value={value}
-        toolbar="minimal"
-        maxChars={maxChars}
-        minHeight={Math.max(rows * 24, 100)}
+        rows={rows}
+        maxLength={maxChars}
         placeholder={placeholder ?? 'Write something...'}
-        onChange={(html) => onChange(html)}
+        onChange={(e) => onChange(maxChars ? e.target.value.slice(0, maxChars) : e.target.value)}
+        style={{
+          width: '100%',
+          minHeight: Math.max(rows * 24, 100),
+          resize: 'vertical',
+          fontFamily: 'var(--font-body)',
+          fontSize: '13px',
+          lineHeight: 1.6,
+          color: 'var(--text)',
+          background: 'var(--bg)',
+          border: '1px solid var(--border)',
+          borderRadius: '3px',
+          padding: '10px 12px',
+          outline: 'none',
+        }}
       />
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   保存按钮
+   保存按钮 —— antd Button 适配层
+   保持原 props: { children, onClick }
+   内置保存成功提示：未传入 onClick 时，点击后显示 "Settings saved" 提示；
+   传入 onClick 时由调用方自行处理反馈。
    ═══════════════════════════════════════════════════════════════ */
 
 interface SaveButtonProps {
@@ -376,31 +351,42 @@ interface SaveButtonProps {
 }
 
 export function SaveButton({ children, onClick }: SaveButtonProps) {
+  const { message } = App.useApp();
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    if (onClick) {
+      try {
+        setLoading(true);
+        await onClick();
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // 未传入 onClick 时给出默认成功提示，让用户感知保存已生效
+      message.success('Settings saved');
+    }
+  };
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    <Button
+      type="primary"
+      onClick={handleClick}
+      loading={loading}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
         gap: '8px',
         padding: '10px 22px',
-        background: 'var(--gold)',
-        border: 'none',
-        borderRadius: '3px',
-        color: 'var(--bg)',
         fontFamily: 'var(--font-mono)',
         fontSize: '12px',
         fontWeight: 700,
         textTransform: 'uppercase',
         letterSpacing: '0.06em',
-        cursor: 'pointer',
-        transition: 'opacity 0.15s',
+        height: 'auto',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; }}
-      onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
     >
       {children}
-    </button>
+    </Button>
   );
 }

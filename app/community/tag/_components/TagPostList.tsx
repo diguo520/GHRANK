@@ -13,12 +13,13 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
+import { Tabs, App, Divider } from 'antd';
 import { useChunkedData } from '@/hooks/useChunkedData';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { SkeletonAvatar, SkeletonLine } from '@/components/skeleton/Skeleton';
 import ThreadItem from '../../_components/ThreadItem';
 import { type Thread } from '../../_data/community-data';
-import { TagIcon } from '../../../_components/icons';
+import { TagIcon } from '@/components/shared/icons';
 import {
   TAG_TABS,
   TAG_PAGE_SIZE,
@@ -41,8 +42,7 @@ function PostSkeleton() {
         gridTemplateColumns: '44px 1fr auto',
         gap: '16px',
         padding: '18px 22px',
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
+        background: 'transparent',
       }}
     >
       <SkeletonAvatar size={44} shape="round" />
@@ -67,7 +67,9 @@ function ThreadListInner({
   onLike: (author: string) => void;
 }) {
   // 标签帖子池（确定性，仅依赖 tag，保证 SSR/CSR 一致）
+  // 该标签不在 POST_TAGS 子集时返回空数组，用于验证筛选效果
   const pool = useMemo(() => buildTagPool(tag), [tag]);
+  const isEmpty = pool.length === 0; // 当前标签无帖子的标志位
   // 按 tab 过滤+排序后的基础帖子
   const filteredBase = useMemo(() => filterTagThreads(pool, tab), [pool, tab]);
   const initialData = useMemo(() => filteredBase.slice(0, TAG_PAGE_SIZE), [filteredBase]);
@@ -142,15 +144,42 @@ function ThreadListInner({
 
   const skeletons = Array.from({ length: skeletonCount }, (_, i) => i);
 
+  /* 空状态：当前标签不在 POST_TAGS 子集中，无任何帖子，用于验证筛选效果 */
+  if (isEmpty) {
+    return (
+      <div
+        className="empty-state flex flex-col items-center justify-center py-20"
+        style={{ color: 'var(--text-muted)' }}
+      >
+        <div
+          className="font-mono text-[11px] mb-3"
+          style={{ letterSpacing: '0.16em', opacity: 0.6 }}
+        >
+          // NO POSTS
+        </div>
+        <div className="font-display text-[18px] mb-2" style={{ color: 'var(--text)' }}>
+          No posts under this tag yet
+        </div>
+        <div className="font-body text-[13px]" style={{ color: 'var(--text-dim)' }}>
+          {`#${tag} has no posts in the current filter scope.`}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="thread-list flex flex-col gap-2.5">
-      {/* 已加载的真实帖子（标签页点赞可交互） */}
-      {visibleItems.map((item) => (
-        <ThreadItem
-          key={`thread-${item.id}`}
-          thread={item}
-          onLike={onLike}
-        />
+    <div className="thread-list flex flex-col">
+      {/* 已加载的真实帖子（标签页点赞可交互），使用 Divider 分割线分隔 */}
+      {visibleItems.map((item, index) => (
+        <div key={`thread-${item.id}`}>
+          <ThreadItem
+            thread={item}
+            onLike={onLike}
+          />
+          {index < visibleItems.length - 1 && (
+            <Divider style={{ margin: 0, borderColor: 'var(--border-subtle)' }} />
+          )}
+        </div>
       ))}
 
       {/* 骨架屏占位 */}
@@ -189,25 +218,19 @@ interface TagPostListProps {
 
 export default function TagPostList({ tag }: TagPostListProps) {
   const [currentTab, setCurrentTab] = useState('All');
-  // Toast 状态：点赞反馈提示
-  const [toastMsg, setToastMsg] = useState('');
-  const [toastVisible, setToastVisible] = useState(false);
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // antd message 实例（必须在 <App> 内部使用）
+  const { message } = App.useApp();
 
-  // 点赞回调：显示 Toast
+  // 点赞回调：显示 antd message
   const handleLike = useCallback((author: string) => {
-    setToastMsg(`Liked ${author}'s post`);
-    setToastVisible(true);
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    toastTimerRef.current = setTimeout(() => setToastVisible(false), 2200);
-  }, []);
+    message.success(`Liked ${author}'s post`, 2.2);
+  }, [message]);
 
-  // 清理 Toast 定时器
-  useEffect(() => {
-    return () => {
-      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    };
-  }, []);
+  // antd Tabs items 配置
+  const tabItems = useMemo(() => TAG_TABS.map((tab) => ({
+    key: tab.key,
+    label: tab.label,
+  })), []);
 
   return (
     <main className="community-content min-w-0">
@@ -237,7 +260,7 @@ export default function TagPostList({ tag }: TagPostListProps) {
       <div
         className="community-hero section-hero-compact relative overflow-hidden mb-6"
         style={{
-          background: 'linear-gradient(135deg, rgba(245, 197, 24, 0.04) 0%, transparent 60%), var(--surface)',
+          background: 'linear-gradient(135deg, rgba(157, 140, 255, 0.04) 0%, transparent 60%), var(--surface)',
           border: '1px solid var(--border)',
           padding: '24px 28px',
         }}
@@ -253,7 +276,7 @@ export default function TagPostList({ tag }: TagPostListProps) {
               height: '52px',
               background: 'var(--gold-subtle)',
               color: 'var(--gold)',
-              border: '1px solid rgba(245, 197, 24, 0.35)',
+              border: '1px solid rgba(157, 140, 255, 0.35)',
             }}
           >
             <TagIcon size={52} />
@@ -281,63 +304,17 @@ export default function TagPostList({ tag }: TagPostListProps) {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div
-        className="community-tabs flex items-center gap-1 mb-5 flex-wrap"
-        style={{ borderBottom: '1px solid var(--border)' }}
-      >
-        {TAG_TABS.map((tab) => {
-          const isActive = currentTab === tab.key;
-          return (
-            <button
-              key={tab.key}
-              onClick={() => setCurrentTab(tab.key)}
-              className="font-mono text-[11px] font-semibold uppercase py-2.5 px-4 cursor-pointer transition-colors"
-              style={{
-                color: isActive ? 'var(--gold)' : 'var(--text-dim)',
-                background: 'transparent',
-                border: 'none',
-                borderBottom: `2px solid ${isActive ? 'var(--gold)' : 'transparent'}`,
-                letterSpacing: '0.08em',
-                marginBottom: '-1px',
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) e.currentTarget.style.color = 'var(--text)';
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) e.currentTarget.style.color = 'var(--text-dim)';
-              }}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      {/* antd Tabs */}
+      <Tabs
+        activeKey={currentTab}
+        onChange={setCurrentTab}
+        items={tabItems}
+        className="community-tabs"
+        style={{ marginBottom: '20px' }}
+      />
 
       {/* 帖子列表（key 切换 tab 时重新挂载，触发骨架屏流程） */}
       <ThreadListInner key={currentTab} tag={tag} tab={currentTab} onLike={handleLike} />
-
-      {/* Toast 提示（点赞反馈） */}
-      <div
-        className="fixed left-1/2 flex items-center justify-center pointer-events-none"
-        style={{
-          bottom: '32px',
-          transform: toastVisible ? 'translateX(-50%) translateY(0)' : 'translateX(-50%) translateY(20px)',
-          background: 'var(--surface)',
-          border: '1px solid rgba(245, 197, 24, 0.35)',
-          padding: '12px 24px',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '12px',
-          color: 'var(--gold)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(245, 197, 24, 0.15)',
-          zIndex: 10000,
-          opacity: toastVisible ? 1 : 0,
-          transition: 'opacity 0.3s, transform 0.3s',
-          letterSpacing: '0.04em',
-        }}
-      >
-        {toastMsg}
-      </div>
     </main>
   );
 }

@@ -131,7 +131,7 @@ export default function AboutPage() {
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = 'var(--gold)';
                 e.currentTarget.style.borderColor = 'var(--gold)';
-                e.currentTarget.style.background = 'rgba(245, 197, 24, 0.04)';
+                e.currentTarget.style.background = 'rgba(157, 140, 255, 0.04)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.color = 'var(--text-dim)';

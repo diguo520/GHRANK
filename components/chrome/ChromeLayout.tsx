@@ -13,9 +13,10 @@ import Footer from './Footer';
 import SearchOverlay from './SearchOverlay';
 import UserCenterSidebar from './UserCenterSidebar';
 import SideNav from './SideNav';
+import FloatingMessages from './FloatingMessages';
 import { useGsapAnimations } from '@/hooks/useGsapAnimations';
 import { getConfig } from '@/lib/config';
-import { AppEventProvider } from '@/app/_context/AppEventContext';
+import { AppEventProvider } from '@/components/providers/AppEventContext';
 
 export default function ChromeLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -65,6 +66,9 @@ export default function ChromeLayout({ children }: { children: React.ReactNode }
 
       {/* 右侧悬浮导航（通知/消息/钱包/笔记/发帖/设置/回到顶部） */}
       <SideNav />
+
+      {/* 右下角浮动消息（Facebook/Twitter 风格） */}
+      <FloatingMessages />
     </AppEventProvider>
   );
 }

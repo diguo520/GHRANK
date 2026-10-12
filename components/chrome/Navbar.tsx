@@ -3,11 +3,13 @@
 import { CSSProperties, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Input, Button } from 'antd';
 import { NAV_LINKS } from '@/lib/config';
 import type { PageConfig } from '@/lib/config';
 import { HEX_CLIP_PATH } from '@/lib/constants';
-import { useIsLoggedIn } from '@/app/_hooks/useIsLoggedIn';
-import { useAppEvent } from '@/app/_context/AppEventContext';
+import { isImageAvatar } from '@/lib/avatar';
+import { useIsLoggedIn } from '@/hooks/useIsLoggedIn';
+import { useAppEvent } from '@/components/providers/AppEventContext';
 
 interface NavbarProps {
   config: PageConfig;
@@ -31,7 +33,7 @@ function Logo() {
     justifyContent: 'center',
     width: '36px',
     height: '36px',
-    background: isHovered ? 'rgba(245, 197, 24, 0.12)' : 'var(--gold-subtle)',
+    background: isHovered ? 'rgba(157, 140, 255, 0.12)' : 'var(--gold-subtle)',
     border: '1.5px solid var(--gold)',
     clipPath: HEX_CLIP_PATH,
     fontFamily: 'var(--font-display)',
@@ -42,7 +44,7 @@ function Logo() {
     position: 'relative',
     transform: isHovered ? 'rotate(60deg)' : 'none',
     boxShadow: isHovered
-      ? '0 0 16px rgba(245, 197, 24, 0.4), 0 0 32px rgba(245, 197, 24, 0.15)'
+      ? '0 0 16px rgba(157, 140, 255, 0.4), 0 0 32px rgba(157, 140, 255, 0.15)'
       : 'none',
     transition:
       'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, background 0.4s ease',
@@ -89,7 +91,7 @@ function Logo() {
             fontWeight: 800,
             letterSpacing: isHovered ? '4px' : '2px',
             color: 'var(--gold)',
-            textShadow: isHovered ? '0 0 12px rgba(245, 197, 24, 0.5)' : 'none',
+            textShadow: isHovered ? '0 0 12px rgba(157, 140, 255, 0.5)' : 'none',
             transition: 'letter-spacing 0.4s cubic-bezier(0.22, 1, 0.36, 1), text-shadow 0.4s ease',
           }}
         >
@@ -123,6 +125,8 @@ export default function Navbar({ config, currentPage, onOpenSearch }: NavbarProp
   /* 登录状态 —— 统一 hook */
   const { loggedIn, userAvatar } = useIsLoggedIn();
   const { toggleSidebar } = useAppEvent();
+  // 头像是否为真实图片：否则按字母徽章渲染
+  const avatarIsImg = isImageAvatar(userAvatar);
 
   // 登录页隐藏登录按钮
   const hideLogin = currentPage === 'login';
@@ -197,7 +201,7 @@ export default function Navbar({ config, currentPage, onOpenSearch }: NavbarProp
           height: '1px',
           width: `${progress}%`,
           background: 'var(--gold)',
-          boxShadow: '0 0 8px rgba(245, 197, 24, 0.6), 0 0 16px rgba(245, 197, 24, 0.3)',
+          boxShadow: '0 0 8px rgba(157, 140, 255, 0.6), 0 0 16px rgba(157, 140, 255, 0.3)',
           opacity: isLoading ? 1 : 0,
           transition: `width ${isLoading ? '300ms' : '150ms'} cubic-bezier(0.22, 1, 0.36, 1), opacity 200ms ease`,
           pointerEvents: 'none',
@@ -218,7 +222,7 @@ export default function Navbar({ config, currentPage, onOpenSearch }: NavbarProp
               key={n.page}
               href={n.href}
               data-page={n.page}
-              className="relative px-4 py-2 rounded-sm transition-colors duration-200 hover:bg-[rgba(245,197,24,0.08)]"
+              className="relative px-4 py-2 rounded-sm transition-colors duration-200 hover:bg-[rgba(157,140,255,0.08)]"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: '13px',
@@ -238,7 +242,7 @@ export default function Navbar({ config, currentPage, onOpenSearch }: NavbarProp
                     width: '60%',
                     height: '2px',
                     background: 'var(--gold)',
-                    boxShadow: '0 0 8px rgba(245, 197, 24, 0.6)',
+                    boxShadow: '0 0 8px rgba(157, 140, 255, 0.6)',
                   }}
                 />
               )}
@@ -249,55 +253,37 @@ export default function Navbar({ config, currentPage, onOpenSearch }: NavbarProp
 
       {/* ── 右侧：搜索框 + 登录/头像 ── */}
       <div className="flex items-center gap-3 flex-shrink-0">
-        {/* 搜索框 —— 点击触发 onOpenSearch */}
-        <div
-          className="flex items-center gap-2 rounded-sm cursor-pointer transition-colors duration-200 hover:border-[var(--gold)]"
+        {/* 搜索框 —— antd Input（ readOnly，点击触发 onOpenSearch） */}
+        <Input
+          prefix={<span style={{ color: 'var(--text-dim)' }}>{'\u{1F50D}\uFE0E'}</span>}
+          placeholder={config.searchPlaceholder}
+          readOnly
+          onClick={() => onOpenSearch()}
+          size="middle"
           style={{
-            background: 'var(--surface)',
-            border: '1px solid var(--border)',
-            padding: 'var(--sp-2) var(--sp-3)',
             minWidth: '200px',
+            background: 'var(--surface)',
+            cursor: 'pointer',
           }}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onOpenSearch();
-          }}
-        >
-          <span className="text-sm flex-shrink-0" style={{ color: 'var(--text-dim)' }}>
-            {'\u{1F50D}\uFE0E'}
-          </span>
-          <input
-            type="text"
-            placeholder={config.searchPlaceholder}
-            spellCheck="false"
-            readOnly
-            className="flex-1 bg-transparent border-none outline-hidden cursor-pointer min-w-0"
-            style={{
-              color: 'var(--text)',
-              fontFamily: 'var(--font-body)',
-              fontSize: '13px',
-            }}
-          />
-        </div>
+        />
 
-        {/* 未登录：显示登录按钮 */}
+        {/* 未登录：antd Button */}
         {!loggedIn && !hideLogin && (
-          <Link
-            href="/login"
-            className="inline-flex items-center rounded-sm whitespace-nowrap transition-all duration-200 hover:shadow-[0_0_16px_rgba(245,197,24,0.4)]"
-            style={{
-              padding: 'var(--sp-2) var(--sp-5)',
-              background: 'var(--gold)',
-              color: 'var(--bg)',
-              fontFamily: 'var(--font-display)',
-              fontSize: '12px',
-              fontWeight: 700,
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-            }}
-          >
-            LOG IN
+          <Link href="/login">
+            <Button
+              type="primary"
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '12px',
+                fontWeight: 700,
+                letterSpacing: '1.5px',
+                textTransform: 'uppercase',
+                height: 'auto',
+                padding: 'var(--sp-2) var(--sp-5)',
+              }}
+            >
+              LOG IN
+            </Button>
           </Link>
         )}
 
@@ -324,16 +310,37 @@ export default function Navbar({ config, currentPage, onOpenSearch }: NavbarProp
                 width: '36px',
                 height: '36px',
                 border: '1.5px solid var(--gold)',
+                // 字母徽章：金色底 + 居中文字；图片：保持透明由 Image 填充
+                background: avatarIsImg ? 'var(--surface-overlay)' : 'var(--gold-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <Image
-                src={userAvatar}
-                alt=""
-                width={36}
-                height={36}
-                className="w-full h-full object-cover rounded-full"
-                style={{ aspectRatio: '1 / 1' }}
-              />
+              {avatarIsImg ? (
+                <Image
+                  src={userAvatar}
+                  alt=""
+                  width={36}
+                  height={36}
+                  className="w-full h-full object-cover rounded-full"
+                  style={{ aspectRatio: '1 / 1' }}
+                />
+              ) : (
+                <span
+                  className="font-display"
+                  style={{
+                    color: 'var(--gold)',
+                    fontWeight: 800,
+                    fontSize: userAvatar.length >= 3 ? 14 : 18,
+                    letterSpacing: '0.02em',
+                    lineHeight: 1,
+                    userSelect: 'none',
+                  }}
+                >
+                  {userAvatar}
+                </span>
+              )}
             </span>
             {/* 在线状态绿点 */}
             <span

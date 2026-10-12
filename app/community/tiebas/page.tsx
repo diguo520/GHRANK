@@ -8,7 +8,7 @@
  * 响应式：xl(1280+) 三栏 / lg(1024+) 两栏（隐藏右栏）/ 默认单栏
  * Chrome 层（Ticker/Navbar/Footer 等）由 ChromeLayout 统一处理，此处仅含 main 区域
  */
-import TiebasSidebar from './_components/TiebasSidebar';
+import CommunitySidebar from '../_components/CommunitySidebar';
 import TiebasPostList from './_components/TiebasPostList';
 import TiebasRightPanel from './_components/TiebasRightPanel';
 import { findBar } from './_data/community-tiebas-data';
@@ -29,8 +29,8 @@ export default async function CommunityTiebasPage({
     <main className="main-content">
       {/* 3 栏布局：响应式 grid，右栏在 xl 以下隐藏 */}
       <div className="grid gap-5 lg:gap-6 py-6 pb-16 items-start grid-cols-1 lg:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_300px]">
-        {/* 左栏：相关贴吧 + 热门贴吧 + 版权 */}
-        <TiebasSidebar currentBarId={bar.id} />
+        {/* 左栏：与社区首页保持一致 */}
+        <CommunitySidebar />
         {/* 中栏：面包屑 + Tieba Hero + Tabs + 帖子列表 */}
         <TiebasPostList bar={bar} />
         {/* 右栏：贴吧信息 + 规则 + 版主 + 广告（xl 以上显示） */}

@@ -1,49 +1,66 @@
 /**
- * SidePanel —— 通用侧边弹出面板
- * 封装 header（标题 + 关闭按钮）+ body 结构
- * 用于 SideNav 中的通知/消息/钱包/发帖等面板
+ * SidePanel —— 通用侧边弹出面板（v2.0 antd 迁移）
+ *
+ * 迁移内容：
+ * - 自定义 CSS 开合 → antd Drawer（自带动画、遮罩、ESC 关闭）
+ * - 自定义 close SVG → antd Drawer 内置 CloseIcon
+ *
+ * 保持兼容：
+ * - props 签名完全不变（isOpen/title/onClose/children/data-panel/ariaLabel）
+ * - 调用方（SideNav）无需修改
+ *
+ * 注意：data-panel 属性转移到 Drawer 的 rootClassName 以便 CSS 定位
  */
-import { ReactNode } from 'react';
+import { Drawer } from 'antd';
+import type { ReactNode } from 'react';
 
 interface SidePanelProps {
   isOpen: boolean;
   title: string;
   onClose: () => void;
   children: ReactNode;
-  /** 面板 data-panel 属性，用于 CSS 选择器 */
+  /** 面板标识，转为 className 用于样式定位 */
   'data-panel'?: string;
   /** 面板 aria-label */
   ariaLabel?: string;
 }
 
-const closeIcon = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 6 6 18M6 6l12 12" />
-  </svg>
-);
-
-export function SidePanel({ isOpen, title, onClose, children, 'data-panel': dataPanel, ariaLabel }: SidePanelProps) {
+export function SidePanel({
+  isOpen,
+  title,
+  onClose,
+  children,
+  'data-panel': dataPanel,
+  ariaLabel,
+}: SidePanelProps) {
   return (
-    <div
-      className={`gh-side-panel${isOpen ? ' is-open' : ''}`}
-      data-panel={dataPanel}
-      role="dialog"
+    <Drawer
+      open={isOpen}
+      onClose={onClose}
+      title={title}
+      placement="right"
+      size={360}
+      rootClassName={dataPanel ? `gh-side-panel gh-side-panel-${dataPanel}` : 'gh-side-panel'}
       aria-label={ariaLabel}
+      styles={{
+        header: {
+          borderBottom: '1px solid var(--border)',
+          padding: '16px 20px',
+          background: '#111318',
+        },
+        body: {
+          padding: '12px 16px',
+          background: 'var(--surface)',
+        },
+        section: {
+          background: '#111318',
+          border: '1px solid var(--border)',
+          borderRadius: '8px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+        },
+      }}
     >
-      <div className="gh-side-panel-header">
-        <span className="gh-side-panel-title">{title}</span>
-        <button
-          type="button"
-          className="gh-side-panel-close"
-          aria-label="Close"
-          onClick={onClose}
-        >
-          {closeIcon}
-        </button>
-      </div>
-      <div className="gh-side-panel-body">
-        {children}
-      </div>
-    </div>
+      {children}
+    </Drawer>
   );
 }

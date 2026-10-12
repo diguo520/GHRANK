@@ -13,6 +13,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import { Segmented } from 'antd';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { SkeletonAvatar, SkeletonLine } from '@/components/skeleton/Skeleton';
 import ReplyItem from './ReplyItem';
@@ -28,32 +29,30 @@ import {
 } from '../_data/community-detail-data';
 
 /* ── 排序选项 ── */
-const SORT_OPTIONS: { key: SortOrder; label: string }[] = [
-  { key: 'oldest', label: 'Oldest' },
-  { key: 'newest', label: 'Newest' },
-  { key: 'best', label: 'Best' },
+const SORT_OPTIONS: { value: SortOrder; label: string }[] = [
+  { value: 'oldest', label: 'Oldest' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'best', label: 'Best' },
 ];
 
-/* ── 回复骨架屏（匹配 reply-item 横向布局） ── */
+/* ── 回复骨架屏（匹配 reply-item 紧凑布局） ── */
 function ReplySkeleton() {
   return (
     <div
-      className="flex gap-3.5"
+      className="flex gap-3"
       style={{
-        padding: '18px 20px',
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
-        marginBottom: '10px',
+        padding: '8px 0',
+        marginBottom: '2px',
       }}
     >
-      <SkeletonAvatar size={36} shape="round" />
-      <div className="flex-1 flex flex-col gap-2">
-        <div className="flex gap-2.5">
-          <SkeletonLine width="100px" height="12px" />
+      <SkeletonAvatar size={32} shape="round" />
+      <div className="flex-1 flex flex-col gap-1.5">
+        <div className="flex gap-2">
           <SkeletonLine width="80px" height="10px" />
+          <SkeletonLine width="60px" height="8px" />
         </div>
-        <SkeletonLine width="70%" height="12px" />
-        <SkeletonLine width="100%" height="12px" />
+        <SkeletonLine width="60%" height="10px" />
+        <SkeletonLine width="90%" height="10px" />
       </div>
     </div>
   );
@@ -196,39 +195,13 @@ export default function ReplyList() {
           >
             Sort
           </span>
-          {SORT_OPTIONS.map((opt) => {
-            const isActive = sortOrder === opt.key;
-            return (
-              <button
-                key={opt.key}
-                onClick={() => handleSortChange(opt.key)}
-                className="sort-btn font-mono text-[11px] font-medium"
-                style={{
-                  color: isActive ? 'var(--bg)' : 'var(--text-dim)',
-                  background: isActive ? 'var(--gold)' : 'transparent',
-                  border: `1px solid ${isActive ? 'var(--gold)' : 'var(--border)'}`,
-                  padding: '5px 12px',
-                  cursor: 'pointer',
-                  transition: 'all 0.18s',
-                  letterSpacing: '0.03em',
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.color = 'var(--text)';
-                    e.currentTarget.style.borderColor = 'rgba(245,197,24,0.5)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.color = 'var(--text-dim)';
-                    e.currentTarget.style.borderColor = 'var(--border)';
-                  }
-                }}
-              >
-                {opt.label}
-              </button>
-            );
-          })}
+          <Segmented
+            className="gh-segmented"
+            size="small"
+            options={SORT_OPTIONS}
+            value={sortOrder}
+            onChange={(v) => handleSortChange(v as SortOrder)}
+          />
         </div>
       </div>
 
